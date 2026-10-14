@@ -2,7 +2,7 @@
 // that P doesn't sit on. Drag P (and A, B) around the circle.
 import { useState } from 'react';
 import { combine, geom, path, Vec } from 'dsviz';
-import { Diagram } from 'dsviz/react';
+import { Diagram, MathText } from 'dsviz/react';
 
 const O = { x: 220, y: 155 }, R = 115;
 const TAU = 2 * Math.PI;
@@ -50,7 +50,7 @@ export default function Inscribed() {
         }}
       />
       <p className="status formula">
-        <span className="tone-accent">∠APB = {inscribed.toFixed(1)}°</span> = ½ × <span className="tone-visited">arc AB {geom.toDegrees(arc).toFixed(1)}°</span>
+        <span className="tone-accent"><MathText tex={`\\angle APB = ${inscribed.toFixed(1)}°`} /></span> = ½ × <span className="tone-visited"><MathText tex={`\\text{arc } AB = ${geom.toDegrees(arc).toFixed(1)}°`} /></span>
       </p>
       <p className="hint">Slide P anywhere on the far side: the angle doesn't change. Make AB a diameter and you get Thales: 90°.</p>
     </>

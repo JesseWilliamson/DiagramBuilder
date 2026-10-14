@@ -19,6 +19,8 @@ const toc = [
   ['motion', 'Animation'],
   ['interaction', 'Interaction'],
   ['player', 'Stepping through algorithms'],
+  ['camera', 'The camera'],
+  ['math', 'Maths labels'],
   ['sizing', 'Sizing'],
   ['vanilla', 'Without React'],
   ['exercises', 'Exercises'],
@@ -96,7 +98,7 @@ p.toWorld(e.x, e.y);                                        // drag position →
         <Section id="interaction" title="Interaction">
           <p><code>&lt;Diagram onClick onDrag&gt;</code> report the node (with its <code>data</code>) and the pointer position in scene coordinates. Mark nodes <code>interactive</code> for a pointer cursor, <code>draggable</code> to receive drags.</p>
           <p>For small things you drag, use <code>handle({'{ id, x, y }'})</code>: a visible dot plus a large invisible hit target (small targets are the main reason drag interactions feel bad). <code>plot.point(..., {'{ draggable: true }'})</code> and <code>geom.polygon(..., {'{ draggable: true }'})</code> use it for you, and <code>hint: true</code> pulses a ring until the first touch.</p>
-          <p>Give draggable diagrams a fixed <code>viewBox</code>: an auto-fitting camera would chase the thing you're dragging.</p>
+          <p>Everything draggable is also reachable with Tab and movable with the arrow keys (Shift for bigger steps). The keys drive a virtual pointer and send the same <code>dragstart / drag / dragend</code> events, so your <code>onDrag</code> handler works unchanged, snapping included. <code>e.keyboard</code> tells you which it was.</p>
         </Section>
 
         <Section id="player" title="Stepping through algorithms">
@@ -114,6 +116,29 @@ function* search(a, target) {
 const player = usePlayer(() => search(nums, target), [nums, target]);
 <Transport player={player} />
 <CodeTrace lines={code} active={player.frame.line} />`}</Code>
+        </Section>
+
+        <Section id="camera" title="The camera">
+          <p>The camera is the <code>viewBox</code>. Whatever moves on screen is what the reader takes to be the change, so the camera should almost never move. Pick by kind of diagram:</p>
+          <ul>
+            <li><b>Plots and anything draggable:</b> a fixed <code>viewBox</code> (<code>plane.viewBox()</code> for plots). The axes are the reference frame; if they moved, the point you're dragging would appear to move twice.</li>
+            <li><b>Step-through algorithms:</b> fit every frame once, then hold still. The camera changes when the <i>problem</i> changes (a new input), never per step.</li>
+            <li><b>Growing structures</b> (a tree you insert into): leave it on auto. The default <code>camera="grow"</code> grows when something would fall outside and shrinks only when the content fills less than half the frame, so small changes never nudge it.</li>
+          </ul>
+          <Code>{`
+const draw = (f) => combine(array(nums, { tones: … }), pointer(…));   // pure: one frame → scene
+const viewBox = useMemo(() => fitViewBox(player.frames.map(draw)), [player.frames]);
+<Diagram scene={draw(player.frame)} viewBox={viewBox} />`}</Code>
+          <p>While something is being dragged the camera is frozen whatever the mode, so the thing under the pointer stays under it.</p>
+        </Section>
+
+        <Section id="math" title="Maths labels">
+          <p>Text with <code>role: 'math'</code> is typeset with textbook conventions: single-letter variables italic, numbers and brackets upright, function names upright (<code>sin</code>, <code>log</code>, <code>proj</code>), a real minus sign, medium spaces around <code>+ −</code> and thicker ones around <code>= ≤ ∈</code>. <code>^</code> and <code>_</code> make super- and subscripts, <code>{'{…}'}</code> groups and a few commands work (<code>{String.raw`\theta \cap \le \angle \text{…}`}</code>).</p>
+          <Code>{`
+text({ id: 'eq', x, y, text: 'a^2 + b^2 = c^2', role: 'math' })
+plot.vector(p, O, proj, { id: 'r', label: 'proj_v u' })      // labels on marks are maths already
+<MathText tex="P(A \\mid B) =" /> {p.toFixed(3)}            // the same typesetting in HTML`}</Code>
+          <p>Axis tick numbers use the maths font upright; identifiers from code (<code>lo</code>, <code>mid</code>, <code>curr</code>) stay monospace, because they are code, not maths.</p>
         </Section>
 
         <Section id="sizing" title="Sizing">

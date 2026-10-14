@@ -2,7 +2,7 @@
 // Rectangles are keyed by index, so changing n resizes the ones you have and fades in the rest.
 import { useState } from 'react';
 import { combine, plot } from 'dsviz';
-import { Diagram, Segmented, Slider } from 'dsviz/react';
+import { Diagram, MathText, Segmented, Slider } from 'dsviz/react';
 
 const f = (x: number) => 1.5 * (0.1 * x ** 3 - 0.9 * x ** 2 + 2 * x + 0.6);
 const p = plot.plane({ x: [-0.5, 6.5], y: [-0.6, 4], width: 440, height: 260 });
@@ -43,10 +43,10 @@ export default function Riemann() {
         <div className="grow"><Slider label="Rectangles" value={n} onChange={setN} min={1} max={40} format={(v) => `n = ${v}`} /></div>
         <Segmented value={rule} onChange={setRule} options={[{ value: 'left', label: 'Left' }, { value: 'mid', label: 'Mid' }, { value: 'right', label: 'Right' }, { value: 'trap', label: 'Trap' }]} />
       </div>
-      <div className="stats">
-        <span>sum = <b>{r.sum.toFixed(4)}</b></span>
-        <span>∫ = <b>{exact.toFixed(4)}</b></span>
-        <span className={Math.abs(r.sum - exact) < 0.01 ? 'tone-success' : 'tone-danger'}>error = <b>{(r.sum - exact).toFixed(4)}</b></span>
+      <div className="stats formula">
+        <span><MathText tex="\text{sum} =" /> <b>{r.sum.toFixed(4)}</b></span>
+        <span><MathText tex="\text{exact} =" /> <b>{exact.toFixed(4)}</b></span>
+        <span className={Math.abs(r.sum - exact) < 0.01 ? 'tone-success' : 'tone-danger'}><MathText tex="\text{error} =" /> <b>{(r.sum - exact).toFixed(4)}</b></span>
       </div>
     </>
   );

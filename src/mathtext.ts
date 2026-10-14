@@ -24,11 +24,16 @@ const FUNCTIONS = new Set(['sin', 'cos', 'tan', 'log', 'ln', 'exp', 'max', 'min'
 const COMMANDS: Record<string, string> = {
   theta: 'θ', alpha: 'α', beta: 'β', gamma: 'γ', delta: 'δ', epsilon: 'ε', lambda: 'λ', mu: 'μ', pi: 'π', sigma: 'σ', phi: 'φ', omega: 'ω',
   Delta: 'Δ', Sigma: 'Σ', Omega: 'Ω', cap: '∩', cup: '∪', setminus: '−', triangle: '△', cdot: '·', times: '×', le: '≤', ge: '≥', ne: '≠',
-  approx: '≈', to: '→', in: '∈', infty: '∞', pm: '±', angle: '∠', circ: '°', prime: '′', mid: '|', ldots: '…', sqrt: '√', int: '∫', sum: '∑',
+  approx: '≈', to: '→', in: '∈', infty: '∞', pm: '±', angle: '∠', circ: '°', prime: '′', mid: '∣', ldots: '…', sqrt: '√', int: '∫', sum: '∑',
 };
-const BINARY = new Set(['+', '−', '=', '<', '>', '≤', '≥', '≠', '≈', '×', '·', '→', '∈', '∩', '∪', '±']);
+// TeX's spacing classes: binary operators get a medium space (4/18 em) either
+// side, relations a thick one (5/18 em), which is why "a + b = c" reads as
+// (a + b) = (c) at a glance.
+const RELATIONS = new Set(['=', '<', '>', '≤', '≥', '≠', '≈', '→', '∈', '∣']);
+const BINARY = new Set([...RELATIONS, '+', '−', '×', '·', '∩', '∪', '△', '±']);
 const GREEK_UPRIGHT = /[ΔΣΩ∑∫√]/; // capital Greek and big operators stay upright
-const THIN = ' ';
+const MEDIUM = '\u205f'; // medium mathematical space, 4/18 em
+const THICK = '\u2005'; // four-per-em space, close to TeX's 5/18 em
 
 export function parseMath(src: string): MathSpan[] {
   const out: MathSpan[] = [];
@@ -87,13 +92,16 @@ export function parseMath(src: string): MathSpan[] {
       // unary minus at the start or after an operator / open bracket: no spaces
       const prev = out[out.length - 1]?.text.trimEnd().slice(-1);
       const unary = sym === '−' && (!prev || BINARY.has(prev) || '([{,'.includes(prev));
-      push(unary ? sym : `${THIN}${sym}${THIN}`, false, shift);
+      const sp = RELATIONS.has(sym) ? THICK : MEDIUM;
+      push(unary ? sym : `${sp}${sym}${sp}`, false, shift);
     } else if (/^[α-ωϑϕ]$/.test(sym)) push(sym, true, shift);
     else push(sym, !GREEK_UPRIGHT.test(sym) && /^\p{L}$/u.test(sym), shift);
   }
 
   walk(src);
-  return out;
+  // an operator at either end has nothing to be spaced from ("P =" then a number in HTML)
+  if (out.length) out[0].text = out[0].text.trimStart(), (out[out.length - 1].text = out[out.length - 1].text.trimEnd());
+  return out.filter((s) => s.text);
 }
 
 function matchBrace(s: string, open: number): number {

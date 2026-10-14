@@ -2,7 +2,7 @@
 // (circumcentre, incentre, centroid, orthocentre) follow along.
 import { useState } from 'react';
 import { combine, geom, Vec } from 'dsviz';
-import { Diagram, Switch } from 'dsviz/react';
+import { Diagram, MathText, Switch } from 'dsviz/react';
 
 const W = 440, H = 300;
 const mid = (a: Vec, b: Vec) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
@@ -69,7 +69,7 @@ export default function Triangle() {
         <Switch label="Altitudes" checked={show.altitudes} onChange={set('altitudes')} />
       </div>
       <p className="status formula">
-        {angles.map((a) => `${a.toFixed(1)}°`).join(' + ')} = <b>{angles.reduce((s, a) => s + a, 0).toFixed(1)}°</b>
+        <MathText tex={`A + B + C = ${angles.map((a) => `${a.toFixed(1)}°`).join(' + ')} =`} /> <b>{angles.reduce((s, a) => s + a, 0).toFixed(1)}°</b>
       </p>
     </>
   );

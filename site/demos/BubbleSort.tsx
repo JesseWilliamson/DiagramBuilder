@@ -1,6 +1,6 @@
 // Keys decide what moves. Turn "stable keys" off and the numbers change in place instead.
-import { useState } from 'react';
-import { array, combine, pointer } from 'dsviz';
+import { useMemo, useState } from 'react';
+import { array, combine, fitViewBox, pointer } from 'dsviz';
 import { Button, Diagram, Switch, Transport, usePlayer } from 'dsviz/react';
 
 type Item = { value: number; key: string };
@@ -22,23 +22,28 @@ function* bubbleSort(input: number[]) {
 
 const random = () => Array.from({ length: 8 }, () => 1 + Math.floor(Math.random() * 49));
 
-export default function BubbleSort() {
-  const [input, setInput] = useState([29, 10, 14, 37, 13, 5, 22, 41]);
-  const [useKeys, setUseKeys] = useState(true);
-  const player = usePlayer(() => bubbleSort(input), [input], { interval: 450 });
-  const f = player.frame!;
+type Frame = { items: Item[]; j: number; end: number; swap: boolean };
 
+function draw(f: Frame, useKeys: boolean) {
   const arr = array(f.items.map((it) => it.value), {
     cell: 40,
     keys: useKeys ? f.items.map((it) => it.key) : undefined,
     tones: (i) =>
       f.j < 0 || i > f.end ? 'success' : i === f.j || i === f.j + 1 ? (f.swap ? 'danger' : 'active') : undefined,
   });
-  const scene = combine(arr, f.j >= 0 && pointer({ id: 'j', at: arr.top(f.j), label: 'j', tone: 'active', length: 14 }));
+  return combine(arr, f.j >= 0 && pointer({ id: 'j', at: arr.top(f.j), label: 'j', tone: 'active', length: 14 }));
+}
+
+export default function BubbleSort() {
+  const [input, setInput] = useState([29, 10, 14, 37, 13, 5, 22, 41]);
+  const [useKeys, setUseKeys] = useState(true);
+  const player = usePlayer(() => bubbleSort(input), [input], { interval: 450 });
+  const f = player.frame!;
+  const viewBox = useMemo(() => fitViewBox(player.frames.map((fr) => draw(fr, useKeys))), [player.frames, useKeys]);
 
   return (
     <>
-      <Diagram scene={scene} />
+      <Diagram scene={draw(f, useKeys)} viewBox={viewBox} />
       <p className="status">
         {f.j < 0 ? 'Sorted.' : f.swap ? `Swapped a[${f.j}] and a[${f.j + 1}].` : `Compare a[${f.j}] and a[${f.j + 1}].`}
       </p>

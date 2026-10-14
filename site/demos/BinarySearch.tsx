@@ -1,6 +1,6 @@
 // The algorithm is a generator: each `yield` is one step of the transport bar.
 import { useMemo, useState } from 'react';
-import { array, combine, pointer } from 'dsviz';
+import { array, combine, fitViewBox, pointer } from 'dsviz';
 import { CodeTrace, Diagram, NumberStepper, Transport, usePlayer } from 'dsviz/react';
 
 const nums = [-9, -4, -1, 0, 3, 5, 8, 9, 12, 17, 21, 30];
@@ -37,12 +37,11 @@ function* binarySearch(a: number[], target: number) {
   yield { lo, hi, mid: -1, line: 6, found: false, msg: `lo > hi: the interval is empty, ${target} isn't here.` };
 }
 
-export default function BinarySearch() {
-  const [target, setTarget] = useState(9);
-  const player = usePlayer(() => binarySearch(nums, target), [target], { interval: 800 });
-  const f = player.frame!;
+type Frame = { lo: number; hi: number; mid: number; found: boolean };
 
-  const scene = useMemo(() => {
+// Drawing is a pure function of one frame, so we can also draw EVERY frame
+// up front and fit the camera to all of them (see below).
+function draw(f: Frame) {
     const arr = array(nums, {
       cell: 36,
       gap: 8,
@@ -58,12 +57,20 @@ export default function BinarySearch() {
       live && pointer({ id: 'lo', at: under(f.lo), label: 'lo', side: 'bottom', length: 12 }),
       live && pointer({ id: 'hi', at: under(f.hi), label: 'hi', side: 'bottom', length: 12, level: f.lo === f.hi ? 1 : 0 }),
     );
-  }, [f]);
+}
+
+export default function BinarySearch() {
+  const [target, setTarget] = useState(9);
+  const player = usePlayer(() => binarySearch(nums, target), [target], { interval: 800 });
+  const f = player.frame!;
+  // A fixed camera that fits every step: the lo/hi labels come and go, but
+  // the array never shifts under the reader's eye.
+  const viewBox = useMemo(() => fitViewBox(player.frames.map(draw)), [player.frames]);
 
   return (
     <>
       <NumberStepper label="Target" value={target} onChange={setTarget} min={-15} max={35} />
-      <Diagram scene={scene} />
+      <Diagram scene={draw(f)} viewBox={viewBox} />
       <p className="status">{f.msg}</p>
       <CodeTrace lines={code} active={f.line} />
       <Transport player={player} />

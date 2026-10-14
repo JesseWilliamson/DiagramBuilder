@@ -150,6 +150,10 @@ ${TONES.map(toneVars).join('\n')}
 .dv-circle.dv-role-handle:not(${anyTone}) { fill: var(--dv-point); }
 .dv-circle.dv-role-handle${anyTone} { fill: var(--dv-c); }
 .dv-role-hit:hover + .dv-role-handle { transform: scale(1.35); }
+/* keyboard focus: no browser box around the invisible target; ring the dot instead */
+.dv-draggable:focus { outline: none; }
+.dv-role-hit:focus-visible + .dv-role-handle { transform: scale(1.35); stroke: var(--dv-fg); stroke-width: 2.5px; }
+.dv-draggable:not(.dv-role-hit):focus-visible { stroke: var(--dv-fg); stroke-width: 3px; }
 .dv-circle.dv-role-pulse { fill: none; stroke: var(--dv-c, var(--dv-point)); stroke-width: 2px; pointer-events: none; transform-box: fill-box; transform-origin: center; animation: dv-pulse 1.6s ease-out infinite; }
 @keyframes dv-pulse { 0% { transform: scale(1); opacity: .9; } 80%, 100% { transform: scale(3); opacity: 0; } }
 .dv-circle.dv-role-particle { stroke: none; fill: var(--dv-cf); pointer-events: none; }

@@ -50,7 +50,7 @@ export interface DiagramProps {
 export function Diagram({ scene, size = 'natural', scale, height = 240, viewBox = 'auto', camera, padding, duration, ease, onClick, onDragStart, onDrag, onDragEnd, className, label }: DiagramProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const viewRef = useRef<View | null>(null);
-  const dragging = useRef(false);
+  const dragging = useRef<null | 'pointer' | 'key'>(null);
   const sceneRef = useRef(scene);
   sceneRef.current = scene;
   const handlers = useRef({ onClick, onDragStart, onDrag, onDragEnd });
@@ -62,9 +62,9 @@ export function Diagram({ scene, size = 'natural', scale, height = 240, viewBox 
     viewRef.current = view;
     const offs = [
       view.on('click', (e) => handlers.current.onClick?.(e)),
-      view.on('dragstart', (e) => ((dragging.current = true), handlers.current.onDragStart?.(e))),
+      view.on('dragstart', (e) => ((dragging.current = e.keyboard ? 'key' : 'pointer'), handlers.current.onDragStart?.(e))),
       view.on('drag', (e) => handlers.current.onDrag?.(e)),
-      view.on('dragend', (e) => ((dragging.current = false), handlers.current.onDragEnd?.(e))),
+      view.on('dragend', (e) => ((dragging.current = null), handlers.current.onDragEnd?.(e))),
     ];
     view.render(sceneRef.current);
     return () => {
@@ -84,7 +84,10 @@ export function Diagram({ scene, size = 'natural', scale, height = 240, viewBox 
   // Every scene change: render. While the user drags, skip tweening AND freeze
   // the camera, so the thing under the cursor stays glued to it.
   useEffect(() => {
-    viewRef.current?.render(scene, dragging.current ? { duration: 0, camera: false } : undefined);
+    // (A pointer drag follows the finger with no tween; an arrow-key press is a
+    // discrete jump, so it gets a short one.)
+    const d = dragging.current;
+    viewRef.current?.render(scene, d ? { duration: d === 'key' ? 120 : 0, camera: false } : undefined);
   }, [scene]);
 
   const style = size === 'natural'

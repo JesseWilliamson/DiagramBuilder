@@ -2,7 +2,7 @@
 // the derivative. "Show f′" plots every slope as a height, as its own curve.
 import { useState } from 'react';
 import { combine, plot } from 'dsviz';
-import { Diagram, Segmented, Switch } from 'dsviz/react';
+import { Diagram, MathText, Segmented, Switch } from 'dsviz/react';
 
 const fns = {
   'sin x': { f: Math.sin, df: Math.cos },
@@ -43,10 +43,10 @@ export default function Tangent() {
         <Segmented value={name} onChange={setName} options={Object.keys(fns) as Name[]} />
         <Switch label="Show f′" checked={showDf} onChange={setShowDf} />
       </div>
-      <p className="stats">
-        <span>x = <b>{x0.toFixed(2)}</b></span>
-        <span>f(x) = <b>{f(x0).toFixed(2)}</b></span>
-        <span className="tone-active">slope = <b>{t.slope.toFixed(2)}</b></span>
+      <p className="stats formula">
+        <span><MathText tex="x =" /> <b>{x0.toFixed(2)}</b></span>
+        <span><MathText tex="f(x) =" /> <b>{f(x0).toFixed(2)}</b></span>
+        <span className="tone-active"><MathText tex="f'(x) =" /> <b>{t.slope.toFixed(2)}</b></span>
       </p>
     </>
   );

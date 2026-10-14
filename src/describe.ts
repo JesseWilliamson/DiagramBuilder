@@ -71,6 +71,8 @@ export function describe(n: SceneNode, p: NumericProps, g: Geometry = geometry):
     class: classFor(n) + (solidHead ? ' dv-head-solid' : ''),
     'data-id': n.id,
     opacity: f(p.opacity),
+    // draggable things are reachable with Tab and movable with the arrow keys
+    ...(n.draggable ? { tabindex: '0' } : {}),
   };
   switch (n.kind) {
     case 'circle':

@@ -2,18 +2,19 @@
 // P(region) is its area as a fraction of the rectangle U.
 import { useState } from 'react';
 import { prob, Vec } from 'dsviz';
-import { Button, Diagram } from 'dsviz/react';
+import { Button, Diagram, MathText } from 'dsviz/react';
 
 type Region = prob.VennRegion;
 const U: [number, number, number, number] = [0, 0, 440, 250];
 const names: Record<string, string> = {
-  '': '∅', both: 'A ∩ B', aOnly: 'A − B', bOnly: 'B − A', neither: '(A ∪ B)ᶜ',
-  'aOnly,both': 'A', 'both,bOnly': 'B', 'aOnly,bOnly': 'A △ B', 'aOnly,both,bOnly': 'A ∪ B',
-  'aOnly,neither': 'Bᶜ', 'bOnly,neither': 'Aᶜ', 'both,neither': '(A △ B)ᶜ', 'aOnly,bOnly,neither': '(A ∩ B)ᶜ',
-  'aOnly,both,neither': 'A ∪ Bᶜ', 'both,bOnly,neither': 'Aᶜ ∪ B', 'aOnly,both,bOnly,neither': 'U',
+  // TeX-lite strings: <MathText> sets them in maths type (italic A, B; spaced ∩)
+  '': '∅', both: 'A \\cap B', aOnly: 'A - B', bOnly: 'B - A', neither: '(A \\cup B)^c',
+  'aOnly,both': 'A', 'both,bOnly': 'B', 'aOnly,bOnly': 'A \\triangle B', 'aOnly,both,bOnly': 'A \\cup B',
+  'aOnly,neither': 'B^c', 'bOnly,neither': 'A^c', 'both,neither': '(A \\triangle B)^c', 'aOnly,bOnly,neither': '(A \\cap B)^c',
+  'aOnly,both,neither': 'A \\cup B^c', 'both,bOnly,neither': 'A^c \\cup B', 'aOnly,both,bOnly,neither': 'U',
 };
 const order: Region[] = ['aOnly', 'both', 'bOnly', 'neither'];
-const presets: Array<[string, Region[]]> = [['A ∩ B', ['both']], ['A ∪ B', ['aOnly', 'both', 'bOnly']], ['A − B', ['aOnly']], ['A △ B', ['aOnly', 'bOnly']], ['(A ∪ B)ᶜ', ['neither']]];
+const presets: Region[][] = [['both'], ['aOnly', 'both', 'bOnly'], ['aOnly'], ['aOnly', 'bOnly'], ['neither']];
 
 export default function Venn() {
   const [a, setA] = useState({ x: 170, y: 130, r: 85 });
@@ -40,18 +41,18 @@ export default function Venn() {
         onClick={(e) => toggle(prob.vennRegionAt(e, a, b))}
       />
       <div className="row">
-        {presets.map(([label, regions]) => (
-          <Button key={label} onClick={() => setSel(regions)}>{label}</Button>
+        {presets.map((regions) => (
+          <Button key={regions.join()} onClick={() => setSel(regions)}><MathText tex={names[regions.join(',')]} /></Button>
         ))}
       </div>
       <p className="status formula">
-        Shaded: <b className="tone-accent">{names[key] ?? key}</b>, P = <b>{sel.reduce((s, r) => s + P[r], 0).toFixed(3)}</b>
+        Shaded: <span className="tone-accent"><MathText tex={names[key] ?? key} /></span>, <MathText tex="P =" /> <b>{sel.reduce((s, r) => s + P[r], 0).toFixed(3)}</b>
       </p>
-      <div className="stats">
-        <span>P(A) = <b>{pA.toFixed(3)}</b></span>
-        <span>P(B) = <b>{pB.toFixed(3)}</b></span>
-        <span>P(A ∩ B) = <b>{P.both.toFixed(3)}</b></span>
-        <span className={independent ? 'tone-success' : ''}>P(A)·P(B) = <b>{(pA * pB).toFixed(3)}</b>{independent && ' (independent!)'}</span>
+      <div className="stats formula">
+        <span><MathText tex="P(A) =" /> <b>{pA.toFixed(3)}</b></span>
+        <span><MathText tex="P(B) =" /> <b>{pB.toFixed(3)}</b></span>
+        <span><MathText tex="P(A \cap B) =" /> <b>{P.both.toFixed(3)}</b></span>
+        <span className={independent ? 'tone-success' : ''}><MathText tex="P(A) P(B) =" /> <b>{(pA * pB).toFixed(3)}</b>{independent && ' (independent!)'}</span>
       </div>
     </>
   );

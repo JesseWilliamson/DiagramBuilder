@@ -1,7 +1,7 @@
 // Vectors you can grab by the tip. Same plane, three questions.
 import { useState } from 'react';
 import { combine, geom, plot, Vec } from 'dsviz';
-import { Diagram, Segmented } from 'dsviz/react';
+import { Diagram, MathText, Segmented } from 'dsviz/react';
 
 // Equal pixels per unit on both axes (60), so angles on screen are true angles.
 const p = plot.plane({ x: [-1, 6], y: [-1, 4], width: 420, height: 300 });
@@ -41,7 +41,7 @@ export default function Vectors() {
     mode === 'projection' && [
       geom.angleMark(p.toPx(u), p.toPx(O), p.toPx(v), { id: 'theta', r: 30, label: 'θ', tone: 'active' }),
       plot.segment(p, u, proj, { id: 'perp', role: 'guide' }),
-      plot.vector(p, O, proj, { id: 'result', tone: 'success', label: 'proj', width: 3 }),
+      plot.vector(p, O, proj, { id: 'result', tone: 'success', label: 'proj_v u', width: 3 }),
     ],
     plot.vector(p, O, u, { id: 'u', tone: 'accent', label: 'u' }),
     plot.vector(p, O, v, { id: 'v', tone: 'visited', label: 'v' }),
@@ -59,14 +59,14 @@ export default function Vectors() {
         }}
       />
       <Segmented value={mode} onChange={setMode} options={['sum', 'difference', 'projection']} />
-      <div className="stats">
-        <span className="tone-accent">u = <b>{fmt(u)}</b></span>
-        <span className="tone-visited">v = <b>{fmt(v)}</b></span>
-        {mode === 'sum' && <span className="tone-success">u + v = <b>{fmt(add(u, v))}</b></span>}
-        {mode === 'difference' && <span className="tone-danger">u − v = <b>{fmt(sub(u, v))}</b></span>}
+      <div className="stats formula">
+        <span className="tone-accent"><MathText tex="u =" /> <b>{fmt(u)}</b></span>
+        <span className="tone-visited"><MathText tex="v =" /> <b>{fmt(v)}</b></span>
+        {mode === 'sum' && <span className="tone-success"><MathText tex="u + v =" /> <b>{fmt(add(u, v))}</b></span>}
+        {mode === 'difference' && <span className="tone-danger"><MathText tex="u - v =" /> <b>{fmt(sub(u, v))}</b></span>}
         {mode === 'projection' && <>
-          <span>u · v = <b>{dot.toFixed(2)}</b></span>
-          <span className="tone-active">θ = <b>{theta.toFixed(1)}°</b></span>
+          <span><MathText tex="u \cdot v =" /> <b>{dot.toFixed(2)}</b></span>
+          <span className="tone-active"><MathText tex="\theta =" /> <b>{theta.toFixed(1)}°</b></span>
         </>}
       </div>
     </>

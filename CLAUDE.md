@@ -33,6 +33,10 @@ Motion, a real bundler) instead of hand-rolling substitutes.
     `translate`, `namespace`, `bounds`. `path.ts`: path data, Catmull-Rom smoothing, arc-length `resample`.
   - `render.ts` `createView` (keyed reconciler + tween engine, `setViewBox`), `describe.ts`, `static.ts` (`toSVG`),
     `player.ts`, `handle.ts` (draggable dot + big invisible hit target, optional pulse `hint`), `fx.ts` (`burst`).
+  - `camera.ts`: `fitViewBox(parts)` and `nextCamera` (the `'grow'` auto camera: grow on overflow, shrink only below
+    50% fill). Policy: plots/draggables fixed; step-throughs `fitViewBox(player.frames.map(draw))`; camera frozen while
+    dragging. `mathtext.ts`: TeX-lite (`a^2`, `x_{i}`, `\cap`, `\text{}`) used for `role: 'math'` text and `<MathText>`.
+  - Draggable nodes get `tabindex=0`; arrow keys emit the normal drag events from a virtual pointer (`e.keyboard`).
   - `styles.ts`: ONE theme: white canvas, 1.5px ink lines, flat yellow/blue/green/red/purple/orange fills,
     #e5e5e5 grids, thick blue curves, italic serif maths labels. `--dv-*` variables on `.dv-root` / `.dvc`; dark via
     `[data-theme="dark"]` or `.dark` (or the OS setting).
@@ -46,7 +50,7 @@ Motion, a real bundler) instead of hand-rolling substitutes.
 - `src/react/` — `<Diagram>` (natural size by default: 1 scene unit = 1 CSS px, shrinks on narrow screens; `scale`,
   `size="fill"`, fixed `viewBox`, `duration`, `ease`), `usePlayer` (`start: 'end'`), `useTicker`, `useBurst`, and small
   neutral controls on Radix: `Slider`, `Segmented`, `Select`, `Switch`, `NumberStepper`, `Button`, `TextInput`,
-  `Transport` (`<Transport player={player} />`), `CodeTrace`.
+  `Transport` (`<Transport player={player} />`), `CodeTrace`, `MathText`.
 - `site/` — docs site (Vite + React, hash routes): home (`#/`, intro + live featured examples + usage), examples
   (`#/examples`: 26 examples grouped by family, each the live diagram beside its editable source), guide
   (`#/guide`), API (`#/api`). Every `site/demos/*.tsx` is a real module importing from `dsviz` / `dsviz/react`;

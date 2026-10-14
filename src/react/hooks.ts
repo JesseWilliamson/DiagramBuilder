@@ -5,6 +5,8 @@ import { Player, PlayerOptions, createPlayer } from '../player';
 
 export interface PlayerState<S> {
   frame: S | undefined;
+  /** Every frame, computed up front. Handy for a fixed camera: `fitViewBox(frames.map(draw))`. */
+  frames: readonly S[];
   index: number;
   count: number;
   playing: boolean;
@@ -59,6 +61,7 @@ export function usePlayer<S>(makeFrames: () => Iterable<S>, deps: DependencyList
 
   return {
     frame: player.frame,
+    frames: player.frames,
     index: player.index,
     count: player.frames.length,
     playing: player.playing,

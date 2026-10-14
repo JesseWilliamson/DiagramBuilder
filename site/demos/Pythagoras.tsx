@@ -2,7 +2,7 @@
 // always fill the big square: (a + b)² = 4 · ab/2 + c², so a² + b² = c².
 import { useState } from 'react';
 import { combine, handle, path, text } from 'dsviz';
-import { Diagram } from 'dsviz/react';
+import { Diagram, MathText } from 'dsviz/react';
 
 const S = 240; // side of the big square
 
@@ -33,7 +33,7 @@ export default function Pythagoras() {
         onDrag={(e) => { setTouched(true); setA(Math.round(Math.max(24, Math.min(S - 24, e.x)))); }}
       />
       <p className="status formula" style={{ textAlign: 'center' }}>
-        <span className="math-ital">a</span>² + <span className="math-ital">b</span>² = {Math.round(a * a + b * b).toLocaleString()} = <span className="math-ital">c</span>²
+        <MathText tex={`a^2 + b^2 = ${Math.round(a * a + b * b).toLocaleString()} = c^2`} />
       </p>
     </>
   );

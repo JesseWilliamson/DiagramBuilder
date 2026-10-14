@@ -95,7 +95,11 @@ ol.exercises { padding-left: 20px; display: grid; gap: 8px; }
 .stats b { color: var(--ink); font-weight: 600; }
 .tone-active { color: #b78900; } .tone-accent { color: #294bc6; } .tone-success { color: #009b2b; } .tone-danger { color: #c43939; } .tone-visited { color: #7139cc; }
 :root[data-theme="dark"] .tone-active { color: #f9d25c; } :root[data-theme="dark"] .tone-accent { color: #abbdff; } :root[data-theme="dark"] .tone-success { color: #5ed981; } :root[data-theme="dark"] .tone-danger { color: #ff8585; } :root[data-theme="dark"] .tone-visited { color: #d3b8ff; }
-.formula { font-size: 14px; }
+.formula { font: 16px "STIX Two Text", "Times New Roman", serif; }
+.formula .dvc-math { font-size: 1em; }
+.formula b { font-weight: 600; }
+.stats.formula { font-size: 15px; gap: 4px 20px; }
+.stats.formula b { font-weight: 500; }
 .math-ital { font-family: "STIX Two Text", serif; font-style: italic; }
 
 @media (max-width: 980px) {

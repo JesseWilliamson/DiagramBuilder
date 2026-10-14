@@ -2,7 +2,7 @@
 // The tree multiplies along each path; Bayes' rule is just "of the + leaves, how much is sick?"
 import { useState } from 'react';
 import { combine, prob, rect, text } from 'dsviz';
-import { Diagram, Slider } from 'dsviz/react';
+import { Diagram, MathText, Slider } from 'dsviz/react';
 
 const pct = (p: number) => `${+(p * 100).toFixed(p < 0.01 ? 2 : 1)}%`;
 
@@ -42,7 +42,7 @@ export default function Bayes() {
       <div className="row"><div className="grow"><Slider label="Sensitivity" value={sens} onChange={setSens} min={50} max={100} step={0.5} format={(v) => `${v}%`} /></div></div>
       <div className="row"><div className="grow"><Slider label="Specificity" value={spec} onChange={setSpec} min={50} max={100} step={0.5} format={(v) => `${v}%`} /></div></div>
       <p className="status formula">
-        P(sick | +) = <span className="tone-success">{tp.toFixed(4)}</span> / (<span className="tone-success">{tp.toFixed(4)}</span> + <span className="tone-danger">{fp.toFixed(4)}</span>) = <b>{pct(posterior)}</b>
+        <MathText tex="P(\text{sick} \mid +) =" /> <span className="tone-success">{tp.toFixed(4)}</span> / (<span className="tone-success">{tp.toFixed(4)}</span> + <span className="tone-danger">{fp.toFixed(4)}</span>) = <b>{pct(posterior)}</b>
       </p>
       <p className="hint">With 1% prevalence, most positives are false. What has to change for a positive to mean “probably sick”?</p>
     </>

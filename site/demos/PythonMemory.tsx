@@ -1,6 +1,6 @@
 // Names, objects and aliasing, Python-Tutor style. `b = a` doesn't copy the list:
 // it draws a second arrow to the same object. Step through and watch what changes.
-import { mem } from 'dsviz';
+import { fitViewBox, mem } from 'dsviz';
 import { CodeTrace, Diagram, Transport, usePlayer } from 'dsviz/react';
 
 const code = [
@@ -35,12 +35,16 @@ const steps: Step[] = [
 // Fixed heap positions, so an object never jumps when another is added.
 const positions = { L1: { x: 0, y: 20 }, L2: { x: 0, y: 92 }, fn: { x: 0, y: 164 } };
 
+const draw = (s: Step) => mem.stackHeap(s.frames, s.heap, { tones: s.tones, positions, frameWidth: 150, heapX: 270 });
+// The second stack frame and the function object appear later; reserve their room now.
+const viewBox = fitViewBox(steps.map(draw));
+
 export default function PythonMemory() {
   const player = usePlayer(() => steps, [], { interval: 1400 });
   const s = player.frame!;
   return (
     <>
-      <Diagram scene={mem.stackHeap(s.frames, s.heap, { tones: s.tones, positions, frameWidth: 150, heapX: 270 })} />
+      <Diagram scene={draw(s)} viewBox={viewBox} />
       <p className="status">{s.note}</p>
       <CodeTrace lines={code} active={s.line} />
       <Transport player={player} />

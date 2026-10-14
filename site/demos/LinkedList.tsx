@@ -1,6 +1,6 @@
 // Reversing a linked list. Each arrow's id is the node it LEAVES, so flipping
 // `curr.next` swings that arrow round instead of replacing it.
-import { V2, combine, linkedList, listFromValues, pointer, text, ListNodeSpec } from 'dsviz';
+import { V2, combine, fitViewBox, linkedList, listFromValues, pointer, text, ListNodeSpec } from 'dsviz';
 import { CodeTrace, Diagram, Transport, usePlayer } from 'dsviz/react';
 
 const values = [4, 8, 15, 16];
@@ -35,12 +35,11 @@ function* reverse() {
   yield snap(prev, null, undefined, 5);
 }
 
-export default function LinkedList() {
-  const player = usePlayer(reverse, [], { interval: 800 });
-  const f = player.frame!;
+type Frame = { nodes: ListNodeSpec[]; prev: Key; curr: Key; nxt: Key | undefined; line: number };
 
+function draw(f: Frame) {
   // Pin the order: by default boxes follow `next`, which would shuffle them mid-reversal.
-  const list = linkedList(f.nodes as ListNodeSpec[], {
+  const list = linkedList(f.nodes, {
     order: values.map((_, i) => `n${i}`),
     arrowTones: f.curr !== null ? { [String(f.curr)]: 'active' } : {},
   });
@@ -53,7 +52,7 @@ export default function LinkedList() {
   const nullText = (id: string, slot: number, show: boolean) =>
     show && text({ id, x: list.slot(slot).x, y: list.slot(slot).y, text: 'None', size: 12, role: 'null' });
 
-  const scene = combine(
+  return combine(
     list,
     nullText('null-left', -1, f.prev === null),
     nullText('null-right', values.length, f.curr === null || f.nxt === null),
@@ -61,10 +60,19 @@ export default function LinkedList() {
     pointer({ id: 'curr', at: at(f.curr, 'top', values.length), label: 'curr', tone: 'active' }),
     f.nxt !== undefined && pointer({ id: 'nxt', at: at(f.nxt, 'bottom', values.length), side: 'bottom', label: 'nxt', tone: 'accent' }),
   );
+}
+
+// Every frame is fixed, so the camera is too: fit it once, at module level.
+const frames = [...reverse()] as Frame[];
+const viewBox = fitViewBox(frames.map(draw));
+
+export default function LinkedList() {
+  const player = usePlayer(() => frames, [], { interval: 800 });
+  const f = player.frame!;
 
   return (
     <>
-      <Diagram scene={scene} />
+      <Diagram scene={draw(f)} viewBox={viewBox} />
       <CodeTrace lines={code} active={f.line} />
       <Transport player={player} />
     </>

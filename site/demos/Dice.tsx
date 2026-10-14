@@ -2,7 +2,7 @@
 // (cells in the event) / 36. Click a cell or a bar to pick the sum.
 import { useState } from 'react';
 import { combine, prob } from 'dsviz';
-import { Diagram, Segmented } from 'dsviz/react';
+import { Diagram, MathText, Segmented } from 'dsviz/react';
 
 const counts = [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]; // ways to roll 2, 3, …, 12
 type Mode = '=' | '≥' | '≤';
@@ -44,7 +44,7 @@ export default function Dice() {
       <div className="row spread">
         <Segmented label="Sum" value={mode} onChange={setMode} options={['=', '≥', '≤']} />
         <p className="status formula">
-          P(sum {mode} {k}) = <b className="tone-accent">{hits}</b>/36 = <b>{(hits / 36).toFixed(3)}</b>
+          <MathText tex={`P(\\text{sum} ${mode} ${k}) =`} /> <b className="tone-accent">{hits}</b>/36 = <b>{(hits / 36).toFixed(3)}</b>
         </p>
       </div>
     </>

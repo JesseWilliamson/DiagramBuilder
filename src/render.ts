@@ -69,6 +69,8 @@ export interface ViewEvent {
   x: number;
   y: number;
   original: Event;
+  /** True when the event came from the arrow keys rather than a pointer. */
+  keyboard?: boolean;
 }
 
 export interface View {
@@ -271,12 +273,12 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
     return V2(p.x, p.y);
   }
 
-  function emit(type: ViewEventType, id: string, ev: PointerEvent | MouseEvent) {
+  function emit(type: ViewEventType, id: string, ev: PointerEvent | MouseEvent | KeyboardEvent, at?: Vec) {
     const e = entries.get(id);
     const set = handlers.get(type);
     if (!e || !set) return;
-    const w = toWorld(ev.clientX, ev.clientY);
-    for (const h of set) h({ type, id, node: e.node, x: w.x, y: w.y, original: ev });
+    const w = at ?? toWorld((ev as MouseEvent).clientX, (ev as MouseEvent).clientY);
+    for (const h of set) h({ type, id, node: e.node, x: w.x, y: w.y, original: ev, keyboard: !!at });
   }
 
   const idOf = (t: EventTarget | null): string | null =>
@@ -291,6 +293,7 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
     if (!id || !e?.node.draggable) return;
     ev.preventDefault();
     svg.setPointerCapture(ev.pointerId);
+    key = null;
     drag = { id, pointer: ev.pointerId, sx: ev.clientX, sy: ev.clientY, moved: false };
     svg.classList.add('dv-dragging');
     emit('dragstart', id, ev);
@@ -316,6 +319,43 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
     if (id) emit('click', id, ev);
   };
 
+  // Keyboard dragging. Arrow keys move a VIRTUAL POINTER that starts on the
+  // node and accumulates, and we emit the same dragstart/drag/dragend a mouse
+  // would — so every drag handler works with the keyboard for free. The pointer
+  // accumulates (rather than restarting from the node each press) so handlers
+  // that snap to a grid still move: three small presses add up to one cell.
+  let key: { id: string; at: Vec; down: boolean } | null = null;
+  const STEPS: Record<string, [number, number]> = {
+    ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1],
+  };
+  const centre = (n: SceneNode) => {
+    const b = bounds({ nodes: [n] });
+    return V2(b.x + b.w / 2, b.y + b.h / 2);
+  };
+  const onKeyDown = (ev: KeyboardEvent) => {
+    const dir = STEPS[ev.key];
+    const id = idOf(ev.target);
+    const e = id ? entries.get(id) : undefined;
+    if (!dir || !id || !e?.node.draggable) return;
+    ev.preventDefault(); // don't scroll the page
+    if (!key || key.id !== id) key = { id, at: centre(e.node), down: false };
+    // One step is a fixed fraction of the view, so it feels the same at any zoom.
+    const step = (Math.max(vb.to[2], vb.to[3]) / 60) * (ev.shiftKey ? 5 : 1);
+    if (!key.down) emit('dragstart', id, ev, key.at), (key.down = true);
+    key.at = V2(key.at.x + dir[0] * step, key.at.y + dir[1] * step);
+    emit('drag', id, ev, key.at);
+  };
+  const endKey = (ev: Event) => {
+    if (!key?.down) return;
+    key.down = false;
+    emit('dragend', key.id, ev as KeyboardEvent, key.at);
+  };
+  const onKeyUp = (ev: KeyboardEvent) => STEPS[ev.key] && endKey(ev);
+  const onFocusOut = (ev: FocusEvent) => (endKey(ev), (key = null));
+
+  svg.addEventListener('keydown', onKeyDown);
+  svg.addEventListener('keyup', onKeyUp);
+  svg.addEventListener('focusout', onFocusOut);
   svg.addEventListener('pointerdown', onPointerDown);
   svg.addEventListener('pointermove', onPointerMove);
   svg.addEventListener('pointerup', onPointerUp);
@@ -343,6 +383,9 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
     },
     destroy() {
       if (raf) cancelAnimationFrame(raf);
+      svg.removeEventListener('keydown', onKeyDown);
+      svg.removeEventListener('keyup', onKeyUp);
+      svg.removeEventListener('focusout', onFocusOut);
       svg.removeEventListener('pointerdown', onPointerDown);
       svg.removeEventListener('pointermove', onPointerMove);
       svg.removeEventListener('pointerup', onPointerUp);

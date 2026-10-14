@@ -19,6 +19,8 @@ export interface PolygonOptions {
   /** Fill the inside lightly. Default true. */
   fill?: boolean;
   width?: number;
+  /** Pulse the drag handles until the learner touches one. */
+  hint?: boolean;
 }
 
 /** A closed polygon with optional vertex labels and drag handles. */
@@ -34,7 +36,7 @@ export function polygon(points: readonly Vec[], o: PolygonOptions = {}): Scene {
       const out = vadd(p, vscale(vnorm(vsub(p, c)), 16));
       nodes.push(text({ id: `${id}:label:${i}`, x: out.x, y: out.y, text: o.labels[i], size: 15, role: 'math' }));
     }
-    nodes.push(...handle({ id: `${id}:v:${i}`, x: p.x, y: p.y, r: 5, draggable: !!o.draggable, tone: o.tone, data: { id, index: i } }));
+    nodes.push(...handle({ id: `${id}:v:${i}`, x: p.x, y: p.y, r: 5, draggable: !!o.draggable, hint: o.hint, tone: o.tone, data: { id, index: i } }));
   });
   return { nodes };
 }
@@ -144,11 +146,11 @@ export function circle(center: Vec, r: number, o: { id: string; tone?: Tone; das
 }
 
 /** A labelled point. */
-export function pointLabel(p: Vec, s: string, o: { id: string; tone?: Tone; offset?: Vec; draggable?: boolean; data?: unknown }): Scene {
+export function pointLabel(p: Vec, s: string, o: { id: string; tone?: Tone; offset?: Vec; draggable?: boolean; hint?: boolean; data?: unknown }): Scene {
   const off = o.offset ?? V2(10, -12);
   return {
     nodes: [
-      ...handle({ id: o.id, x: p.x, y: p.y, r: 4.5, tone: o.tone, draggable: !!o.draggable, data: o.data ?? { id: o.id } }),
+      ...handle({ id: o.id, x: p.x, y: p.y, r: 4.5, tone: o.tone, draggable: !!o.draggable, hint: o.hint, data: o.data ?? { id: o.id } }),
       text({ id: `${o.id}:label`, x: p.x + off.x, y: p.y + off.y, text: s, size: 14, role: 'math', tone: o.tone }),
     ],
   };

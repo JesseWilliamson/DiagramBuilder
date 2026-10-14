@@ -2,7 +2,7 @@
 // (circumcentre, incentre, centroid, orthocentre) follow along.
 import { useState } from 'react';
 import { combine, geom, Vec } from 'dsviz';
-import { Diagram, Switch } from 'dsviz/react';
+import { Challenge, Diagram, Switch, useBurst } from 'dsviz/react';
 
 const W = 440, H = 300;
 const mid = (a: Vec, b: Vec) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
@@ -12,6 +12,8 @@ export default function Triangle() {
   const [pts, setPts] = useState<Vec[]>([{ x: 110, y: 230 }, { x: 330, y: 240 }, { x: 190, y: 60 }]);
   const [show, setShow] = useState({ circum: true, incircle: false, medians: false, altitudes: false });
   const [A, B, C] = pts;
+  const [touched, setTouched] = useState(false);
+  const [particles, fire] = useBurst();
   const set = (k: keyof typeof show) => (v: boolean) => setShow((s) => ({ ...s, [k]: v }));
 
   const cc = geom.circumcircle(A, B, C);
@@ -45,7 +47,8 @@ export default function Triangle() {
     geom.angleMark(C, A, B, { id: 'angA', label: true, tone: 'accent' }),
     geom.angleMark(A, B, C, { id: 'angB', label: true, tone: 'accent' }),
     geom.angleMark(B, C, A, { id: 'angC', label: true, tone: 'accent' }),
-    geom.polygon(pts, { id: 'tri', labels: ['A', 'B', 'C'], draggable: true, fill: false }),
+    geom.polygon(pts, { id: 'tri', labels: ['A', 'B', 'C'], draggable: true, hint: !touched, fill: false }),
+    particles,
   );
 
   return (
@@ -55,6 +58,7 @@ export default function Triangle() {
         height={310}
         viewBox={[0, 0, W, H]}
         onDrag={(e) => {
+          setTouched(true);
           const i = (e.node.data as { index: number }).index;
           // snap to a 5px grid so right angles and equal sides are reachable by hand
           const p = { x: Math.round(Math.max(10, Math.min(W - 10, e.x)) / 5) * 5, y: Math.round(Math.max(10, Math.min(H - 10, e.y)) / 5) * 5 };
@@ -70,7 +74,14 @@ export default function Triangle() {
       <p className="status formula">
         {angles.map((a) => `${a.toFixed(1)}°`).join(' + ')} = <b>{angles.reduce((s, a) => s + a, 0).toFixed(1)}°</b>
       </p>
-      <p className="hint">Make a right angle: where does the circumcentre go? Make two sides equal and watch the tick marks.</p>
+      <Challenge
+        goals={[
+          { label: 'Make a right angle (watch the arc turn square)', done: angles.some((a) => Math.abs(a - 90) < 0.5) },
+          { label: 'Make two sides equal (isosceles)', done: same(0, 1) || same(1, 2) || same(0, 2) },
+          { label: 'Push the circumcentre outside the triangle', done: angles.some((a) => a > 91) },
+        ]}
+        onGoal={() => fire(G.x, G.y)}
+      />
     </>
   );
 }

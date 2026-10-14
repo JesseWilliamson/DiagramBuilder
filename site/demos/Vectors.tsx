@@ -1,7 +1,7 @@
 // Vectors you can grab by the tip. Same plane, three questions.
 import { useState } from 'react';
 import { combine, geom, plot, Vec } from 'dsviz';
-import { Diagram, Segmented } from 'dsviz/react';
+import { Challenge, Diagram, Segmented } from 'dsviz/react';
 
 // Equal pixels per unit on both axes (60), so angles on screen are true angles.
 const p = plot.plane({ x: [-1, 6], y: [-1, 4], width: 420, height: 300 });
@@ -18,6 +18,7 @@ export default function Vectors() {
   const [u, setU] = useState<Vec>({ x: 3.5, y: 1 });
   const [v, setV] = useState<Vec>({ x: 1.25, y: 2.5 });
   const [mode, setMode] = useState<Mode>('sum');
+  const [touched, setTouched] = useState(false);
 
   const dot = geom.dot(u, v);
   const proj = scale(v, dot / (geom.dot(v, v) || 1));
@@ -41,8 +42,8 @@ export default function Vectors() {
     ],
     plot.vector(p, O, u, { id: 'u', tone: 'accent', label: 'u' }),
     plot.vector(p, O, v, { id: 'v', tone: 'visited', label: 'v' }),
-    plot.point(p, u.x, u.y, { id: 'U', draggable: true, tone: 'accent' }),
-    plot.point(p, v.x, v.y, { id: 'V', draggable: true, tone: 'visited' }),
+    plot.point(p, u.x, u.y, { id: 'U', draggable: true, hint: !touched, tone: 'accent' }),
+    plot.point(p, v.x, v.y, { id: 'V', draggable: true, hint: !touched, tone: 'visited' }),
   );
 
   return (
@@ -52,6 +53,7 @@ export default function Vectors() {
         height={320}
         viewBox={p.viewBox()}
         onDrag={(e) => {
+          setTouched(true);
           const w = p.clamp(p.toWorld(e.x, e.y));
           (e.id === 'U' ? setU : setV)({ x: snap(w.x), y: snap(w.y) });
         }}
@@ -67,9 +69,13 @@ export default function Vectors() {
           <span className="tone-active">θ = <b>{theta.toFixed(1)}°</b></span>
         </>}
       </div>
-      <p className="hint">
-        {mode === 'projection' ? 'Make θ = 90°: what happens to u · v and the projection?' : 'Drag the tips. Vector addition is “walk u, then walk v”.'}
-      </p>
+      <Challenge
+        goals={[
+          { label: 'Make u + v land exactly on (5, 3)', done: add(u, v).x === 5 && add(u, v).y === 3 },
+          { label: 'Make u and v perpendicular (u · v = 0)', done: dot === 0 && geom.dot(u, u) > 0 && geom.dot(v, v) > 0 },
+          { label: 'Make u − v point straight down', done: sub(u, v).x === 0 && sub(u, v).y < 0 },
+        ]}
+      />
     </>
   );
 }

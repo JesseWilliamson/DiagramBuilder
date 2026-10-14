@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { View, ViewEvent, createView } from '../render';
 import { Scene } from '../scene';
+import type { Easing } from '../easing';
 
 export interface DiagramProps {
   scene: Scene;
@@ -14,8 +15,10 @@ export interface DiagramProps {
   /** 'auto' fits the camera to the scene; a fixed [x, y, w, h] keeps axes still. Default 'auto'. */
   viewBox?: 'auto' | [number, number, number, number];
   padding?: number;
-  /** Animation length in ms (default 380). */
+  /** Animation length in ms (default 420). */
   duration?: number;
+  /** Easing curve (default easeOutSoft). Try easeInQuad for falling things. */
+  ease?: Easing;
   onClick?: (e: ViewEvent) => void;
   onDragStart?: (e: ViewEvent) => void;
   onDrag?: (e: ViewEvent) => void;
@@ -35,7 +38,7 @@ export interface DiagramProps {
  *  - Event handlers are read through a ref, so passing a fresh inline `onDrag`
  *    every render doesn't tear down and rebuild the view's listeners.
  */
-export function Diagram({ scene, height = 240, viewBox = 'auto', padding, duration, onClick, onDragStart, onDrag, onDragEnd, className, label }: DiagramProps) {
+export function Diagram({ scene, height = 240, viewBox = 'auto', padding, duration, ease, onClick, onDragStart, onDrag, onDragEnd, className, label }: DiagramProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const viewRef = useRef<View | null>(null);
   const dragging = useRef(false);
@@ -46,7 +49,7 @@ export function Diagram({ scene, height = 240, viewBox = 'auto', padding, durati
 
   // Create / destroy the view. `viewBox`, `padding`, `duration` are creation options.
   useEffect(() => {
-    const view = createView(svgRef.current!, { viewBox, padding, duration });
+    const view = createView(svgRef.current!, { viewBox, padding, duration, ease });
     viewRef.current = view;
     const offs = [
       view.on('click', (e) => handlers.current.onClick?.(e)),
@@ -61,7 +64,7 @@ export function Diagram({ scene, height = 240, viewBox = 'auto', padding, durati
       viewRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [padding, duration]);
+  }, [padding, duration, ease]);
 
   // Camera changes don't need a new view.
   useEffect(() => {

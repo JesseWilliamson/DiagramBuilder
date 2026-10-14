@@ -163,7 +163,7 @@ export function Transport({ player: p }: TransportProps) {
     <div className="dvc dvc-transport">
       <button type="button" onClick={p.first} disabled={p.index === 0} aria-label="First step"><Icon d="M3 3h2v10H3zM13 3v10L6 8z" /></button>
       <button type="button" onClick={p.prev} disabled={p.index === 0} aria-label="Previous step"><Icon d="M12 3v10L5 8z" /></button>
-      <button type="button" onClick={p.toggle} aria-label={p.playing ? 'Pause' : 'Play'}>
+      <button type="button" className="is-play" onClick={p.toggle} aria-label={p.playing ? 'Pause' : 'Play'}>
         <Icon d={p.playing ? 'M4 3h3v10H4zM9 3h3v10H9z' : 'M4 3l9 5-9 5z'} />
       </button>
       <button type="button" onClick={p.next} disabled={p.index >= last} aria-label="Next step"><Icon d="M4 3v10l7-5zM11 3h2v10h-2z" /></button>
@@ -198,15 +198,18 @@ export function CodeTrace({ lines, active }: { lines: readonly string[]; active?
 export interface ButtonProps {
   children: ReactNode;
   onClick: () => void;
-  variant?: 'primary' | 'ghost';
+  /** primary = dark 3D pill (Continue / Check), green = celebratory CTA, ghost = outlined 3D pill. */
+  variant?: 'primary' | 'green' | 'ghost';
+  size?: 'normal' | 'large';
   disabled?: boolean;
   title?: string;
 }
 
-export function Button({ children, onClick, variant = 'ghost', disabled, title }: ButtonProps) {
+/** A 3D pill button: it sits on a solid lip and drops onto it when pressed. */
+export function Button({ children, onClick, variant = 'ghost', size = 'normal', disabled, title }: ButtonProps) {
   injectControlStyles();
   return (
-    <button type="button" className={cx('dvc dvc-btn', variant === 'primary' && 'is-primary')} onClick={onClick} disabled={disabled} title={title}>
+    <button type="button" className={cx('dvc dvc-btn', variant === 'primary' && 'is-primary', variant === 'green' && 'is-green', size === 'large' && 'is-large')} onClick={onClick} disabled={disabled} title={title}>
       {children}
     </button>
   );

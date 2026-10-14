@@ -25,6 +25,7 @@ export type Tone =
   | 'success'
   | 'danger'
   | 'visited'
+  | 'orange'
   | 'muted'
   | 'ghost'
   | (string & {});

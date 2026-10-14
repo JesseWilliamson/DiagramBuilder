@@ -146,13 +146,15 @@ export interface PointOptions {
   /** Where the label sits relative to the point, in px. Default (8, -10). */
   labelOffset?: Vec;
   data?: unknown;
+  /** Pulse a "drag me" ring (turn off once touched). */
+  hint?: boolean;
 }
 
 /** A dot at world (x, y). With `draggable`, it gets a big hit target; drag events carry `data`. */
 export function point(p: Plane, x: number, y: number, o: PointOptions): Scene {
   const c = p.toPx(x, y);
   const off = o.labelOffset ?? V2(8, -12);
-  const nodes: SceneNode[] = handle({ id: o.id, x: c.x, y: c.y, r: o.r ?? 5, tone: o.tone, draggable: !!o.draggable, data: o.data ?? { id: o.id } });
+  const nodes: SceneNode[] = handle({ id: o.id, x: c.x, y: c.y, r: o.r ?? 5, tone: o.tone, draggable: !!o.draggable, hint: o.hint, data: o.data ?? { id: o.id } });
   if (o.label) nodes.push(text({ id: `${o.id}:label`, x: c.x + off.x, y: c.y + off.y, text: o.label, size: 13, role: 'math', tone: o.tone, anchor: off.x < 0 ? 'end' : 'start' }));
   return { nodes };
 }

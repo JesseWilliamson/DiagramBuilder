@@ -1,125 +1,172 @@
 /**
- * Stylesheet. Two layers:
+ * Stylesheet. The look is modelled on Brilliant's lesson diagrams (values read
+ * from brilliant.org's own design tokens):
  *
- *  1. Variables on `.dv-root` — the full vocabulary of the look. Dark-first,
- *     matched to getbetter: near-black surface, thin 1px ink outlines, small
- *     type, monospace numerals, a blue accent, green for "good".
- *  2. Base rules that only ever read variables (never literal colours).
+ *   - white canvas, crisp BLACK 1.5px lines, filled triangle arrowheads
+ *   - flat, saturated fills from one palette (yellow / blue / green / red /
+ *     purple / orange), always with a black outline on top
+ *   - very light #e5e5e5 grids, thick blue curves, pale blue areas
+ *   - things you can press sit on a 3px solid "lip" (their `button3d`)
  *
- * Light mode is a variable override, not a second theme: it applies under
- * `[data-theme="light"]` / `.light` (or the OS setting when neither is set). Controls carry the `dvc` class so they get the same variables..
- * Apps re-skin by overriding variables on any ancestor, no JS needed:
- *   .my-app .dv-root { --dv-accent: hotpink; }
+ * Two layers:
+ *  1. Variables on `.dv-root` (and `.dvc` for the controls): the vocabulary.
+ *  2. Base rules that only ever read variables.
  *
- * Tones (`tone: 'active'`) become classes. Each tone exposes three colours:
- *   --dv-c   ink    (arrows, text)
+ * Dark mode is a variable swap under `[data-theme="dark"]` / `.dark` (or the OS
+ * setting when neither is set). Re-skin from your app without touching JS:
+ *   .my-app .dv-root { --dv-active-fill: hotpink; }
+ *
+ * Tones (`tone: 'active'`) become classes. Each tone has three colours:
+ *   --dv-c   ink    (text, arrows, curves)
  *   --dv-cf  fill   (shapes)
- *   --dv-cs  stroke (shape outlines)
- * so "highlighted cells get a light tint but keep a crisp outline" is just
- * the default fill/stroke formula, and any tone can override either half.
+ *   --dv-cs  stroke (shape outlines: black by default, Brilliant-style)
  */
-const TONES = ['active', 'accent', 'success', 'danger', 'visited'];
+const TONES = ['active', 'accent', 'success', 'danger', 'visited', 'orange'];
 const toneVars = (t: string) =>
-  `.dv-tone-${t} { --dv-c: var(--dv-${t}); --dv-cf: var(--dv-${t}-fill); --dv-cs: var(--dv-${t}-stroke); }`;
-const toneDefaults = TONES.map(
-  (t) => `--dv-${t}-fill: color-mix(in srgb, var(--dv-${t}) var(--dv-tint), var(--dv-surface)); --dv-${t}-stroke: var(--dv-${t});`,
-).join('\n  ');
+  `.dv-tone-${t} { --dv-c: var(--dv-${t}); --dv-cf: var(--dv-${t}-fill); --dv-cs: var(--dv-${t}-stroke); --dv-cl: var(--dv-${t}-lip); }`;
 const anyTone = `:is(${TONES.map((t) => `.dv-tone-${t}`).join(', ')})`;
 
+// palette (brilliant.org panda tokens)
+const P = {
+  yellow: ['#fdf3d3', '#f9d25c', '#f7c325', '#b78900'], // 200, 400, 500, 700
+  blue: ['#dae2ff', '#abbdff', '#456dff', '#294bc6'], // 200, 300, 500, 700
+  green: ['#d4f5dd', '#9fe8b3', '#29cc57', '#009b2b'],
+  red: ['#ffdfdf', '#ffb6b6', '#ff5d5d', '#c43939'],
+  purple: ['#ebe0ff', '#d3b8ff', '#9d62ff', '#7139cc'],
+  orange: ['#ffe8d3', '#ffcc9c', '#ff8d23', '#ce6809'],
+};
+
 const LIGHT = `
-  --dv-fg: #1a1d24; --dv-muted: #8b919d; --dv-surface: #ffffff; --dv-muted-fill: #f1f2f5;
-  --dv-stroke: #3a4150; --dv-edge: #3a4150; --dv-halo: #ffffff;
-  --dv-active: #b7791f; --dv-accent: #2f6fe4; --dv-success: #1b8a52; --dv-danger: #d03a3a; --dv-visited: #7c5ce0;
-  --dv-tint: 16%;`;
+  --dv-fg: #000; --dv-muted: #999; --dv-faint: #ccc; --dv-surface: #fff; --dv-muted-fill: #f2f2f2;
+  --dv-stroke: #000; --dv-edge: #000; --dv-halo: #fff; --dv-grid: #e5e5e5; --dv-tile-stroke: #d9d9d9; --dv-lip: rgb(0 0 0 / .12);
+  --dv-curve: ${P.blue[2]}; --dv-area: color-mix(in srgb, ${P.blue[1]} 70%, transparent); --dv-point: #ff775c;
+  --dv-active: ${P.yellow[3]}; --dv-active-fill: ${P.yellow[1]}; --dv-active-stroke: #000; --dv-active-lip: ${P.yellow[3]};
+  --dv-accent: ${P.blue[2]}; --dv-accent-fill: ${P.blue[1]}; --dv-accent-stroke: #000; --dv-accent-lip: ${P.blue[3]};
+  --dv-success: ${P.green[3]}; --dv-success-fill: ${P.green[1]}; --dv-success-stroke: #000; --dv-success-lip: ${P.green[3]};
+  --dv-danger: ${P.red[3]}; --dv-danger-fill: ${P.red[1]}; --dv-danger-stroke: #000; --dv-danger-lip: ${P.red[3]};
+  --dv-visited: ${P.purple[3]}; --dv-visited-fill: ${P.purple[1]}; --dv-visited-stroke: #000; --dv-visited-lip: ${P.purple[3]};
+  --dv-orange: ${P.orange[3]}; --dv-orange-fill: ${P.orange[0]}; --dv-orange-stroke: ${P.orange[1]}; --dv-orange-lip: ${P.orange[1]};
+  --dv-band: ${P.yellow[0]};`;
+
+const DARK = `
+  --dv-fg: #fff; --dv-muted: #8c8c8c; --dv-faint: #4c4c4c; --dv-surface: #1e1e1e; --dv-muted-fill: #2a2a2a;
+  --dv-stroke: #f2f2f2; --dv-edge: #f2f2f2; --dv-halo: #1e1e1e; --dv-grid: #333; --dv-tile-stroke: #4c4c4c; --dv-lip: rgb(0 0 0 / .6);
+  --dv-curve: #7491ff; --dv-area: color-mix(in srgb, #7491ff 35%, transparent); --dv-point: #ff8871;
+  --dv-active: ${P.yellow[1]}; --dv-active-fill: #b78900; --dv-active-stroke: #f2f2f2; --dv-active-lip: #5c4400;
+  --dv-accent: #7491ff; --dv-accent-fill: #375ce3; --dv-accent-stroke: #f2f2f2; --dv-accent-lip: #142563;
+  --dv-success: ${P.green[1]}; --dv-success-fill: #15b441; --dv-success-stroke: #f2f2f2; --dv-success-lip: #004e16;
+  --dv-danger: ${P.red[1]}; --dv-danger-fill: #e14b4b; --dv-danger-stroke: #f2f2f2; --dv-danger-lip: #621c1c;
+  --dv-visited: ${P.purple[1]}; --dv-visited-fill: #874de5; --dv-visited-stroke: #f2f2f2; --dv-visited-lip: #381d66;
+  --dv-orange: ${P.orange[1]}; --dv-orange-fill: #673404; --dv-orange-stroke: #ce6809; --dv-orange-lip: #291502;
+  --dv-band: #5c4400;`;
 
 export const DEFAULT_CSS = /* css */ `
-/* ── 1. vocabulary (dark-first) ────────────────────────────────── */
+/* ── 1. vocabulary ─────────────────────────────────────────────── */
 .dv-root, .dvc {
-  --dv-font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --dv-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --dv-label-font: var(--dv-mono);
-  --dv-math-font: "STIX Two Text", "Latin Modern Roman", Georgia, serif;
-  --dv-value-weight: 500;
-  --dv-fg: #e8eaee; --dv-muted: #7a8190; --dv-surface: #17191e; --dv-muted-fill: #1d2026;
-  --dv-stroke: #8f98a8; --dv-edge: #8f98a8; --dv-halo: #17191e; --dv-stroke-w: 1.25px;
-  --dv-active: #f2b84b; --dv-accent: #5b9dff; --dv-success: #4cc38a; --dv-danger: #ff7a7a; --dv-visited: #a993ff;
-  --dv-tint: 24%;
-  --dv-grid: color-mix(in srgb, var(--dv-fg) 7%, transparent);
-  ${toneDefaults}
-  --dv-band: color-mix(in srgb, var(--dv-accent) 8%, transparent);
+  --dv-font: Inter, "CoFo Brilliant", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --dv-mono: "Source Code Pro", ui-monospace, "SF Mono", Menlo, monospace;
+  --dv-math-font: "KaTeX_Main", "Latin Modern Roman", "STIX Two Text", "Times New Roman", serif;
+  --dv-stroke-w: 1.5px;${LIGHT}
   font-family: var(--dv-font);
 }
 .dv-root { overflow: visible; }
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]):not(.dark) :is(.dv-root, .dvc) {${LIGHT}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not(.light) :is(.dv-root, .dvc) {${DARK}
   }
 }
-:root[data-theme="light"] :is(.dv-root, .dvc), :root.light :is(.dv-root, .dvc), .light :is(.dv-root, .dvc) {${LIGHT}
+:root[data-theme="dark"] :is(.dv-root, .dvc), :root.dark :is(.dv-root, .dvc), .dark :is(.dv-root, .dvc) {${DARK}
 }
 
 /* ── 2. base rules ─────────────────────────────────────────────── */
-.dv { transition: fill .3s ease, stroke .3s ease, stroke-width .2s ease; }
+.dv { transition: fill .25s ease, stroke .25s ease, filter .12s ease; }
 .dv-circle, .dv-rect, .dv-path { fill: var(--dv-surface); stroke: var(--dv-stroke); stroke-width: var(--dv-stroke-w); }
 .dv-path { stroke-linecap: round; stroke-linejoin: round; }
 .dv-path.dv-open { fill: none; }
 .dv-arrow { --dv-ink: var(--dv-edge); fill: none; stroke: var(--dv-ink); stroke-linecap: round; stroke-linejoin: round; }
 .dv-head-solid { fill: var(--dv-ink); }
-.dv-text { fill: var(--dv-fg); pointer-events: none; user-select: none; font-variant-numeric: tabular-nums; }
-.dv-dashed { stroke-dasharray: 5 5; }
+.dv-text { fill: var(--dv-fg); pointer-events: none; user-select: none; font-variant-numeric: tabular-nums; font-weight: 500; }
+.dv-dashed { stroke-dasharray: 6 5; }
 
 ${TONES.map(toneVars).join('\n')}
 :is(.dv-circle, .dv-rect, .dv-path)${anyTone} { fill: var(--dv-cf); stroke: var(--dv-cs); }
 .dv-path.dv-open${anyTone} { fill: none; }
 .dv-arrow${anyTone} { --dv-ink: var(--dv-c); }
-.dv-text${anyTone} { fill: var(--dv-c); }
-.dv-tone-muted:is(.dv-circle, .dv-rect, .dv-path) { fill: var(--dv-muted-fill); stroke: var(--dv-muted); }
+.dv-text${anyTone} { fill: var(--dv-fg); }
+.dv-tone-muted:is(.dv-circle, .dv-rect, .dv-path) { fill: var(--dv-muted-fill); stroke: var(--dv-faint); }
 .dv-path.dv-open.dv-tone-muted { fill: none; }
-.dv-arrow.dv-tone-muted { --dv-ink: var(--dv-muted); }
+.dv-arrow.dv-tone-muted { --dv-ink: var(--dv-faint); }
 .dv-text.dv-tone-muted { fill: var(--dv-muted); }
-.dv-tone-ghost:is(.dv-circle, .dv-rect, .dv-path) { fill: none; stroke: var(--dv-muted); stroke-dasharray: 4 4; }
+.dv-tone-ghost:is(.dv-circle, .dv-rect, .dv-path) { fill: none; stroke: var(--dv-faint); stroke-dasharray: 4 4; }
 
-/* roles: semantic parts emitted by the layouts */
-/* plots */
-.dv-path.dv-role-grid { stroke: var(--dv-grid); fill: none; }
-.dv-path.dv-role-axis { stroke: var(--dv-muted); fill: none; }
-.dv-arrow.dv-role-axis { --dv-ink: var(--dv-muted); }
-.dv-path.dv-role-tick { stroke: var(--dv-muted); }
-.dv-path.dv-role-curve { fill: none; }
-.dv-path.dv-role-curve:not(${anyTone}, .dv-tone-muted) { stroke: var(--dv-accent); }
-.dv-path.dv-role-area, .dv-path.dv-role-region { stroke: none; fill: color-mix(in srgb, var(--dv-c, var(--dv-accent)) 22%, transparent); }
-.dv-path.dv-role-region.dv-tone-muted { fill: transparent; }
-.dv-path.dv-role-marker { fill: var(--dv-c, var(--dv-muted)); stroke: none; }
-.dv-path.dv-role-guide { fill: none; stroke: var(--dv-muted); stroke-dasharray: 3 4; }
-.dv-rect.dv-role-bar:not(${anyTone}, .dv-tone-muted) { fill: color-mix(in srgb, var(--dv-accent) 28%, var(--dv-surface)); stroke: var(--dv-accent); }
-.dv-rect.dv-role-track { fill: var(--dv-grid); stroke: none; }
-/* draggable handles: a big invisible hit target, then the visible dot */
-.dv-circle.dv-role-hit { fill: transparent; stroke: none; pointer-events: all; }
-.dv-circle.dv-role-handle { pointer-events: none; transform-box: fill-box; transform-origin: center; transition: transform .15s ease, fill .3s ease, stroke .3s ease; stroke-width: 2px; }
-.dv-circle.dv-role-handle:not(${anyTone}) { fill: var(--dv-accent); stroke: var(--dv-surface); }
-.dv-circle.dv-role-handle${anyTone} { fill: var(--dv-c); stroke: var(--dv-surface); }
-.dv-role-hit:hover + .dv-role-handle, .dv-role-hit:focus + .dv-role-handle { transform: scale(1.4); }
-.dv-text.dv-role-label { fill: var(--dv-fg); }
-.dv-path.dv-role-bar { stroke-width: 1px; }
-:is(.dv-path, .dv-circle).dv-role-outline { fill: none; }
-.dv-rect.dv-role-universe { fill: transparent; stroke: var(--dv-muted); }
-.dv-rect.dv-role-universe${anyTone} { fill: color-mix(in srgb, var(--dv-c) 16%, transparent); }
-.dv-rect.dv-role-frame { fill: var(--dv-muted-fill); stroke: var(--dv-grid); }
-.dv-text.dv-role-label.dv-tone-muted { fill: var(--dv-muted); }
-.dv-text.dv-role-value { fill: var(--dv-fg); font-family: var(--dv-label-font); font-weight: var(--dv-value-weight); }
+/* ── roles: semantic parts emitted by the layouts ─────────────── */
+.dv-text.dv-role-value { fill: var(--dv-fg); font-weight: 600; }
 .dv-text.dv-role-value.dv-tone-muted { fill: var(--dv-muted); }
-.dv-text.dv-role-math { font-family: var(--dv-math-font); font-style: italic; }
-.dv-role-index, .dv-role-caption { fill: var(--dv-muted); font-family: var(--dv-label-font); }
-.dv-role-pointer-label { font-weight: 500; font-family: var(--dv-label-font); }
+.dv-text.dv-role-math { font-family: var(--dv-math-font); font-style: italic; font-weight: 400; }
+.dv-text.dv-role-index { fill: var(--dv-muted); font-weight: 500; }
+.dv-text.dv-role-caption { fill: var(--dv-muted); font-weight: 500; letter-spacing: .02em; }
+.dv-text.dv-role-pointer-label { font-weight: 700; }
+.dv-text.dv-role-pointer-label${anyTone}, .dv-text.dv-role-label${anyTone} { fill: var(--dv-c); }
 .dv-role-tag { display: none; }
-.dv-rect.dv-role-window { fill: var(--dv-band); stroke: var(--dv-accent); stroke-width: 1; stroke-dasharray: 4 3; }
-.dv-role-edge-label { paint-order: stroke; stroke: var(--dv-halo); stroke-width: 5px; stroke-linejoin: round; }
+.dv-rect.dv-role-window { fill: var(--dv-band); stroke: var(--dv-active-lip); stroke-width: 1.5; stroke-dasharray: none; }
+.dv-role-edge-label { paint-order: stroke; stroke: var(--dv-halo); stroke-width: 5px; stroke-linejoin: round; font-weight: 600; }
+.dv-text.dv-role-edge-label${anyTone} { fill: var(--dv-c); }
 .dv-role-null { fill: var(--dv-muted); }
 .dv-circle.dv-role-dot { fill: var(--dv-edge); stroke: none; }
 
+/* plots */
+.dv-path.dv-role-grid { stroke: var(--dv-grid); fill: none; }
+.dv-path.dv-role-axis { stroke: var(--dv-fg); fill: none; }
+.dv-arrow.dv-role-axis { --dv-ink: var(--dv-fg); }
+.dv-path.dv-role-tick { stroke: var(--dv-fg); }
+.dv-path.dv-role-curve { fill: none; }
+.dv-path.dv-role-curve:not(${anyTone}, .dv-tone-muted) { stroke: var(--dv-curve); }
+.dv-path.dv-role-curve${anyTone} { stroke: var(--dv-c); }
+.dv-path.dv-role-area { stroke: none; fill: var(--dv-area); }
+.dv-path.dv-role-region { stroke: none; fill: var(--dv-area); }
+.dv-path.dv-role-region${anyTone} { fill: var(--dv-cf); }
+.dv-path.dv-role-region.dv-tone-muted { fill: transparent; }
+.dv-path.dv-role-guide { fill: none; stroke: var(--dv-fg); stroke-dasharray: 4 4; stroke-width: 1.5; }
+.dv-path.dv-role-glow { fill: none; stroke: var(--dv-fg); stroke-dasharray: 5 5; stroke-width: 2; filter: drop-shadow(0 0 3px #5cf0b6) drop-shadow(0 0 7px #5cf0b6); }
+.dv-path.dv-role-marker { fill: var(--dv-c, var(--dv-muted)); stroke: none; }
+.dv-path.dv-role-bar, .dv-rect.dv-role-bar { stroke: var(--dv-stroke); stroke-width: 1.5px; }
+.dv-rect.dv-role-bar:not(${anyTone}, .dv-tone-muted), .dv-path.dv-role-bar:not(${anyTone}, .dv-tone-muted) { fill: var(--dv-accent-fill); }
+.dv-rect.dv-role-track { fill: var(--dv-muted-fill); stroke: none; }
+:is(.dv-path, .dv-circle).dv-role-outline { fill: none; }
+.dv-circle.dv-role-outline${anyTone} { stroke: var(--dv-c); }
+.dv-rect.dv-role-universe { fill: var(--dv-surface); stroke: var(--dv-stroke); }
+.dv-rect.dv-role-universe${anyTone} { fill: var(--dv-cf); }
+.dv-rect.dv-role-frame { fill: var(--dv-muted-fill); stroke: none; }
+.dv-rect.dv-role-frame${anyTone} { fill: color-mix(in srgb, var(--dv-cf) 45%, var(--dv-surface)); }
+
+/* draggable handles: a big invisible hit target, then the visible dot */
+.dv-circle.dv-role-hit { fill: transparent; stroke: none; pointer-events: all; }
+.dv-circle.dv-role-handle { pointer-events: none; transform-box: fill-box; transform-origin: center; stroke: var(--dv-surface); stroke-width: 2.5px; transition: transform .15s ease, fill .25s ease; filter: drop-shadow(0 1px 2px rgb(0 0 0 / .3)); }
+.dv-circle.dv-role-handle:not(${anyTone}) { fill: var(--dv-point); }
+.dv-circle.dv-role-handle${anyTone} { fill: var(--dv-c); }
+.dv-role-hit:hover + .dv-role-handle { transform: scale(1.35); }
+.dv-circle.dv-role-pulse { fill: none; stroke: var(--dv-c, var(--dv-point)); stroke-width: 2px; pointer-events: none; transform-box: fill-box; transform-origin: center; animation: dv-pulse 1.6s ease-out infinite; }
+@keyframes dv-pulse { 0% { transform: scale(1); opacity: .9; } 80%, 100% { transform: scale(3); opacity: 0; } }
+.dv-circle.dv-role-particle { stroke: none; fill: var(--dv-cf); pointer-events: none; }
+.dv-text.dv-role-label { fill: var(--dv-fg); }
+
+/* tactile: pressable tiles sit on a solid lip (Brilliant's button3d), lift on hover, sink when pressed */
 .dv-interactive { cursor: pointer; }
+:is(.dv-rect, .dv-circle).dv-interactive:not(.dv-role-hit, .dv-role-universe),
+.dv-circle.dv-draggable:not(.dv-role-hit) {
+  stroke: var(--dv-tile-stroke); stroke-width: 2px;
+  filter: drop-shadow(0 3px 0 var(--dv-lip));
+}
+:is(.dv-rect, .dv-circle).dv-interactive${anyTone}:not(.dv-role-hit) { stroke: var(--dv-cl); filter: drop-shadow(0 3px 0 var(--dv-cl)); }
+:is(.dv-rect, .dv-circle).dv-interactive.dv-tone-muted:not(.dv-role-hit) { stroke: var(--dv-faint); }
+:is(.dv-rect, .dv-circle).dv-interactive:not(.dv-role-hit, .dv-role-universe):hover,
+.dv-circle.dv-draggable:not(.dv-role-hit):hover { filter: drop-shadow(0 4px 0 var(--dv-lip)) brightness(1.04); }
+:is(.dv-rect, .dv-circle).dv-interactive${anyTone}:not(.dv-role-hit):hover { filter: drop-shadow(0 4px 0 var(--dv-cl)) brightness(1.04); }
+:is(.dv-rect, .dv-circle).dv-interactive:not(.dv-role-hit, .dv-role-universe):active { filter: none; }
+.dv-path.dv-role-region.dv-interactive { cursor: pointer; }
+.dv-path.dv-role-region.dv-interactive:hover { fill: color-mix(in srgb, var(--dv-cf, var(--dv-active-fill)) 60%, transparent); }
 .dv-draggable { cursor: grab; touch-action: none; }
 .dv-root.dv-dragging, .dv-root.dv-dragging .dv-draggable { cursor: grabbing; }
-.dv-rect.dv-interactive:hover, .dv-circle.dv-interactive:not(.dv-role-hit):hover { stroke-width: 2.2; }
+@media (prefers-reduced-motion: reduce) { .dv-circle.dv-role-pulse { animation: none; opacity: .5; } }
 `;
 
 const STYLE_ID = 'dsviz-default-styles';

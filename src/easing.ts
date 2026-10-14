@@ -12,10 +12,13 @@ export const easeOutBack: Easing = (t) => {
 };
 
 /**
- * A soft settle: overshoots by ~2% and comes back. Enough to feel physical,
- * not enough to look bouncy. This is the default feel of dsviz.
+ * A soft settle: overshoots by ~4% and comes back. Enough to feel physical
+ * and a little playful, not enough to look bouncy. The default feel of dsviz.
  */
 export const easeOutSoft: Easing = (t) => {
-  const c1 = 0.6, c3 = c1 + 1;
+  const c1 = 0.9, c3 = c1 + 1;
   return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
 };
+
+/** Speeds up like something falling. Pair with a short duration for gravity. */
+export const easeInQuad: Easing = (t) => t * t;

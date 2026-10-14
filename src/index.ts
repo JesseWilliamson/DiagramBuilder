@@ -16,6 +16,7 @@ export * from './themes';
 export * from './scene';
 export * from './path';
 export * from './handle';
+export * from './fx';
 export * from './describe';
 export * from './styles';
 export * from './render';

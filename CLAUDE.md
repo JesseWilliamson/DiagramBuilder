@@ -7,8 +7,12 @@ editorials and courses). These notes say where things stand and what's planned n
 ## Read first
 
 1. `docs/user-messages.md`: Jesse's messages from the original session, verbatim. Message 4 is the
-   current brief and message 5 explains the screenshots. If anything below disagrees with his words,
+   original brief and message 5 explains the screenshots. If anything below disagrees with his words,
    his words win.
+   **Latest direction (Claude Code session):** "Really just try to clone exactly the UI from
+   Brilliant." The look is now modelled on brilliant.org's real design tokens (light by default, dark
+   variant), and the site is a Brilliant-style course + lesson player. This supersedes the earlier
+   "dark-first, matched to getbetter" decision; getbetter can still re-skin via the CSS variables.
 2. `docs/getbetter-screens/*.png`: the site this goes into, and the diagrams to replace first.
 
 You have npm here, which the original session didn't. Install what the plan needs (shadcn/Radix,
@@ -27,21 +31,27 @@ Motion, a real bundler) instead of hand-rolling substitutes.
     `translate`, `namespace`, `bounds`. `path.ts`: path data, Catmull-Rom smoothing, arc-length `resample`.
   - `render.ts` `createView` (keyed reconciler + tween engine, `setViewBox`), `describe.ts`, `static.ts` (`toSVG`),
     `player.ts`, `handle.ts` (draggable dot + big invisible hit target).
-  - `styles.ts`: ONE dark-first theme as `--dv-*` variables on `.dv-root` / `.dvc`; light via `[data-theme="light"]`
-    or `.light`. Roles (`grid`, `axis`, `curve`, `area`, `region`, `bar`, `guide`, `handle`, `hit`, `math`…) decide looks.
+  - `styles.ts`: ONE theme cloned from Brilliant (values read from brilliant.org's Panda tokens): white canvas,
+    black 1.5px lines, flat yellow/blue/green/red/purple/orange fills, #e5e5e5 grids, thick blue curves, a solid
+    3px lip under pressable tiles. `--dv-*` variables on `.dv-root` / `.dvc`; dark via `[data-theme="dark"]` or `.dark`.
+    Roles (`grid`, `axis`, `curve`, `area`, `region`, `bar`, `guide`, `glow`, `handle`, `hit`, `math`…) decide looks.
   - Families: `ds/` (array, pointer, linkedList, binaryTree, graph, grid, stack, queue — also exported top-level),
     `plot/` (plane, axes, fn, point, segment, vector, tangent, area, riemann, integrate, label),
     `prob/` (bars, sampleSpace, diePips, probTree, venn2 + vennRegions/vennAreas/vennRegionAt),
     `geom/` (polygon, segment, tickMarks, angleMark, circle, pointLabel + intersection/centre helpers),
     `sched/` (simulate: fcfs/sjf/srtf/rr/priority; gantt), `mem/` (stackHeap, memory, hex).
     Non-ds families are namespaces: `import { plot, prob, geom, sched, mem } from 'dsviz'`.
-- `src/react/` — `<Diagram>` (fixed viewBox ⇒ aspect-ratio sizing), `usePlayer` (`start: 'end'` option), `useTicker`,
-  and Radix-based controls: `Slider`, `Segmented`, `Select`, `Switch`, `NumberStepper`, `Button`, `TextInput`,
-  `Transport` (`<Transport player={player} />`), `CodeTrace`.
-- `site/` — the demo page (Vite + React). Every `site/demos/*.tsx` is a real module (`import … from 'dsviz'`) that
-  Vite compiles for first paint AND the editable source: on edit, `site/live/compile.ts` transpiles it with sucrase
-  and runs it with a `require` that maps to the real library. CodeMirror editor, KaTeX (MathML output) for prose.
-  21 demos: algorithms (7), functions (3), probability (4), geometry (2), systems (3), paths (1), pipeline (1).
+- `src/react/` — `<Diagram>` (fixed viewBox ⇒ aspect-ratio sizing; `ease`), `usePlayer` (`start: 'end'`), `useTicker`,
+  Radix-based controls styled like Brilliant (3D pill buttons with a 4px lip, pill segments, black-thumb sliders):
+  `Slider`, `Segmented`, `Select`, `Switch`, `NumberStepper`, `Button` (primary/green/ghost), `TextInput`,
+  `Transport` (`<Transport player={player} />`), `CodeTrace`; the fun layer `Challenge`, `Predict`, `useBurst`
+  (+ core `burst()` and `handle({ hint })`); and the lesson kit `MultipleChoice`, `Feedback`, `ProgressSegments`.
+- `site/` — a Brilliant-style app (Vite + React, hash routes): home (oat hero, serif headline, live Pythagoras
+  card), `#/courses`, `#/course/:id` (zig-zag path of 3D lesson tiles), `#/lesson/:course/:lesson` (one screen
+  per step: prompt → diagram card → question → Check → green/pink feedback sheet → Continue; segmented
+  progress; completion screen), `#/docs`. Content lives in `site/content.tsx` (6 courses, 18 lessons, 24
+  questions). Every `site/demos/*.tsx` is a real module and the editable source: the `</>` button in the lesson
+  top bar opens a drawer where it's edited live (`site/live/useLive.tsx` + sucrase `compile.ts` + CodeMirror).
 - `tests/` — vitest for path maths and every family's maths (`npm test`).
 - Scripts: `npm run dev` (site), `npm run build` (library → `dist/`), `npm run build:site` (→ `site-dist/`),
   `npm run typecheck`. `.github/workflows/pages.yml` deploys the site to GitHub Pages on push to main.

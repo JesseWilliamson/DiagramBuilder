@@ -129,3 +129,15 @@ describe('mem', () => {
     expect(s.nodes.filter((n) => n.kind === 'arrow')).toHaveLength(2);
   });
 });
+
+describe('lesson facts', () => {
+  it('SRTF gives the lowest average wait for the scheduling lesson’s processes', () => {
+    const procs = [
+      { id: 'P1', arrival: 0, burst: 6 }, { id: 'P2', arrival: 1, burst: 3 }, { id: 'P3', arrival: 2, burst: 1 },
+      { id: 'P4', arrival: 4, burst: 4 }, { id: 'P5', arrival: 6, burst: 2 },
+    ];
+    const avg = Object.fromEntries((['fcfs', 'sjf', 'srtf', 'rr'] as const).map((p) => [p, sched.simulate(procs, p, 2).avgWaiting]));
+    expect(Math.min(...Object.values(avg))).toBe(avg.srtf);
+    expect(Object.values(avg).filter((v) => v === avg.srtf)).toHaveLength(1);
+  });
+});

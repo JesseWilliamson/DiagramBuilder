@@ -11,6 +11,7 @@ const norm = (t: number) => ((t % TAU) + TAU) % TAU;
 
 export default function Inscribed() {
   const [t, setT] = useState({ A: 2.6, B: 0.45, P: 4.6 });
+  const [touched, setTouched] = useState(false);
   const A = on(t.A), B = on(t.B), P = on(t.P);
 
   // The arc from A counter-clockwise to B either contains P or it doesn't; we want the one that doesn't.
@@ -33,7 +34,7 @@ export default function Inscribed() {
     (['A', 'B', 'P'] as const).map((k) => {
       const q = on(t[k]);
       const out = { x: (q.x - O.x) / R * 18, y: (q.y - O.y) / R * 18 };
-      return geom.pointLabel(q, k, { id: k, draggable: true, tone: k === 'P' ? 'accent' : 'visited', offset: out, data: { k } });
+      return geom.pointLabel(q, k, { id: k, draggable: true, hint: !touched && k === 'P', tone: k === 'P' ? 'accent' : 'visited', offset: out, data: { k } });
     }),
   );
 
@@ -44,6 +45,7 @@ export default function Inscribed() {
         height={320}
         viewBox={[60, 10, 320, 290]}
         onDrag={(e) => {
+          setTouched(true);
           const k = (e.node.data as { k: 'A' | 'B' | 'P' }).k;
           setT((s) => ({ ...s, [k]: Math.atan2(e.y - O.y, e.x - O.x) }));
         }}

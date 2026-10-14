@@ -1,35 +1,43 @@
 import { useEffect, useState } from 'react';
-import { combine, plot } from 'dsviz';
+import { combine, handle, path, text } from 'dsviz';
 import { Diagram, useTicker } from 'dsviz/react';
 
-// A function morphing through a few shapes, with its Riemann rectangles and a
-// tangent riding along. Everything keyed, so it all tweens.
-const fns: Array<[string, (x: number) => number]> = [
-  ['sin x + 1.5', (x) => Math.sin(x) + 1.5],
-  ['x²/4', (x) => (x * x) / 4],
-  ['2 − |x|/2', (x) => 2 - Math.abs(x) / 2],
-  ['eˣ / 8', (x) => Math.exp(x) / 8],
-  ['1.2 + cos 2x', (x) => 1.2 + 0.8 * Math.cos(2 * x)],
-];
-const p = plot.plane({ x: [-3.2, 3.2], y: [-0.4, 3], width: 520, height: 250 });
+// A square inside a square: the four corner triangles plus the tilted square
+// always fill the big one. Drag the point (or watch it breathe on its own):
+// (a + b)² = 4 · ab/2 + c², which rearranges to a² + b² = c².
+const S = 260;
 
 export function Hero() {
-  const tick = useTicker(2400);
-  const [x0, setX0] = useState(0.8);
-  useEffect(() => setX0(-2 + ((tick * 1.37) % 4)), [tick]);
-  const [name, f] = fns[tick % fns.length];
-  const r = plot.riemann(p, f, -2.5, 2.5, 10 + (tick % 3) * 5, 'mid', { tone: 'accent' });
+  const [a, setA] = useState(80);
+  const [touched, setTouched] = useState(false);
+  const tick = useTicker(1800, !touched);
+  useEffect(() => { if (!touched) setA([80, 150, 105, 60, 125][tick % 5]); }, [tick, touched]);
+
+  const P = [[a, 0], [S, a], [S - a, S], [0, S - a]] as Array<[number, number]>;
+  const corners = [[0, 0], [S, 0], [S, S], [0, S]] as Array<[number, number]>;
   const scene = combine(
-    plot.axes(p, { xTicks: 1, yTicks: 1, labels: false }),
-    r,
-    plot.fn(p, f, { id: 'f', width: 2.5 }),
-    plot.tangent(p, f, x0, { id: 't', span: 0.9 }),
-    plot.point(p, x0, f(x0), { id: 'P', tone: 'active' }),
+    // the four right triangles (purple), then the tilted square on top
+    corners.map((c, i) => path({ id: `tri${i}`, points: [c, P[i], P[(i + 3) % 4]], closed: true, tone: 'visited', role: 'region' })),
+    path({ id: 'inner', points: P, closed: true, width: 1.5 }),
+    path({ id: 'outer', points: corners, closed: true, width: 1.5, role: 'outline' }),
+    path({ id: 'gv', points: [[a, -22], [a, S + 22]], role: 'glow' }),
+    path({ id: 'gh', points: [[-22, S - a], [S + 22, S - a]], role: 'glow' }),
+    text({ id: 'la', x: a / 2, y: -14, text: 'a', size: 18, role: 'math' }),
+    text({ id: 'lb', x: a + (S - a) / 2, y: -14, text: 'b', size: 18, role: 'math' }),
+    text({ id: 'lc', x: (a + S) / 2 + 12, y: a / 2 - 10, text: 'c', size: 18, role: 'math' }),
+    handle({ id: 'P', x: a, y: 0, r: 8, hit: 22, hint: !touched, tone: 'accent' }),
   );
   return (
     <div className="hero-card">
-      <Diagram scene={scene} height={260} viewBox={p.viewBox([12, 12, 12, 12])} duration={900} label="A function morphing between shapes with its Riemann sum" />
-      <div className="cap"><span>f(x) = {name}</span><span>Σ ≈ {r.sum.toFixed(3)}</span></div>
+      <Diagram
+        scene={scene}
+        height={420}
+        viewBox={[-40, -46, S + 80, S + 86]}
+        duration={touched ? 300 : 1200}
+        onDrag={(e) => { setTouched(true); setA(Math.max(20, Math.min(S - 20, e.x))); }}
+        label="A tilted square inside a square, showing why a² + b² = c²"
+      />
+      <div className="hero-cap"><span className="math-ital">a</span>² + <span className="math-ital">b</span>² = <span className="math-ital">c</span>²</div>
     </div>
   );
 }

@@ -21,6 +21,6 @@ export interface Geometry {
   headScale: number;
 }
 
-export const geometry: Geometry = { rxScale: 0.8, strokeScale: 0.8, head: 'triangle', headScale: 1 };
+export const geometry: Geometry = { rxScale: 1, strokeScale: 0.75, head: 'triangle', headScale: 1.1 };
 
 export const feel = { ease: easeOutSoft, duration: 420 };

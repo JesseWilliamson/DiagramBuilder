@@ -62,12 +62,12 @@ export function axes(p: Plane, o: AxesOptions = {}): Scene {
     for (const v of xs) {
       if (hideZero && v === 0) continue;
       nodes.push(path({ id: `${id}:tx:${v}`, points: [[p.sx(v), ax - 3], [p.sx(v), ax + 3]], role: 'tick', width: 1 }));
-      nodes.push(text({ id: `${id}:lx:${v}`, x: p.sx(v), y: ax + 14, text: fmt(v), size: 11, role: 'index' }));
+      nodes.push(text({ id: `${id}:lx:${v}`, x: p.sx(v), y: ax + 15, text: fmt(v), size: 12, role: 'tick-label' }));
     }
     for (const v of ys) {
       if (hideZero && v === 0) continue;
       nodes.push(path({ id: `${id}:ty:${v}`, points: [[ay - 3, p.sy(v)], [ay + 3, p.sy(v)]], role: 'tick', width: 1 }));
-      nodes.push(text({ id: `${id}:ly:${v}`, x: ay - 8, y: p.sy(v), text: fmt(v), size: 11, role: 'index', anchor: 'end' }));
+      nodes.push(text({ id: `${id}:ly:${v}`, x: ay - 8, y: p.sy(v), text: fmt(v), size: 12, role: 'tick-label', anchor: 'end' }));
     }
   }
   if (o.xLabel) nodes.push(text({ id: `${id}:xl`, x: p.width + 14, y: ax, text: o.xLabel, size: 15, role: 'math', anchor: 'start' }));

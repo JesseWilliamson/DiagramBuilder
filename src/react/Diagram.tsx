@@ -15,8 +15,14 @@ export interface DiagramProps {
   scale?: number;
   /** CSS height in 'fill' mode. Default 240. */
   height?: number | string;
-  /** 'auto' fits the camera to the scene; a fixed [x, y, w, h] keeps axes still. Default 'auto'. */
+  /**
+   * The camera. A fixed [x, y, w, h] never moves: use it for plots, anything
+   * draggable, and step-through diagrams (`fitViewBox(allFrames)`). 'auto'
+   * (default) grows to fit and otherwise stays still; see `camera`.
+   */
   viewBox?: 'auto' | [number, number, number, number];
+  /** How an 'auto' camera follows the scene: 'grow' (default) or 'fit'. */
+  camera?: 'grow' | 'fit';
   padding?: number;
   /** Animation length in ms (default 420). */
   duration?: number;
@@ -41,7 +47,7 @@ export interface DiagramProps {
  *  - Event handlers are read through a ref, so passing a fresh inline `onDrag`
  *    every render doesn't tear down and rebuild the view's listeners.
  */
-export function Diagram({ scene, size = 'natural', scale, height = 240, viewBox = 'auto', padding, duration, ease, onClick, onDragStart, onDrag, onDragEnd, className, label }: DiagramProps) {
+export function Diagram({ scene, size = 'natural', scale, height = 240, viewBox = 'auto', camera, padding, duration, ease, onClick, onDragStart, onDrag, onDragEnd, className, label }: DiagramProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const viewRef = useRef<View | null>(null);
   const dragging = useRef(false);
@@ -52,7 +58,7 @@ export function Diagram({ scene, size = 'natural', scale, height = 240, viewBox 
 
   // Create / destroy the view. `viewBox`, `padding`, `duration` are creation options.
   useEffect(() => {
-    const view = createView(svgRef.current!, { viewBox, padding, duration, ease, size, scale });
+    const view = createView(svgRef.current!, { viewBox, camera, padding, duration, ease, size, scale });
     viewRef.current = view;
     const offs = [
       view.on('click', (e) => handlers.current.onClick?.(e)),
@@ -67,7 +73,7 @@ export function Diagram({ scene, size = 'natural', scale, height = 240, viewBox 
       viewRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [padding, duration, ease, size, scale]);
+  }, [padding, duration, ease, size, scale, camera]);
 
   // Camera changes don't need a new view.
   useEffect(() => {
@@ -75,10 +81,10 @@ export function Diagram({ scene, size = 'natural', scale, height = 240, viewBox 
     // a fixed camera is a new array each render; compare by value
   }, [Array.isArray(viewBox) ? viewBox.join(',') : viewBox]);
 
-  // Every scene change: render. While the user drags, skip tweening so the
-  // thing under the cursor stays glued to it.
+  // Every scene change: render. While the user drags, skip tweening AND freeze
+  // the camera, so the thing under the cursor stays glued to it.
   useEffect(() => {
-    viewRef.current?.render(scene, dragging.current ? { duration: 0 } : undefined);
+    viewRef.current?.render(scene, dragging.current ? { duration: 0, camera: false } : undefined);
   }, [scene]);
 
   const style = size === 'natural'

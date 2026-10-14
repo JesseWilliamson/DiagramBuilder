@@ -15,6 +15,7 @@
  * handle colour. JS only animates geometry.
  */
 import { resampleProps } from './path';
+import { ViewBox, nextCamera } from './camera';
 import { describe, numericProps, tagFor } from './describe';
 import { Box, NumericProps, Scene, SceneNode, bounds } from './scene';
 import { Easing, easeInOutCubic } from './easing';
@@ -41,6 +42,12 @@ export interface ViewOptions {
   scale?: number;
   /** Padding around the scene in 'auto' mode. Default 24. */
   padding?: number;
+  /**
+   * How an 'auto' camera follows the scene. 'grow' (default): only grows when
+   * something would fall outside, shrinks only when the content is much smaller.
+   * 'fit': refit on every render. See camera.ts for when to use which.
+   */
+  camera?: 'grow' | 'fit';
   /** Inject the default stylesheet into <head>. Default true. */
   injectStyles?: boolean;
 }
@@ -48,6 +55,8 @@ export interface ViewOptions {
 export interface RenderOptions {
   /** Override the duration for this render only. Use 0 while dragging. */
   duration?: number;
+  /** Set false to leave the camera exactly where it is for this render (e.g. while dragging). */
+  camera?: boolean;
 }
 
 export type ViewEventType = 'click' | 'dragstart' | 'drag' | 'dragend';
@@ -138,6 +147,10 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
       if (e.el.getAttribute(k) !== d.attrs[k]) e.el.setAttribute(k, d.attrs[k]);
     }
     if (d.text !== undefined && e.el.textContent !== d.text) e.el.textContent = d.text;
+    if (d.html !== undefined && (e.el as SVGElement & { _html?: string })._html !== d.html) {
+      (e.el as SVGElement & { _html?: string })._html = d.html; // compare against what we set, not the browser's serialisation
+      e.el.innerHTML = d.html;
+    }
   }
 
   function frame(now: number) {
@@ -232,13 +245,14 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
       i++;
     }
 
-    // 3. Retarget the viewBox.
-    if (!Array.isArray(opts.viewBox) && next.size) {
+    // 3. Retarget the camera (auto mode only, and not while something is being dragged).
+    if (!Array.isArray(opts.viewBox) && next.size && ro.camera !== false) {
       const b: Box = bounds(scene);
       const p = opts.padding;
-      const target = [b.x - p, b.y - p, Math.max(1, b.w + 2 * p), Math.max(1, b.h + 2 * p)];
       const first = vb.to[2] === 1 && vb.to[3] === 1;
-      vb = { from: first ? target : [...vb.cur], to: target, cur: [...vb.cur], start: now, dur: first ? 0 : dur };
+      const target = nextCamera(first ? null : (vb.to as ViewBox), [b.x - p, b.y - p, b.w + 2 * p, b.h + 2 * p], opts.camera ?? 'grow');
+      const moved = target.some((v, k) => v !== vb.to[k]);
+      if (first || moved) vb = { from: first ? target : [...vb.cur], to: target, cur: [...vb.cur], start: now, dur: first ? 0 : dur };
     }
 
     // Paint the first frame synchronously (instant feedback while dragging),

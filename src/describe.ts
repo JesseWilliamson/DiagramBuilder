@@ -11,6 +11,7 @@
 import { NumericProps, SceneNode } from './scene';
 import { Geometry, geometry } from './themes';
 import { pathData } from './path';
+import { mathTspans, parseMath } from './mathtext';
 import { V2, Vec, vadd, vnorm, vperp, vscale, vsub } from './vec';
 
 /** Path points live in the flat numeric bag as p0, p1, … (x0 y0 x1 y1 …) so the tween engine needs no special case. */
@@ -40,6 +41,8 @@ export interface Description {
   tag: SvgTag;
   attrs: Record<string, string>;
   text?: string;
+  /** Inner SVG markup instead of plain text (maths labels become <tspan>s). */
+  html?: string;
 }
 
 export const tagFor = (kind: SceneNode['kind']): SvgTag => (kind === 'arrow' ? 'path' : kind);
@@ -87,7 +90,8 @@ export function describe(n: SceneNode, p: NumericProps, g: Geometry = geometry):
     case 'text':
       return {
         tag: 'text',
-        text: n.text,
+        // role 'math' is typeset: italic variables, upright numbers, real superscripts
+        ...(n.role === 'math' ? { html: mathTspans(parseMath(n.text), p.size) } : { text: n.text }),
         attrs: {
           ...attrs,
           x: f(p.x),

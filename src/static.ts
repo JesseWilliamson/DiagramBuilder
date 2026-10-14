@@ -26,7 +26,7 @@ export function toSVG(scene: Scene, o: ToSvgOptions = {}): string {
     .map((n) => {
       const d = describe(n, numericProps(n), geometry);
       const attrs = Object.entries(d.attrs).map(([k, v]) => `${k}="${esc(v)}"`).join(' ');
-      return d.text !== undefined ? `<${d.tag} ${attrs}>${esc(d.text)}</${d.tag}>` : `<${d.tag} ${attrs}/>`;
+      return d.html !== undefined ? `<${d.tag} ${attrs}>${d.html}</${d.tag}>` : d.text !== undefined ? `<${d.tag} ${attrs}>${esc(d.text)}</${d.tag}>` : `<${d.tag} ${attrs}/>`;
     })
     .join('\n  ');
   const style = (o.embedStyles === false ? '' : `<style>${DEFAULT_CSS}</style>\n  `);

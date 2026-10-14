@@ -131,7 +131,7 @@ export function angleMark(a: Vec, b: Vec, c: Vec, o: AngleMarkOptions): Scene {
     const mid = (a0 + a1) / 2;
     const lr = r + 12 + (arcs - 1) * 4;
     const s = o.label === true ? `${Math.round(toDegrees(ang))}°` : o.label;
-    nodes.push(text({ id: `${o.id}:label`, x: b.x + lr * Math.cos(mid), y: b.y + lr * Math.sin(mid), text: s, size: 12, role: o.label === true ? 'value' : 'math', tone: o.tone }));
+    nodes.push(text({ id: `${o.id}:label`, x: b.x + lr * Math.cos(mid), y: b.y + lr * Math.sin(mid), text: s, size: 14, role: 'math', tone: o.tone }));
   }
   return { nodes };
 }

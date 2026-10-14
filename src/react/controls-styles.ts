@@ -84,6 +84,10 @@ export const CONTROLS_CSS = /* css */ `
 .dvc-code { margin: 0; padding: 8px 4px; border-radius: 8px; background: var(--dvc-soft); font: 12.5px/1.7 var(--dv-mono); color: var(--dvc-sub); overflow-x: auto; }
 .dvc-code-line { white-space: pre; padding: 0 10px; border-radius: 4px; transition: background .2s, color .2s; }
 .dvc-code-line.is-active { color: var(--dvc-ink); background: var(--dvc-hl); box-shadow: inset 2px 0 0 var(--dvc-hl-bar); }
+/* maths in HTML: same font and rules as the diagram's maths labels */
+.dvc-math { font-family: var(--dv-math-font, "STIX Two Text", "Times New Roman", serif); font-size: 1.12em; white-space: nowrap; }
+.dvc-math i { font-style: italic; }
+.dvc-math sup, .dvc-math sub { font-size: .7em; line-height: 0; }
 @media (prefers-reduced-motion: reduce) { .dvc, .dvc * { transition: none !important; } }
 `;
 

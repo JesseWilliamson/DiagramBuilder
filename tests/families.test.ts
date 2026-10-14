@@ -141,3 +141,25 @@ describe('lesson facts', () => {
     expect(Object.values(avg).filter((v) => v === avg.srtf)).toHaveLength(1);
   });
 });
+
+import { fitViewBox, nextCamera } from '../src/camera';
+import { rect } from '../src/scene';
+
+describe('camera', () => {
+  it('stays put while the content fits', () => {
+    expect(nextCamera([0, 0, 100, 100], [10, 10, 80, 80])).toEqual([0, 0, 100, 100]);
+  });
+  it('grows to include content that would fall outside', () => {
+    expect(nextCamera([0, 0, 100, 100], [50, 50, 100, 20])).toEqual([0, 0, 150, 100]);
+  });
+  it('shrinks only when the content fills less than half the frame', () => {
+    expect(nextCamera([0, 0, 100, 100], [10, 10, 40, 40])).toEqual([10, 10, 40, 40]);
+  });
+  it("'fit' always refits, and boxes snap outward to whole units", () => {
+    expect(nextCamera([0, 0, 100, 100], [10.4, 10.6, 50.2, 60], 'fit')).toEqual([10, 10, 51, 61]);
+  });
+  it('fitViewBox covers every frame', () => {
+    const frames = [rect({ id: 'a', x: 0, y: 0, w: 10, h: 10 }), rect({ id: 'a', x: 100, y: 0, w: 10, h: 10 })];
+    expect(fitViewBox(frames, 5)).toEqual([-10, -10, 120, 20]);
+  });
+});

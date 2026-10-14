@@ -102,10 +102,15 @@ ${TONES.map(toneVars).join('\n')}
 /* ── roles: semantic parts emitted by the layouts ─────────────── */
 .dv-text.dv-role-value { fill: var(--dv-fg); font-weight: 600; }
 .dv-text.dv-role-value.dv-tone-muted { fill: var(--dv-muted); }
-.dv-text.dv-role-math { font-family: var(--dv-math-font); font-style: italic; font-weight: 400; }
+.dv-text.dv-role-math { font-family: var(--dv-math-font); font-weight: 400; }
+/* numbers on plot axes and measurements are maths too: upright serif */
+.dv-text.dv-role-tick-label { font-family: var(--dv-math-font); font-weight: 400; fill: var(--dv-fg); }
+/* code identifiers (lo, hi, mid, curr…) are code: monospace */
+.dv-text.dv-role-pointer-label, .dv-text.dv-role-code { font-family: var(--dv-mono); font-weight: 600; }
+/* maths labels sitting on grids and curves get a halo so they stay legible */
+.dv-text.dv-role-math, .dv-text.dv-role-tick-label { paint-order: stroke; stroke: var(--dv-halo); stroke-width: 4px; stroke-linejoin: round; }
 .dv-text.dv-role-index { fill: var(--dv-muted); font-weight: 500; }
 .dv-text.dv-role-caption { fill: var(--dv-muted); font-weight: 500; letter-spacing: .02em; }
-.dv-text.dv-role-pointer-label { font-weight: 700; }
 .dv-text.dv-role-pointer-label${anyTone}, .dv-text.dv-role-label${anyTone} { fill: var(--dv-c); }
 .dv-role-tag { display: none; }
 .dv-rect.dv-role-window { fill: var(--dv-band); stroke: none; }

@@ -12,6 +12,7 @@
  * Array order = paint order. Earlier nodes are drawn underneath later ones.
  */
 import { Vec } from './vec';
+import { mathWidth, parseMath } from './mathtext';
 
 /**
  * Semantic colour. The renderer turns this into a CSS class (`dv-tone-active`)
@@ -195,7 +196,7 @@ export function nodeBounds(n: SceneNode): Box {
       return { x: n.x - n.w / 2, y: n.y - n.h / 2, w: n.w, h: n.h };
     case 'text': {
       const size = n.size ?? 16;
-      const w = estimateTextWidth(n.text, size);
+      const w = n.role === 'math' ? mathWidth(parseMath(n.text), size) : estimateTextWidth(n.text, size);
       const x = n.anchor === 'start' ? n.x : n.anchor === 'end' ? n.x - w : n.x - w / 2;
       return { x, y: n.y - size / 2, w, h: size };
     }

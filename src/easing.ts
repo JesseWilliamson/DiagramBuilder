@@ -10,3 +10,12 @@ export const easeOutBack: Easing = (t) => {
   const c1 = 1.4, c3 = c1 + 1;
   return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
 };
+
+/**
+ * A soft settle: overshoots by ~2% and comes back. Enough to feel physical,
+ * not enough to look bouncy. This is the default feel of dsviz.
+ */
+export const easeOutSoft: Easing = (t) => {
+  const c1 = 0.6, c3 = c1 + 1;
+  return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+};

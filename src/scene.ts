@@ -121,8 +121,8 @@ export interface Scene {
   nodes: SceneNode[];
 }
 
-/** Anything that contributes nodes: a layout result, a node, a list, or nothing. */
-export type Part = Scene | SceneNode | SceneNode[] | null | undefined | false;
+/** Anything that contributes nodes: a layout result, a node, a (nested) list of parts, or nothing. */
+export type Part = Scene | SceneNode | readonly Part[] | null | undefined | false;
 
 // ── constructors ─────────────────────────────────────────────────────────────
 // They only add `kind`; nodes are plain objects so you can spread / tweak them.
@@ -139,12 +139,13 @@ export const path = (o: Omit<PathNode, 'kind'>): PathNode => ({ kind: 'path', ..
  */
 export function combine(...parts: Part[]): Scene {
   const nodes: SceneNode[] = [];
-  for (const p of parts) {
-    if (!p) continue;
-    if (Array.isArray(p)) nodes.push(...p);
-    else if ('nodes' in p) nodes.push(...p.nodes);
-    else nodes.push(p);
-  }
+  const add = (p: Part) => {
+    if (!p) return;
+    if (Array.isArray(p)) (p as readonly Part[]).forEach(add);
+    else if ('nodes' in (p as Scene)) nodes.push(...(p as Scene).nodes);
+    else nodes.push(p as SceneNode);
+  };
+  parts.forEach(add);
   return { nodes };
 }
 

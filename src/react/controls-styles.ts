@@ -54,6 +54,15 @@ export const CONTROLS_CSS = /* css */ `
 .dvc-transport button:disabled { opacity: .35; cursor: default; }
 .dvc-scrub { margin: 0 8px; }
 
+.dvc-btn { all: unset; box-sizing: border-box; display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 7px; cursor: pointer; font: 500 12px ${V('--dv-font', 'system-ui, sans-serif')}; color: ${V('--dv-fg', '#e8eaee')}; border: 1px solid color-mix(in srgb, ${V('--dv-fg', '#e8eaee')} 16%, transparent); transition: background .12s, transform .06s; }
+.dvc-btn:hover:not(:disabled) { background: color-mix(in srgb, ${V('--dv-fg', '#e8eaee')} 8%, transparent); }
+.dvc-btn:active:not(:disabled) { transform: translateY(1px); }
+.dvc-btn:focus-visible { outline: 2px solid ${V('--dv-accent', '#5b9dff')}; outline-offset: 1px; }
+.dvc-btn:disabled { opacity: .4; cursor: default; }
+.dvc-btn.is-primary { background: ${V('--dv-accent', '#5b9dff')}; border-color: transparent; color: #fff; }
+.dvc-btn.is-primary:hover:not(:disabled) { background: color-mix(in srgb, ${V('--dv-accent', '#5b9dff')} 85%, #fff); }
+.dvc-input { all: unset; box-sizing: border-box; padding: 4px 9px; border-radius: 6px; font: 12px ${V('--dv-mono', 'ui-monospace, Menlo, monospace')}; color: ${V('--dv-fg', '#e8eaee')}; border: 1px solid color-mix(in srgb, ${V('--dv-fg', '#e8eaee')} 14%, transparent); }
+.dvc-input:focus { border-color: ${V('--dv-accent', '#5b9dff')}; }
 .dvc-code { margin: 0; padding: 8px; border-radius: 8px; border: 1px solid color-mix(in srgb, ${V('--dv-fg', '#e8eaee')} 10%, transparent); font: 12px/1.7 ${V('--dv-mono', 'ui-monospace, Menlo, monospace')}; color: ${V('--dv-muted', '#7a8190')}; overflow-x: auto; }
 .dvc-code-line { white-space: pre; padding: 0 8px; border-radius: 4px; border: 1px solid transparent; }
 .dvc-code-line.is-active { color: ${V('--dv-fg', '#e8eaee')}; border-color: ${V('--dv-accent', '#5b9dff')}; background: color-mix(in srgb, ${V('--dv-accent', '#5b9dff')} 10%, transparent); }

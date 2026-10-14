@@ -4,7 +4,12 @@ import { Scene } from '../scene';
 
 export interface DiagramProps {
   scene: Scene;
-  /** CSS height of the <svg>; width is always 100%. Default 240. */
+  /**
+   * CSS height of the <svg>; width is always 100%. Default 240.
+   * With a fixed `viewBox` this is a MAX height: the svg keeps the viewBox's
+   * aspect ratio, so on a narrow screen the diagram shrinks instead of floating
+   * in empty space.
+   */
   height?: number | string;
   /** 'auto' fits the camera to the scene; a fixed [x, y, w, h] keeps axes still. Default 'auto'. */
   viewBox?: 'auto' | [number, number, number, number];
@@ -70,5 +75,8 @@ export function Diagram({ scene, height = 240, viewBox = 'auto', padding, durati
     viewRef.current?.render(scene, dragging.current ? { duration: 0 } : undefined);
   }, [scene]);
 
-  return <svg ref={svgRef} className={className} style={{ width: '100%', height, display: 'block' }} role="img" aria-label={label} />;
+  const style = Array.isArray(viewBox)
+    ? { width: '100%', height: 'auto', aspectRatio: `${viewBox[2]} / ${viewBox[3]}`, maxHeight: height, display: 'block' }
+    : { width: '100%', height, display: 'block' };
+  return <svg ref={svgRef} className={className} style={style} role="img" aria-label={label} />;
 }

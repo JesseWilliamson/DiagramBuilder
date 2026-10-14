@@ -25,10 +25,18 @@ export interface PlayerState<S> {
  * The Player is a plain mutable object, so React needs a nudge to re-render when
  * it changes: we subscribe and bump a counter (useReducer's cheapest form).
  */
-export function usePlayer<S>(makeFrames: () => Iterable<S>, deps: DependencyList, options?: Omit<PlayerOptions<S>, 'onFrame'>): PlayerState<S> {
+export interface UsePlayerOptions<S> extends Omit<PlayerOptions<S>, 'onFrame'> {
+  /** Open on the last frame (show the finished result first, let people rewind). Default 'first'. */
+  start?: 'first' | 'end';
+}
+
+export function usePlayer<S>(makeFrames: () => Iterable<S>, deps: DependencyList, options?: UsePlayerOptions<S>): PlayerState<S> {
   const [, bump] = useReducer((n: number) => n + 1, 0);
   const ref = useRef<Player<S> | null>(null);
-  if (!ref.current) ref.current = createPlayer<S>(makeFrames(), options);
+  if (!ref.current) {
+    ref.current = createPlayer<S>(makeFrames(), options);
+    if (options?.start === 'end') ref.current.seek(ref.current.frames.length - 1);
+  }
   const player = ref.current;
 
   useEffect(() => {
@@ -41,6 +49,7 @@ export function usePlayer<S>(makeFrames: () => Iterable<S>, deps: DependencyList
     // The first run already loaded frames in createPlayer; only reload on later changes.
     if (first.current) return void (first.current = false);
     player.load(makeFrames());
+    if (options?.start === 'end') player.seek(player.frames.length - 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 

@@ -41,9 +41,10 @@ export const DEFAULT_CSS = /* css */ `
   --dv-math-font: "STIX Two Text", "Latin Modern Roman", Georgia, serif;
   --dv-value-weight: 500;
   --dv-fg: #e8eaee; --dv-muted: #7a8190; --dv-surface: #17191e; --dv-muted-fill: #1d2026;
-  --dv-stroke: #9aa2b1; --dv-edge: #9aa2b1; --dv-halo: #17191e; --dv-stroke-w: 1px;
-  --dv-active: #e9b44c; --dv-accent: #5b9dff; --dv-success: #4cc38a; --dv-danger: #ff7a7a; --dv-visited: #a993ff;
-  --dv-tint: 22%;
+  --dv-stroke: #8f98a8; --dv-edge: #8f98a8; --dv-halo: #17191e; --dv-stroke-w: 1.25px;
+  --dv-active: #f2b84b; --dv-accent: #5b9dff; --dv-success: #4cc38a; --dv-danger: #ff7a7a; --dv-visited: #a993ff;
+  --dv-tint: 24%;
+  --dv-grid: color-mix(in srgb, var(--dv-fg) 7%, transparent);
   ${toneDefaults}
   --dv-band: color-mix(in srgb, var(--dv-accent) 8%, transparent);
   font-family: var(--dv-font);
@@ -78,6 +79,32 @@ ${TONES.map(toneVars).join('\n')}
 .dv-tone-ghost:is(.dv-circle, .dv-rect, .dv-path) { fill: none; stroke: var(--dv-muted); stroke-dasharray: 4 4; }
 
 /* roles: semantic parts emitted by the layouts */
+/* plots */
+.dv-path.dv-role-grid { stroke: var(--dv-grid); fill: none; }
+.dv-path.dv-role-axis { stroke: var(--dv-muted); fill: none; }
+.dv-arrow.dv-role-axis { --dv-ink: var(--dv-muted); }
+.dv-path.dv-role-tick { stroke: var(--dv-muted); }
+.dv-path.dv-role-curve { fill: none; }
+.dv-path.dv-role-curve:not(${anyTone}, .dv-tone-muted) { stroke: var(--dv-accent); }
+.dv-path.dv-role-area, .dv-path.dv-role-region { stroke: none; fill: color-mix(in srgb, var(--dv-c, var(--dv-accent)) 22%, transparent); }
+.dv-path.dv-role-region.dv-tone-muted { fill: transparent; }
+.dv-path.dv-role-marker { fill: var(--dv-c, var(--dv-muted)); stroke: none; }
+.dv-path.dv-role-guide { fill: none; stroke: var(--dv-muted); stroke-dasharray: 3 4; }
+.dv-rect.dv-role-bar:not(${anyTone}, .dv-tone-muted) { fill: color-mix(in srgb, var(--dv-accent) 28%, var(--dv-surface)); stroke: var(--dv-accent); }
+.dv-rect.dv-role-track { fill: var(--dv-grid); stroke: none; }
+/* draggable handles: a big invisible hit target, then the visible dot */
+.dv-circle.dv-role-hit { fill: transparent; stroke: none; pointer-events: all; }
+.dv-circle.dv-role-handle { pointer-events: none; transform-box: fill-box; transform-origin: center; transition: transform .15s ease, fill .3s ease, stroke .3s ease; stroke-width: 2px; }
+.dv-circle.dv-role-handle:not(${anyTone}) { fill: var(--dv-accent); stroke: var(--dv-surface); }
+.dv-circle.dv-role-handle${anyTone} { fill: var(--dv-c); stroke: var(--dv-surface); }
+.dv-role-hit:hover + .dv-role-handle, .dv-role-hit:focus + .dv-role-handle { transform: scale(1.4); }
+.dv-text.dv-role-label { fill: var(--dv-fg); }
+.dv-path.dv-role-bar { stroke-width: 1px; }
+:is(.dv-path, .dv-circle).dv-role-outline { fill: none; }
+.dv-rect.dv-role-universe { fill: transparent; stroke: var(--dv-muted); }
+.dv-rect.dv-role-universe${anyTone} { fill: color-mix(in srgb, var(--dv-c) 16%, transparent); }
+.dv-rect.dv-role-frame { fill: var(--dv-muted-fill); stroke: var(--dv-grid); }
+.dv-text.dv-role-label.dv-tone-muted { fill: var(--dv-muted); }
 .dv-text.dv-role-value { fill: var(--dv-fg); font-family: var(--dv-label-font); font-weight: var(--dv-value-weight); }
 .dv-text.dv-role-value.dv-tone-muted { fill: var(--dv-muted); }
 .dv-text.dv-role-math { font-family: var(--dv-math-font); font-style: italic; }
@@ -92,7 +119,7 @@ ${TONES.map(toneVars).join('\n')}
 .dv-interactive { cursor: pointer; }
 .dv-draggable { cursor: grab; touch-action: none; }
 .dv-root.dv-dragging, .dv-root.dv-dragging .dv-draggable { cursor: grabbing; }
-.dv-interactive:hover { stroke-width: 1.8; }
+.dv-rect.dv-interactive:hover, .dv-circle.dv-interactive:not(.dv-role-hit):hover { stroke-width: 2.2; }
 `;
 
 const STYLE_ID = 'dsviz-default-styles';

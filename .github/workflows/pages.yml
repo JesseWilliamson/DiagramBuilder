@@ -1,4 +1,4 @@
-name: Deploy playground to GitHub Pages
+name: Deploy demo site to GitHub Pages
 
 on:
   push:
@@ -29,9 +29,9 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
-      - run: npm run build:playground
+      - run: npm run build:site
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: playground-dist
+          path: site-dist
       - id: deployment
         uses: actions/deploy-pages@v4

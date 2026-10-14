@@ -4,6 +4,7 @@ import * as RSwitch from '@radix-ui/react-switch';
 import * as RToggle from '@radix-ui/react-toggle-group';
 import { ReactNode, useId } from 'react';
 import { injectControlStyles } from './controls-styles';
+import type { PlayerState } from './hooks';
 
 /*
  * Controls. Each is a thin skin over a Radix primitive, so keyboard handling,
@@ -148,38 +149,32 @@ export function NumberStepper({ value, onChange, min = -Infinity, max = Infinity
 }
 
 export interface TransportProps {
-  index: number;
-  count: number;
-  playing: boolean;
-  onFirst: () => void;
-  onPrev: () => void;
-  onToggle: () => void;
-  onNext: () => void;
-  onSeek: (i: number) => void;
+  /** What usePlayer() returns. */
+  player: Pick<PlayerState<unknown>, 'index' | 'count' | 'playing' | 'first' | 'prev' | 'toggle' | 'next' | 'seek'>;
 }
 
 const Icon = ({ d }: { d: string }) => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden><path d={d} fill="currentColor" /></svg>;
 
-/** first / prev / play / next, a scrubber with a tick per step, and "Step i / n". Pairs with usePlayer: `<Transport {...p} />`-ish. */
-export function Transport({ index, count, playing, onFirst, onPrev, onToggle, onNext, onSeek }: TransportProps) {
+/** first / prev / play / next, a scrubber with a tick per step, and "Step i / n". `<Transport player={usePlayer(...)} />` */
+export function Transport({ player: p }: TransportProps) {
   injectControlStyles();
-  const last = Math.max(0, count - 1);
+  const last = Math.max(0, p.count - 1);
   return (
     <div className="dvc dvc-transport">
-      <button type="button" onClick={onFirst} disabled={index === 0} aria-label="First step"><Icon d="M3 3h2v10H3zM13 3v10L6 8z" /></button>
-      <button type="button" onClick={onPrev} disabled={index === 0} aria-label="Previous step"><Icon d="M12 3v10L5 8z" /></button>
-      <button type="button" onClick={onToggle} aria-label={playing ? 'Pause' : 'Play'}>
-        <Icon d={playing ? 'M4 3h3v10H4zM9 3h3v10H9z' : 'M4 3l9 5-9 5z'} />
+      <button type="button" onClick={p.first} disabled={p.index === 0} aria-label="First step"><Icon d="M3 3h2v10H3zM13 3v10L6 8z" /></button>
+      <button type="button" onClick={p.prev} disabled={p.index === 0} aria-label="Previous step"><Icon d="M12 3v10L5 8z" /></button>
+      <button type="button" onClick={p.toggle} aria-label={p.playing ? 'Pause' : 'Play'}>
+        <Icon d={p.playing ? 'M4 3h3v10H4zM9 3h3v10H9z' : 'M4 3l9 5-9 5z'} />
       </button>
-      <button type="button" onClick={onNext} disabled={index >= last} aria-label="Next step"><Icon d="M4 3v10l7-5zM11 3h2v10h-2z" /></button>
-      <RSlider.Root className="dvc-slider dvc-scrub" value={[index]} min={0} max={last} step={1} onValueChange={([v]) => onSeek(v)}>
+      <button type="button" onClick={p.next} disabled={p.index >= last} aria-label="Next step"><Icon d="M4 3v10l7-5zM11 3h2v10h-2z" /></button>
+      <RSlider.Root className="dvc-slider dvc-scrub" value={[p.index]} min={0} max={last} step={1} onValueChange={([v]) => p.seek(v)}>
         <RSlider.Track className="dvc-track">
           <RSlider.Range className="dvc-range" />
-          {Array.from({ length: count }, (_, i) => <span key={i} className="dvc-tick" style={{ left: `${last ? (i / last) * 100 : 0}%` }} />)}
+          {p.count <= 80 && Array.from({ length: p.count }, (_, i) => <span key={i} className="dvc-tick" style={{ left: `${last ? (i / last) * 100 : 0}%` }} />)}
         </RSlider.Track>
         <RSlider.Thumb className="dvc-thumb" aria-label="Step" />
       </RSlider.Root>
-      <span className="dvc-readout">Step {index} / {last}</span>
+      <span className="dvc-readout">Step {p.index} / {last}</span>
     </div>
   );
 }
@@ -197,5 +192,51 @@ export function CodeTrace({ lines, active }: { lines: readonly string[]; active?
         <div key={i} className={cx('dvc-code-line', on.has(i) && 'is-active')} aria-current={on.has(i) ? 'step' : undefined}>{l || ' '}</div>
       ))}
     </pre>
+  );
+}
+
+export interface ButtonProps {
+  children: ReactNode;
+  onClick: () => void;
+  variant?: 'primary' | 'ghost';
+  disabled?: boolean;
+  title?: string;
+}
+
+export function Button({ children, onClick, variant = 'ghost', disabled, title }: ButtonProps) {
+  injectControlStyles();
+  return (
+    <button type="button" className={cx('dvc dvc-btn', variant === 'primary' && 'is-primary')} onClick={onClick} disabled={disabled} title={title}>
+      {children}
+    </button>
+  );
+}
+
+export interface TextInputProps {
+  value: string;
+  /** Called on Enter or blur (not every keystroke), so half-typed input doesn't re-run a diagram. */
+  onCommit: (v: string) => void;
+  label?: string;
+  width?: number | string;
+  placeholder?: string;
+}
+
+export function TextInput({ value, onCommit, label, width = '10ch', placeholder }: TextInputProps) {
+  injectControlStyles();
+  const id = useId();
+  return (
+    <Field label={label} id={id}>
+      <input
+        id={id}
+        key={value /* reset the uncontrolled input when the value changes from outside */}
+        className="dvc-input"
+        defaultValue={value}
+        placeholder={placeholder}
+        spellCheck={false}
+        style={{ width }}
+        onKeyDown={(e) => e.key === 'Enter' && onCommit((e.target as HTMLInputElement).value)}
+        onBlur={(e) => e.target.value !== value && onCommit(e.target.value)}
+      />
+    </Field>
   );
 }

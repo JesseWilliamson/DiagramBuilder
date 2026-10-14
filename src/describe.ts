@@ -9,12 +9,20 @@
  * one function means both renderers can never disagree about what a node looks like.
  */
 import { NumericProps, SceneNode } from './scene';
-import { ThemeGeometry } from './themes';
+import { Geometry, geometry } from './themes';
+import { pathData } from './path';
 import { V2, Vec, vadd, vnorm, vperp, vscale, vsub } from './vec';
+
+/** Path points live in the flat numeric bag as p0, p1, … (x0 y0 x1 y1 …) so the tween engine needs no special case. */
 
 export function numericProps(n: SceneNode): NumericProps {
   const opacity = n.opacity ?? 1;
   switch (n.kind) {
+    case 'path': {
+      const o: NumericProps = { width: n.width ?? 1.5, opacity };
+      n.points.forEach(([x, y], i) => ((o[`p${2 * i}`] = x), (o[`p${2 * i + 1}`] = y)));
+      return o;
+    }
     case 'circle':
       return { x: n.x, y: n.y, r: n.r, opacity };
     case 'rect':
@@ -36,9 +44,15 @@ export interface Description {
 
 export const tagFor = (kind: SceneNode['kind']): SvgTag => (kind === 'arrow' ? 'path' : kind);
 
+/** Read the flat bag back into points. */
+export function pointsOf(p: NumericProps, count: number): Array<[number, number]> {
+  return Array.from({ length: count }, (_, i) => [p[`p${2 * i}`], p[`p${2 * i + 1}`]] as [number, number]);
+}
+
 export function classFor(n: SceneNode): string {
   const c = ['dv', `dv-${n.kind}`, `dv-tone-${n.tone ?? 'default'}`];
   if (n.role) c.push(`dv-role-${n.role}`);
+  if (n.kind === 'path' && !n.closed) c.push('dv-open');
   if (n.dashed) c.push('dv-dashed');
   if (n.draggable) c.push('dv-draggable');
   if (n.interactive || n.draggable) c.push('dv-interactive');
@@ -48,9 +62,7 @@ export function classFor(n: SceneNode): string {
 /** Round to 2 decimals so the DOM / SVG strings stay readable. */
 const f = (v: number) => String(Math.round(v * 100) / 100);
 
-const PLAIN: ThemeGeometry = { rxScale: 1, strokeScale: 1, head: 'chevron', headScale: 1 };
-
-export function describe(n: SceneNode, p: NumericProps, g: ThemeGeometry = PLAIN): Description {
+export function describe(n: SceneNode, p: NumericProps, g: Geometry = geometry): Description {
   const solidHead = n.kind === 'arrow' && (n.head ?? true) && g.head === 'triangle';
   const attrs: Record<string, string> = {
     class: classFor(n) + (solidHead ? ' dv-head-solid' : ''),
@@ -85,6 +97,11 @@ export function describe(n: SceneNode, p: NumericProps, g: ThemeGeometry = PLAIN
           'dominant-baseline': 'central',
           ...(n.weight != null ? { 'font-weight': String(n.weight) } : {}),
         },
+      };
+    case 'path':
+      return {
+        tag: 'path',
+        attrs: { ...attrs, d: pathData(pointsOf(p, n.points.length), !!n.closed, !!n.smooth), 'stroke-width': f(p.width) },
       };
     case 'arrow': {
       const w = p.width * g.strokeScale;

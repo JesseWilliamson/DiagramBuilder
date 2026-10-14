@@ -34,7 +34,7 @@ export function pointer(o: PointerOptions): Scene {
   const lab = { x: tail.x + dir[0] * (13 + out), y: tail.y + dir[1] * (13 + out) };
   const nodes: SceneNode[] = [arrow({ id: `${o.id}:arrow`, x1: tail.x, y1: tail.y, x2: tip.x, y2: tip.y, tone, width: 2 })];
   if (o.label) {
-    // A pill behind the label. Hidden by default; themes that want tags (brilliant) show it.
+    // A pill behind the label. Hidden by default; apps can show it with `.dv-role-tag { display: inline }`.
     const w = estimateTextWidth(o.label, 13) + 16;
     const tx = side === 'left' ? lab.x - w / 2 : side === 'right' ? lab.x + w / 2 : lab.x;
     nodes.push(rect({ id: `${o.id}:tag`, x: tx, y: lab.y, w, h: 21, rx: 10.5, role: 'tag', tone }));

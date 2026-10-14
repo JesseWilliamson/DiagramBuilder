@@ -10,6 +10,7 @@ export * from './vec';
 export * from './easing';
 export * from './themes';
 export * from './scene';
+export * from './path';
 export * from './describe';
 export * from './styles';
 export * from './render';

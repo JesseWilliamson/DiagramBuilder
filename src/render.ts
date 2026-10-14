@@ -14,21 +14,19 @@
  * Colours are NOT tweened here: tones are CSS classes, and CSS transitions
  * handle colour. JS only animates geometry.
  */
+import { resampleProps } from './path';
 import { describe, numericProps, tagFor } from './describe';
 import { Box, NumericProps, Scene, SceneNode, bounds } from './scene';
 import { Easing, easeInOutCubic } from './easing';
-import { LIFT_DEFS, injectStyles } from './styles';
-import { Theme, getDefaultTheme, themes } from './themes';
+import { injectStyles } from './styles';
+import { feel, geometry } from './themes';
 import { V2, Vec } from './vec';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 export interface ViewOptions {
-  /** A theme object (e.g. `themes.brilliant`) or its name. Default: getDefaultTheme(). */
-  theme?: Theme | keyof typeof themes;
-  /** Animation length in ms. Default: the theme's. */
+  /** Animation length in ms. Default 380. */
   duration?: number;
-  /** Default: the theme's. */
   ease?: Easing;
   /** 'auto' fits the viewBox to the scene (and animates it); or pass a fixed [x, y, w, h]. */
   viewBox?: 'auto' | [number, number, number, number];
@@ -60,9 +58,8 @@ export interface View {
   /** The last scene passed to render(). */
   readonly scene: Scene;
   render(scene: Scene, opts?: RenderOptions): void;
-  /** Switch theme in place (repaints immediately). */
-  setTheme(theme: Theme | keyof typeof themes): void;
-  readonly theme: Theme;
+  /** Switch between auto-fit and a fixed camera (e.g. a plot whose axes must not move). */
+  setViewBox(viewBox: 'auto' | [number, number, number, number]): void;
   on(type: ViewEventType, handler: (e: ViewEvent) => void): () => void;
   /** Convert browser client coords (e.g. event.clientX) into scene coords. */
   toWorld(clientX: number, clientY: number): Vec;
@@ -82,31 +79,25 @@ interface Entry {
   settled: boolean;
 }
 
+/** `{ ...defaults, ...options }` lets an explicit `undefined` erase a default; drop those keys first. */
+const definedOnly = <T extends object>(o: T): Partial<T> =>
+  Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined)) as Partial<T>;
+
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 /** Create a view inside an existing <svg> element. */
 export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View {
-  const opts = { viewBox: 'auto' as const, padding: 24, injectStyles: true, ...options };
+  const opts = { viewBox: 'auto' as 'auto' | [number, number, number, number], padding: 24, injectStyles: true, ...definedOnly(options) } as Required<Pick<ViewOptions, 'viewBox' | 'padding' | 'injectStyles'>> & ViewOptions;
   if (opts.injectStyles && typeof document !== 'undefined') injectStyles(svg.ownerDocument);
   svg.classList.add('dv-root');
 
   // Two layers: nodes that are leaving fade out *underneath* the live scene.
-  const defs = document.createElementNS(SVG_NS, 'defs');
   const exitLayer = document.createElementNS(SVG_NS, 'g');
   const liveLayer = document.createElementNS(SVG_NS, 'g');
-  svg.append(defs, exitLayer, liveLayer);
+  svg.append(exitLayer, liveLayer);
 
-  // Theme: CSS class (look) + geometry (describe) + easing/duration (feel).
-  let theme: Theme = getDefaultTheme();
-  const ease = () => opts.ease ?? theme.ease;
-  const duration = () => opts.duration ?? theme.duration;
-  function applyTheme(t: Theme | keyof typeof themes) {
-    theme = typeof t === 'string' ? themes[t] : t;
-    for (const c of [...svg.classList]) if (c.startsWith('dv-theme-')) svg.classList.remove(c);
-    svg.classList.add(`dv-theme-${theme.name}`);
-    defs.innerHTML = theme.lift ? LIFT_DEFS : '';
-  }
-  applyTheme(options.theme ?? theme);
+  const ease = () => opts.ease ?? feel.ease;
+  const duration = () => opts.duration ?? feel.duration;
 
   const entries = new Map<string, Entry>();
   let current: Scene = { nodes: [] };
@@ -123,7 +114,7 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
     typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function paint(e: Entry) {
-    const d = describe(e.node, e.cur, theme.geometry);
+    const d = describe(e.node, e.cur, geometry);
     for (const k in d.attrs) {
       if (e.el.getAttribute(k) !== d.attrs[k]) e.el.setAttribute(k, d.attrs[k]);
     }
@@ -204,6 +195,11 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
         };
         entries.set(node.id, e);
       } else {
+        // A path whose point count changed: resample what is on screen to the new
+        // count first, so tweening point i -> point i still means something.
+        if (node.kind === 'path' && e.node.kind === 'path' && e.node.points.length !== node.points.length) {
+          e.cur = { ...e.cur, ...resampleProps(e.cur, e.node.points.length, node.points.length, !!node.closed) };
+        }
         e.exiting = false; // it may have been mid-exit and come back
         e.from = { ...to, ...e.cur }; // start from what's on screen right now
         e.to = to;
@@ -299,12 +295,12 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
       return current;
     },
     render,
-    get theme() {
-      return theme;
-    },
-    setTheme(t) {
-      applyTheme(t);
-      for (const e of entries.values()) paint(e);
+    setViewBox(v) {
+      opts.viewBox = v;
+      if (Array.isArray(v)) {
+        vb.cur = vb.to = vb.from = [...v];
+        svg.setAttribute('viewBox', v.join(' '));
+      } else render(current, { duration: 0 });
     },
     toWorld,
     on(type, handler) {
@@ -319,7 +315,6 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
       svg.removeEventListener('pointerup', onPointerUp);
       svg.removeEventListener('pointercancel', onPointerUp);
       svg.removeEventListener('click', onClick);
-      defs.remove();
       exitLayer.remove();
       liveLayer.remove();
       entries.clear();

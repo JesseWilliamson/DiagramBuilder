@@ -1,7 +1,7 @@
 // Vectors you can grab by the tip. Same plane, three questions.
 import { useState } from 'react';
 import { combine, geom, plot, Vec } from 'dsviz';
-import { Challenge, Diagram, Segmented } from 'dsviz/react';
+import { Diagram, Segmented } from 'dsviz/react';
 
 // Equal pixels per unit on both axes (60), so angles on screen are true angles.
 const p = plot.plane({ x: [-1, 6], y: [-1, 4], width: 420, height: 300 });
@@ -26,6 +26,9 @@ export default function Vectors() {
 
   const scene = combine(
     plot.axes(p, { xTicks: 1, yTicks: 1, labels: true }),
+    // the drag handles go first, so the arrowheads draw on top of them (lines ignore the pointer)
+    plot.point(p, u.x, u.y, { id: 'U', draggable: true, hint: !touched, tone: 'accent' }),
+    plot.point(p, v.x, v.y, { id: 'V', draggable: true, hint: !touched, tone: 'visited' }),
     mode === 'sum' && [
       plot.vector(p, u, add(u, v), { id: 'v-copy', tone: 'muted', dashed: true, width: 1.5 }),
       plot.vector(p, v, add(u, v), { id: 'u-copy', tone: 'muted', dashed: true, width: 1.5 }),
@@ -42,15 +45,12 @@ export default function Vectors() {
     ],
     plot.vector(p, O, u, { id: 'u', tone: 'accent', label: 'u' }),
     plot.vector(p, O, v, { id: 'v', tone: 'visited', label: 'v' }),
-    plot.point(p, u.x, u.y, { id: 'U', draggable: true, hint: !touched, tone: 'accent' }),
-    plot.point(p, v.x, v.y, { id: 'V', draggable: true, hint: !touched, tone: 'visited' }),
   );
 
   return (
     <>
       <Diagram
         scene={scene}
-        height={320}
         viewBox={p.viewBox()}
         onDrag={(e) => {
           setTouched(true);
@@ -69,13 +69,6 @@ export default function Vectors() {
           <span className="tone-active">θ = <b>{theta.toFixed(1)}°</b></span>
         </>}
       </div>
-      <Challenge
-        goals={[
-          { label: 'Make u + v land exactly on (5, 3)', done: add(u, v).x === 5 && add(u, v).y === 3 },
-          { label: 'Make u and v perpendicular (u · v = 0)', done: dot === 0 && geom.dot(u, u) > 0 && geom.dot(v, v) > 0 },
-          { label: 'Make u − v point straight down', done: sub(u, v).x === 0 && sub(u, v).y < 0 },
-        ]}
-      />
     </>
   );
 }

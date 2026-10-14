@@ -1,0 +1,146 @@
+import { ReactNode } from 'react';
+
+const Code = ({ children }: { children: string }) => <pre className="code">{children.trim()}</pre>;
+
+function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
+  return (
+    <section className="guide-section" id={id}>
+      <h2>{title}</h2>
+      {children}
+    </section>
+  );
+}
+
+const toc = [
+  ['start', 'First diagram'],
+  ['scenes', 'Scenes and ids'],
+  ['layouts', 'Layouts and anchors'],
+  ['style', 'Tones, roles and theming'],
+  ['motion', 'Animation'],
+  ['interaction', 'Interaction'],
+  ['player', 'Stepping through algorithms'],
+  ['sizing', 'Sizing'],
+  ['vanilla', 'Without React'],
+  ['exercises', 'Exercises'],
+];
+
+export function Guide() {
+  return (
+    <div className="doc-layout">
+      <nav className="doc-toc" aria-label="On this page">
+        {toc.map(([id, label]) => <a key={id} href={`#/guide`} onClick={(e) => { e.preventDefault(); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); }}>{label}</a>)}
+      </nav>
+      <div className="doc-main">
+        <h1>Guide</h1>
+        <p className="lede">dsviz draws interactive, animated SVG diagrams for teaching: data structures, plots, probability, geometry, scheduling and memory. The core has no dependencies; <code>dsviz/react</code> is a thin wrapper.</p>
+
+        <Section id="start" title="First diagram">
+          <Code>{`npm install github:JesseWilliamson/DiagramBuilder   # react >= 18 as a peer dependency`}</Code>
+          <p>A diagram is a function from your state to a scene. Render it with <code>&lt;Diagram&gt;</code>; when the state changes, render again.</p>
+          <Code>{`
+import { useState } from 'react';
+import { array, combine, pointer } from 'dsviz';
+import { Diagram, Slider } from 'dsviz/react';
+
+export function Example() {
+  const [i, setI] = useState(2);
+  const arr = array([3, 8, 12, 17, 21], { tones: { [i]: 'active' } });
+  return (
+    <>
+      <Diagram scene={combine(arr, pointer({ id: 'i', at: arr.top(i), label: 'i' }))} />
+      <Slider label="i" value={i} onChange={setI} min={0} max={4} />
+    </>
+  );
+}`}</Code>
+          <p>Every example on the <a href="#/examples">examples page</a> is a component like this, and you can edit it there.</p>
+        </Section>
+
+        <Section id="scenes" title="Scenes and ids">
+          <p>A <code>Scene</code> is <code>{'{ nodes: SceneNode[] }'}</code>: a flat list of plain objects. There are five primitives: <code>rect</code> and <code>circle</code> (centred on x, y), <code>text</code>, <code>arrow</code> (with optional <code>bend</code> and head) and <code>path</code> (polyline, polygon or smooth curve). Array order is paint order.</p>
+          <p>Every node has an <code>id</code>. When you render a new scene the renderer matches nodes by id: a node that kept its id <em>tweens</em> from wherever it is on screen to its new props, a new id fades in, a missing id fades out. That one rule is all the animation. It's the same idea as React's <code>key</code>.</p>
+          <p><code>combine(...parts)</code> flattens layouts, nodes and (nested) arrays into one scene and skips falsy parts, so <code>{"show && pointer(...)"}</code> works. <code>translate(part, dx, dy)</code> moves a part; <code>namespace(part, 'left')</code> prefixes its ids so two copies can't collide.</p>
+        </Section>
+
+        <Section id="layouts" title="Layouts and anchors">
+          <p>Layouts turn data into nodes and return the scene plus <em>anchors</em>: functions that tell you where things are, so other parts can attach without coordinate maths.</p>
+          <Code>{`
+const arr = array(nums, { cell: 36 });
+pointer({ id: 'mid', at: arr.top(mid), label: 'mid' });   // arrow onto cell mid
+arr.window(lo, hi);                                         // a band behind cells lo..hi
+
+const p = plot.plane({ x: [-4, 4], y: [-3, 3], width: 440, height: 300 });
+plot.fn(p, Math.sin);                                       // world units, y up
+p.toWorld(e.x, e.y);                                        // drag position → maths coordinates`}</Code>
+          <p>The families: top-level data structures (<code>array, pointer, linkedList, binaryTree, graph, grid, stack, queue</code>) and the namespaces <code>plot</code>, <code>prob</code>, <code>geom</code>, <code>sched</code> and <code>mem</code>. See the <a href="#/api">API</a> for the full list.</p>
+          <p>Ids inside a layout come from your data. <code>array</code> keys cells by index unless you pass <code>keys</code>; give each element a stable key and a swap becomes two tiles sliding past each other instead of two numbers changing in place.</p>
+        </Section>
+
+        <Section id="style" title="Tones, roles and theming">
+          <p>Layouts never pick colours. Each node can carry a <code>tone</code> (<code>active, accent, success, danger, visited, orange, muted, ghost</code>) and a <code>role</code> (<code>value, index, caption, math, curve, grid, axis, area, region, bar, guide</code>…). They become CSS classes, and one stylesheet decides how each looks. Colour changes are CSS transitions; only geometry is tweened in JS.</p>
+          <p>Everything is a CSS variable on <code>.dv-root</code> (diagrams) and <code>.dvc</code> (controls). Override on any ancestor:</p>
+          <Code>{`
+.my-app .dv-root, .my-app .dvc {
+  --dv-active-fill: #ffd166;   /* the yellow highlight */
+  --dv-curve: #0b84f3;         /* plot curves */
+  --dv-font: "Inter", sans-serif;
+}`}</Code>
+          <p>Dark mode switches on <code>[data-theme="dark"]</code> or <code>.dark</code> on any ancestor, or follows the OS when neither is set.</p>
+        </Section>
+
+        <Section id="motion" title="Animation">
+          <p>Tweens start from what's on screen right now, not from the last target, so interrupting an animation (clicking Next twice quickly) never snaps. <code>&lt;Diagram duration ease&gt;</code> sets the feel; while a drag is in progress renders are instant so the shape stays under the pointer.</p>
+          <p>Nodes can say where they come from and go to: <code>enter: {'{ y: parentY }'}</code> makes a tree node grow out of its parent, <code>exit: {'{ x: -40 }'}</code> slides a dequeued cell out to the left. Paths with different point counts are resampled by arc length before tweening, so a curve can morph into another.</p>
+          <p>If the viewer prefers reduced motion, every render is instant.</p>
+        </Section>
+
+        <Section id="interaction" title="Interaction">
+          <p><code>&lt;Diagram onClick onDrag&gt;</code> report the node (with its <code>data</code>) and the pointer position in scene coordinates. Mark nodes <code>interactive</code> for a pointer cursor, <code>draggable</code> to receive drags.</p>
+          <p>For small things you drag, use <code>handle({'{ id, x, y }'})</code>: a visible dot plus a large invisible hit target (small targets are the main reason drag interactions feel bad). <code>plot.point(..., {'{ draggable: true }'})</code> and <code>geom.polygon(..., {'{ draggable: true }'})</code> use it for you, and <code>hint: true</code> pulses a ring until the first touch.</p>
+          <p>Give draggable diagrams a fixed <code>viewBox</code>: an auto-fitting camera would chase the thing you're dragging.</p>
+        </Section>
+
+        <Section id="player" title="Stepping through algorithms">
+          <p>Write the algorithm as a generator that <code>yield</code>s a snapshot whenever something interesting happens. <code>usePlayer</code> runs it once, keeps every frame, and gives you play / pause / step / seek. Yield copies (<code>[...arr]</code>), never the array you keep mutating.</p>
+          <Code>{`
+function* search(a, target) {
+  let lo = 0, hi = a.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    yield { lo, hi, mid, line: 2 };
+    if (a[mid] === target) return;
+    if (a[mid] < target) lo = mid + 1; else hi = mid - 1;
+  }
+}
+const player = usePlayer(() => search(nums, target), [nums, target]);
+<Transport player={player} />
+<CodeTrace lines={code} active={player.frame.line} />`}</Code>
+        </Section>
+
+        <Section id="sizing" title="Sizing">
+          <p>By default diagrams are drawn at their natural size: one scene unit is one CSS pixel, centred, and scaled down only when the container is narrower. That keeps text and line weights identical across every diagram. Pass <code>scale</code> to draw bigger, or <code>size="fill"</code> with a <code>height</code> to stretch to the container instead.</p>
+        </Section>
+
+        <Section id="vanilla" title="Without React">
+          <Code>{`
+import { createView, array, toSVG } from 'dsviz';
+
+const view = createView(document.querySelector('svg'));
+view.render(array([1, 2, 3]));            // animate in the DOM
+view.on('click', (e) => console.log(e.node.data));
+
+const svgString = toSVG(array([1, 2, 3])); // static SVG for SSR, tests, thumbnails`}</Code>
+        </Section>
+
+        <Section id="exercises" title="Exercises">
+          <ol className="exercises">
+            <li><b>Add a <code>warning</code> tone.</b> Pure CSS: find how tones become <code>--dv-c / --dv-cf / --dv-cs</code> in <code>styles.ts</code>.</li>
+            <li><b>A <code>heap()</code> layout.</b> Build the implicit tree (children of i are 2i+1 and 2i+2), reuse <code>binaryTree()</code>, and draw the array underneath with matching keys.</li>
+            <li><b>Three-set Venn.</b> Generalise <code>vennRegions</code>: each of the 7 regions is bounded by arcs between pairwise intersection points.</li>
+            <li><b>Reingold–Tilford.</b> Replace the in-order tree layout with a tidier one, keeping the <code>TreeDiagram</code> return type.</li>
+            <li><b>Text crossfade.</b> When a text node's string changes it swaps instantly. Make <code>render.ts</code> fade the old string out and the new one in.</li>
+          </ol>
+        </Section>
+      </div>
+    </div>
+  );
+}

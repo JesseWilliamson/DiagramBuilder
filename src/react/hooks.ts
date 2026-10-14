@@ -1,4 +1,6 @@
 import { DependencyList, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { burst } from '../fx';
+import { SceneNode } from '../scene';
 import { Player, PlayerOptions, createPlayer } from '../player';
 
 export interface PlayerState<S> {
@@ -83,3 +85,25 @@ export function useTicker(ms: number, active = true): number {
 
 /** Memoise a scene from state. Just `useMemo`, named so the intent reads well at call sites. */
 export const useScene = <T,>(build: () => T, deps: DependencyList): T => useMemo(build, deps);
+
+/**
+ * Celebrations inside a diagram. `fire(x, y)` adds a burst of particles at a
+ * scene position; they clear themselves a moment later.
+ *
+ *   const [particles, fire] = useBurst();
+ *   <Diagram scene={combine(stuff, particles)} />
+ */
+export function useBurst(lifetime = 650): [SceneNode[], (x: number, y: number, opts?: { count?: number; radius?: number }) => void] {
+  const [nodes, setNodes] = useState<SceneNode[]>([]);
+  const n = useRef(0);
+  const timers = useRef<number[]>([]);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
+  const fire = useCallback((x: number, y: number, opts?: { count?: number; radius?: number }) => {
+    const id = `burst${n.current++}`;
+    const parts = burst({ id, x, y, ...opts });
+    setNodes((cur) => [...cur, ...parts]);
+    // removing them from the scene IS the fade-out
+    timers.current.push(window.setTimeout(() => setNodes((cur) => cur.filter((p) => !p.id.startsWith(`${id}:`))), lifetime));
+  }, [lifetime]);
+  return [nodes, fire];
+}

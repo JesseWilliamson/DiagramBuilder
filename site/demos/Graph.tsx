@@ -70,7 +70,6 @@ export default function Graph() {
     <>
       <Diagram
         scene={combine(g, row, label)}
-        height={340}
         viewBox={[-240, -165, 480, 380]}
         onDrag={(e) => setPos((p) => ({ ...p, [(e.node.data as { id: Id }).id]: [e.x, e.y] }))}
         onClick={(e) => { const id = (e.node.data as { id?: Id } | undefined)?.id; if (id) setFrom(id); }}

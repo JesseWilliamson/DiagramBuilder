@@ -3,7 +3,7 @@
 import { V2, combine, linkedList, listFromValues, pointer, text, ListNodeSpec } from 'dsviz';
 import { CodeTrace, Diagram, Transport, usePlayer } from 'dsviz/react';
 
-const values = [4, 8, 15, 16, 23];
+const values = [4, 8, 15, 16];
 
 const code = [
   'prev, curr = None, head',
@@ -64,7 +64,7 @@ export default function LinkedList() {
 
   return (
     <>
-      <Diagram scene={scene} height={200} />
+      <Diagram scene={scene} />
       <CodeTrace lines={code} active={f.line} />
       <Transport player={player} />
     </>

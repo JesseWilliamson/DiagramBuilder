@@ -198,18 +198,16 @@ export function CodeTrace({ lines, active }: { lines: readonly string[]; active?
 export interface ButtonProps {
   children: ReactNode;
   onClick: () => void;
-  /** primary = dark 3D pill (Continue / Check), green = celebratory CTA, ghost = outlined 3D pill. */
-  variant?: 'primary' | 'green' | 'ghost';
-  size?: 'normal' | 'large';
+  /** primary = filled, ghost = outlined. */
+  variant?: 'primary' | 'ghost';
   disabled?: boolean;
   title?: string;
 }
 
-/** A 3D pill button: it sits on a solid lip and drops onto it when pressed. */
-export function Button({ children, onClick, variant = 'ghost', size = 'normal', disabled, title }: ButtonProps) {
+export function Button({ children, onClick, variant = 'ghost', disabled, title }: ButtonProps) {
   injectControlStyles();
   return (
-    <button type="button" className={cx('dvc dvc-btn', variant === 'primary' && 'is-primary', variant === 'green' && 'is-green', size === 'large' && 'is-large')} onClick={onClick} disabled={disabled} title={title}>
+    <button type="button" className={cx('dvc dvc-btn', variant === 'primary' && 'is-primary')} onClick={onClick} disabled={disabled} title={title}>
       {children}
     </button>
   );

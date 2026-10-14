@@ -62,16 +62,16 @@ export function axes(p: Plane, o: AxesOptions = {}): Scene {
     for (const v of xs) {
       if (hideZero && v === 0) continue;
       nodes.push(path({ id: `${id}:tx:${v}`, points: [[p.sx(v), ax - 3], [p.sx(v), ax + 3]], role: 'tick', width: 1 }));
-      nodes.push(text({ id: `${id}:lx:${v}`, x: p.sx(v), y: ax + 13, text: fmt(v), size: 10, role: 'index' }));
+      nodes.push(text({ id: `${id}:lx:${v}`, x: p.sx(v), y: ax + 14, text: fmt(v), size: 11, role: 'index' }));
     }
     for (const v of ys) {
       if (hideZero && v === 0) continue;
       nodes.push(path({ id: `${id}:ty:${v}`, points: [[ay - 3, p.sy(v)], [ay + 3, p.sy(v)]], role: 'tick', width: 1 }));
-      nodes.push(text({ id: `${id}:ly:${v}`, x: ay - 7, y: p.sy(v), text: fmt(v), size: 10, role: 'index', anchor: 'end' }));
+      nodes.push(text({ id: `${id}:ly:${v}`, x: ay - 8, y: p.sy(v), text: fmt(v), size: 11, role: 'index', anchor: 'end' }));
     }
   }
-  if (o.xLabel) nodes.push(text({ id: `${id}:xl`, x: p.width + 14, y: ax, text: o.xLabel, size: 13, role: 'math', anchor: 'start' }));
-  if (o.yLabel) nodes.push(text({ id: `${id}:yl`, x: ay, y: -18, text: o.yLabel, size: 13, role: 'math' }));
+  if (o.xLabel) nodes.push(text({ id: `${id}:xl`, x: p.width + 14, y: ax, text: o.xLabel, size: 15, role: 'math', anchor: 'start' }));
+  if (o.yLabel) nodes.push(text({ id: `${id}:yl`, x: ay, y: -20, text: o.yLabel, size: 15, role: 'math' }));
   return { nodes };
 }
 

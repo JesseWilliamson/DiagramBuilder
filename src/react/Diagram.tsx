@@ -6,11 +6,14 @@ import type { Easing } from '../easing';
 export interface DiagramProps {
   scene: Scene;
   /**
-   * CSS height of the <svg>; width is always 100%. Default 240.
-   * With a fixed `viewBox` this is a MAX height: the svg keeps the viewBox's
-   * aspect ratio, so on a narrow screen the diagram shrinks instead of floating
-   * in empty space.
+   * 'natural' (default): drawn at 1 scene unit = 1px (× `scale`), centred, and
+   * shrunk only when the container is narrower. Every diagram gets the same text
+   * size and line weight. 'fill': stretch to the container (width 100%, `height`).
    */
+  size?: 'natural' | 'fill';
+  /** Pixels per scene unit in natural mode. Default 1. */
+  scale?: number;
+  /** CSS height in 'fill' mode. Default 240. */
   height?: number | string;
   /** 'auto' fits the camera to the scene; a fixed [x, y, w, h] keeps axes still. Default 'auto'. */
   viewBox?: 'auto' | [number, number, number, number];
@@ -38,7 +41,7 @@ export interface DiagramProps {
  *  - Event handlers are read through a ref, so passing a fresh inline `onDrag`
  *    every render doesn't tear down and rebuild the view's listeners.
  */
-export function Diagram({ scene, height = 240, viewBox = 'auto', padding, duration, ease, onClick, onDragStart, onDrag, onDragEnd, className, label }: DiagramProps) {
+export function Diagram({ scene, size = 'natural', scale, height = 240, viewBox = 'auto', padding, duration, ease, onClick, onDragStart, onDrag, onDragEnd, className, label }: DiagramProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const viewRef = useRef<View | null>(null);
   const dragging = useRef(false);
@@ -49,7 +52,7 @@ export function Diagram({ scene, height = 240, viewBox = 'auto', padding, durati
 
   // Create / destroy the view. `viewBox`, `padding`, `duration` are creation options.
   useEffect(() => {
-    const view = createView(svgRef.current!, { viewBox, padding, duration, ease });
+    const view = createView(svgRef.current!, { viewBox, padding, duration, ease, size, scale });
     viewRef.current = view;
     const offs = [
       view.on('click', (e) => handlers.current.onClick?.(e)),
@@ -64,7 +67,7 @@ export function Diagram({ scene, height = 240, viewBox = 'auto', padding, durati
       viewRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [padding, duration, ease]);
+  }, [padding, duration, ease, size, scale]);
 
   // Camera changes don't need a new view.
   useEffect(() => {
@@ -78,8 +81,8 @@ export function Diagram({ scene, height = 240, viewBox = 'auto', padding, durati
     viewRef.current?.render(scene, dragging.current ? { duration: 0 } : undefined);
   }, [scene]);
 
-  const style = Array.isArray(viewBox)
-    ? { width: '100%', height: 'auto', aspectRatio: `${viewBox[2]} / ${viewBox[3]}`, maxHeight: height, display: 'block' }
+  const style = size === 'natural'
+    ? { display: 'block', maxWidth: '100%', height: 'auto', margin: '0 auto', overflow: 'visible' }
     : { width: '100%', height, display: 'block' };
   return <svg ref={svgRef} className={className} style={style} role="img" aria-label={label} />;
 }

@@ -49,17 +49,18 @@ export function bars(values: readonly number[], o: BarsOptions = {}): BarsDiagra
   const cx = (i: number) => x0 + slot * (i + 0.5);
   const nodes: SceneNode[] = [];
   values.forEach((v, i) => {
-    const top = Math.min(yOf(v), y0 + H - 0.5);
+    const top = Math.min(yOf(v), y0 + H);
     const h = y0 + H - top;
     nodes.push(
       rect({
-        id: `${id}:bar:${i}`, x: cx(i), y: top + h / 2, w: bw, h, rx: Math.min(3, bw / 4),
+        // a zero-height bar would still draw its outline as a stray line, so hide it (but keep its id, so it can grow back)
+        id: `${id}:bar:${i}`, x: cx(i), y: top + h / 2, w: bw, h, rx: Math.min(3, bw / 4), opacity: h < 0.5 ? 0 : 1,
         role: 'bar', tone: resolveTone(o.tones, i, v),
         enter: { y: y0 + H, h: 0 }, interactive: o.interactive, data: { index: i, value: v },
       }),
     );
-    if (o.showValues) nodes.push(text({ id: `${id}:val:${i}`, x: cx(i), y: top - 9, text: o.format ? o.format(v, i) : String(v), size: 10, role: 'value', enter: { y: y0 + H - 9 } }));
-    if (o.labels) nodes.push(text({ id: `${id}:label:${i}`, x: cx(i), y: y0 + H + 12, text: String(o.labels[i] ?? ''), size: 11, role: 'index' }));
+    if (o.showValues) nodes.push(text({ id: `${id}:val:${i}`, x: cx(i), y: top - 9, text: o.format ? o.format(v, i) : String(v), size: 11, role: 'value', enter: { y: y0 + H - 9 } }));
+    if (o.labels) nodes.push(text({ id: `${id}:label:${i}`, x: cx(i), y: y0 + H + 13, text: String(o.labels[i] ?? ''), size: 12, role: 'index' }));
   });
   nodes.push(path({ id: `${id}:baseline`, points: [[x0, y0 + H], [x0 + W, y0 + H]], role: 'axis', width: 1 }));
   if (o.reference !== undefined) nodes.push(path({ id: `${id}:ref`, points: [[x0, yOf(o.reference)], [x0 + W, yOf(o.reference)]], role: 'guide', width: 1.25 }));
@@ -102,7 +103,7 @@ export function sampleSpace(rows: number, cols: number, o: SampleSpaceOptions = 
       const tone = o.tones?.(r, c);
       nodes.push(rect({ id: `${id}:${r}:${c}`, x: p.x, y: p.y, w: cell, h: cell, rx: 4, tone, interactive: o.interactive, data: { r, c } }));
       const s = o.text?.(r, c);
-      if (s) nodes.push(text({ id: `${id}:${r}:${c}:t`, x: p.x, y: p.y, text: s, size: Math.round(cell * 0.36), role: 'value', tone: tone === 'muted' ? 'muted' : undefined }));
+      if (s) nodes.push(text({ id: `${id}:${r}:${c}:t`, x: p.x, y: p.y, text: s, size: Math.round(cell * 0.42), role: 'value', tone: tone === 'muted' ? 'muted' : undefined }));
     }
   }
   o.colLabels?.forEach((l, c) => nodes.push(text({ id: `${id}:col:${c}`, x: center(0, c).x, y: y0 - 12, text: String(l), size: 11, role: 'index' })));

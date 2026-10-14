@@ -1,22 +1,36 @@
 # dsviz
 
-Interactive, animated SVG teaching diagrams: algorithms, functions, probability, geometry, scheduling and memory.
-A framework-free core plus a thin React layer.
+A TypeScript library for interactive, animated SVG diagrams for teaching: data structures and algorithms,
+plots, probability, geometry, CPU scheduling and memory. You describe the picture as data; dsviz draws it
+and animates every change. Framework-free core, thin React layer.
 
 ```
 state ──▶ layout functions ──▶ Scene (plain data, stable ids) ──▶ <Diagram> / createView / toSVG
 ```
 
-```tsx
-import { array, combine, pointer, plot, prob, geom, sched, mem } from 'dsviz';
-import { Diagram, Transport, usePlayer, Slider, Segmented } from 'dsviz/react';
+## Use it in a project
+
+```sh
+npm install github:JesseWilliamson/DiagramBuilder   # the prepare script builds dist/
 ```
 
-The demo site (`site/`) is a Brilliant-style course app: 6 courses, 18 lessons, 25 interactive diagrams. Press `</>` in any lesson to edit the diagram's code live; each one is a copy-pasteable React component.
+```tsx
+import { array, combine, pointer } from 'dsviz';
+import { Diagram } from 'dsviz/react';
 
-- `npm run dev` — the demo site
+const arr = array([3, 8, 12, 17], { tones: { 2: 'active' } });
+<Diagram scene={combine(arr, pointer({ id: 'i', at: arr.top(2), label: 'i' }))} />
+```
+
+Families: data structures at the top level (`array`, `pointer`, `linkedList`, `binaryTree`, `graph`, `grid`,
+`stack`, `queue`) and the namespaces `plot`, `prob`, `geom`, `sched`, `mem`. Colours are CSS variables
+(`--dv-*`) you can override; dark mode via `[data-theme="dark"]`.
+
+## This repo
+
+- `npm run dev` — the docs and examples site (`site/`)
 - `npm test` — unit tests
 - `npm run build` — library build into `dist/`
-- `npm run build:site` — static demo site into `site-dist/` (deployed to GitHub Pages by CI)
+- `npm run build:site` — static site into `site-dist/` (deployed to GitHub Pages by CI)
 
-See `CLAUDE.md` for the design notes.
+See `CLAUDE.md` for design notes.

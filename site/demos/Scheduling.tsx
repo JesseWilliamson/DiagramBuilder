@@ -28,24 +28,23 @@ export default function Scheduling() {
     lanes: procs.map((p) => p.id), unit: 21, end: s.end, now, tones,
     arrivals: Object.fromEntries(procs.map((p) => [p.id, p.arrival])),
   });
-  const y = chart.bottom + 26;
-  const queue = array(ready, { id: 'ready', keys: ready, x: 66, y, cell: 28, gap: 4, showIndices: false, tones: (i) => tones[ready[i]], enterOffset: { x: 40, y: 0 }, exitOffset: { x: -40, y: 0 } });
-  const cpu = now < s.end && tick.running
-    ? array([tick.running], { id: 'cpu', keys: [tick.running], x: 340, y, cell: 28, showIndices: false, tones: () => tones[tick.running!] })
-    : null;
+  // under the chart: the ready queue (keyed by process, so it slides) and what's on the CPU
+  const y = chart.bottom + 22;
+  const queue = array(ready, { id: 'ready', keys: ready, x: 48, y, cell: 28, gap: 4, showIndices: false, tones: (i) => tones[ready[i]], enterOffset: { x: 40, y: 0 }, exitOffset: { x: -40, y: 0 } });
+  const running = now < s.end ? tick.running : null;
+  const cpu = running ? array([running], { id: 'cpu', keys: [running], x: 300, y, cell: 28, showIndices: false, tones: () => tones[running] }) : null;
+  const labels = [
+    text({ id: 'ready-l', x: -10, y: y + 14, text: 'ready', size: 12, role: 'caption', anchor: 'end' }),
+    !ready.length && text({ id: 'ready-empty', x: 48, y: y + 14, text: 'empty', size: 12, role: 'caption', anchor: 'start' }),
+    text({ id: 'cpu-l', x: 290, y: y + 14, text: 'CPU', size: 12, role: 'caption', anchor: 'end' }),
+    !running && text({ id: 'cpu-idle', x: 300, y: y + 14, text: 'idle', size: 12, role: 'caption', anchor: 'start' }),
+  ];
 
   const finished = s.stats.filter((st) => st.completion <= now);
 
   return (
     <>
-      <Diagram
-        scene={combine(
-          chart, queue, cpu,
-          text({ id: 'ready-l', x: 56, y: y + 14, text: 'ready', size: 12, role: 'caption', anchor: 'end' }),
-          text({ id: 'cpu-l', x: 330, y: y + 14, text: 'CPU', size: 12, role: 'caption', anchor: 'end' }),
-        )}
-        height={270}
-      />
+      <Diagram scene={combine(chart, queue, cpu, labels)} />
       <Transport player={player} />
       <div className="row spread">
         <Segmented value={policy} onChange={setPolicy} options={policies} />

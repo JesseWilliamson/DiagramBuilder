@@ -2,7 +2,7 @@
 // P(region) is its area as a fraction of the rectangle U.
 import { useState } from 'react';
 import { prob, Vec } from 'dsviz';
-import { Button, Challenge, Diagram } from 'dsviz/react';
+import { Button, Diagram } from 'dsviz/react';
 
 type Region = prob.VennRegion;
 const U: [number, number, number, number] = [0, 0, 440, 250];
@@ -35,7 +35,6 @@ export default function Venn() {
     <>
       <Diagram
         scene={prob.venn2(a, b, { highlight: sel, universe: U, interactive: true, draggable: true })}
-        height={270}
         viewBox={[-10, -10, U[2] + 20, U[3] + 20]}
         onDrag={(e) => ((e.node.data as { set: 'a' | 'b' }).set === 'a' ? setA((d) => place(d, e)) : setB((d) => place(d, e)))}
         onClick={(e) => toggle(prob.vennRegionAt(e, a, b))}
@@ -54,13 +53,6 @@ export default function Venn() {
         <span>P(A ∩ B) = <b>{P.both.toFixed(3)}</b></span>
         <span className={independent ? 'tone-success' : ''}>P(A)·P(B) = <b>{(pA * pB).toFixed(3)}</b>{independent && ' (independent!)'}</span>
       </div>
-      <Challenge
-        goals={[
-          { label: 'Make A and B mutually exclusive (no overlap)', done: P.both < 1e-6 },
-          { label: 'Put B entirely inside A', done: Math.hypot(a.x - b.x, a.y - b.y) <= a.r - b.r },
-          { label: 'Make A and B independent: P(A ∩ B) = P(A)·P(B)', done: independent && P.both > 0.005 },
-        ]}
-      />
     </>
   );
 }

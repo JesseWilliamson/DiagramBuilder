@@ -14,18 +14,18 @@ export default function Dice() {
   const hits = counts.reduce((n, c, i) => n + (inEvent(i + 2) ? c : 0), 0);
 
   const space = prob.sampleSpace(6, 6, {
-    x: 0, y: 30, cell: 30, gap: 4,
+    x: 0, y: 32, cell: 32, gap: 4,
     text: (r, c) => String(r + c + 2),
     tones: (r, c) => (inEvent(r + c + 2) ? 'accent' : 'muted'),
     interactive: true,
   });
   // die faces as headers: pips, not numbers
   const dieHeaders = Array.from({ length: 6 }, (_, i) => [
-    prob.diePips(i + 1, space.center(0, i).x, 8, { id: `col-die-${i}`, size: 20 }),
-    prob.diePips(i + 1, -20, space.center(i, 0).y, { id: `row-die-${i}`, size: 20 }),
+    prob.diePips(i + 1, space.center(0, i).x, 8, { id: `col-die-${i}`, size: 22 }),
+    prob.diePips(i + 1, -22, space.center(i, 0).y, { id: `row-die-${i}`, size: 22 }),
   ]);
   const chart = prob.bars(counts, {
-    id: 'dist', x: 250, y: 40, width: 270, height: 150,
+    id: 'dist', x: 252, y: 56, width: 230, height: 150,
     labels: counts.map((_, i) => i + 2), showValues: true, max: 6.5,
     tones: (i) => (inEvent(i + 2) ? 'accent' : 'muted'),
     interactive: true,
@@ -35,7 +35,6 @@ export default function Dice() {
     <>
       <Diagram
         scene={combine(space, dieHeaders, chart)}
-        height={250}
         onClick={(e) => {
           const d = e.node.data as { r?: number; c?: number; index?: number } | undefined;
           if (d?.r !== undefined && d.c !== undefined) setK(d.r + d.c + 2);
@@ -48,7 +47,6 @@ export default function Dice() {
           P(sum {mode} {k}) = <b className="tone-accent">{hits}</b>/36 = <b>{(hits / 36).toFixed(3)}</b>
         </p>
       </div>
-      <p className="hint">Why is 7 the most likely sum? Count the diagonals.</p>
     </>
   );
 }

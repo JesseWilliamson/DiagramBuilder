@@ -69,9 +69,11 @@ export default function MontyHall() {
   });
 
   const rate = (s: { won: number; n: number }) => (s.n ? s.won / s.n : 0);
-  const chart = prob.bars([rate(tally.stay), rate(tally.switch)], {
+  // win rates, once there's something to show (two flat 0% bars just look broken)
+  const played = tally.stay.n + tally.switch.n > 0;
+  const chart = played && prob.bars([rate(tally.stay), rate(tally.switch)], {
     id: 'rates', x: 3 * (DW + GAP) + 30, y: 10, width: 130, height: DH - 10, max: 1,
-    labels: ['stay', 'switch'], showValues: true, format: (v) => `${Math.round(v * 100)}%`, tones: { 0: 'muted', 1: 'success' },
+    labels: ['stay', 'switch'], showValues: true, format: (v) => `${Math.round(v * 100)}%`, tones: { 0: 'muted', 1: 'success' }, reference: 2 / 3,
   });
 
   const msg =
@@ -81,7 +83,7 @@ export default function MontyHall() {
 
   return (
     <>
-      <Diagram scene={combine(doors, chart, particles)} height={200} viewBox={[-6, -28, 520, DH + 60]} onClick={(e) => typeof e.node.data === 'number' && click(e.node.data)} />
+      <Diagram scene={combine(doors, chart, particles)} viewBox={[-6, -28, 520, DH + 60]} onClick={(e) => typeof e.node.data === 'number' && click(e.node.data)} />
       <p className="status">{msg}</p>
       <div className="row">
         <Button variant="primary" onClick={() => setG(newGame())}>{g.stage === 'done' ? 'Play again' : 'Restart'}</Button>

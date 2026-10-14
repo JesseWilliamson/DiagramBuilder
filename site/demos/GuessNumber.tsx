@@ -1,98 +1,76 @@
-// Play before you learn: I'm thinking of a number from 1 to 100. Drag the marker
-// (or click the line) to aim, then guess. Can you always win in 7?
+// A number line you can aim at. The blue band is everything still possible;
+// each guess is a pin. Drag the marker (or click the line), then Guess.
 import { useState } from 'react';
 import { combine, handle, path, rect, text } from 'dsviz';
-import { Button, Challenge, Diagram, useBurst } from 'dsviz/react';
+import { Button, Diagram, useBurst } from 'dsviz/react';
 
-const W = 460;
+const W = 420;
 const x = (n: number) => ((n - 1) / 99) * W; // number → pixel
 const n = (px: number) => Math.max(1, Math.min(100, Math.round((px / W) * 99 + 1))); // pixel → number
-const secretNumber = () => 1 + Math.floor(Math.random() * 100);
+const pick = () => 1 + Math.floor(Math.random() * 100);
 
 export default function GuessNumber() {
-  const [secret, setSecret] = useState(secretNumber);
+  const [secret, setSecret] = useState(pick);
   const [guesses, setGuesses] = useState<number[]>([]);
   const [aim, setAim] = useState(50);
   const [touched, setTouched] = useState(false);
-  const [wins, setWins] = useState<{ count: number; middle: boolean }[]>([]);
   const [particles, fire] = useBurst();
 
-  // The live range is everything not ruled out by a "too high" / "too low".
+  // the live range: everything not ruled out by a "too low" or "too high"
   const lo = Math.max(1, ...guesses.filter((g) => g < secret).map((g) => g + 1));
   const hi = Math.min(100, ...guesses.filter((g) => g > secret).map((g) => g - 1));
   const won = guesses.includes(secret);
   const last = guesses.at(-1);
 
-  function guess() {
+  const guess = () => {
     if (won) return;
-    const next = [...guesses, aim];
-    setGuesses(next);
-    if (aim === secret) {
-      fire(x(aim), 6, { count: 18, radius: 54 });
-      // did every guess split the live range in half?
-      let l = 1, h = 100, middle = true;
-      for (const g of next) {
-        if (Math.abs(g - Math.floor((l + h) / 2)) > 1) middle = false;
-        if (g < secret) l = g + 1; else if (g > secret) h = g - 1;
-      }
-      setWins((w) => [...w, { count: next.length, middle }]);
-    }
-  }
-  function newGame() {
-    setSecret(secretNumber());
-    setGuesses([]);
-    setAim(50);
-  }
+    setGuesses([...guesses, aim]);
+    if (aim === secret) fire(x(aim), -20, { count: 18, radius: 50 });
+  };
+  const aimAt = (px: number) => { setTouched(true); setAim(n(px)); };
 
   const scene = combine(
-    rect({ id: 'track', x: W / 2, y: 6, w: W + 12, h: 22, rx: 6, role: 'track', interactive: true }),
-    // ruled-out ends, and the live window between them
-    lo > 1 && rect({ id: 'out-lo', x: x(lo - 0.5) / 2, y: 6, w: x(lo - 0.5), h: 22, rx: 6, tone: 'muted', exit: { w: 0, x: 0 } }),
-    hi < 100 && rect({ id: 'out-hi', x: (x(hi + 0.5) + W) / 2, y: 6, w: W - x(hi + 0.5), h: 22, rx: 6, tone: 'muted', exit: { w: 0, x: W } }),
-    rect({ id: 'live', x: (x(lo - 0.45) + x(hi + 0.45)) / 2, y: 6, w: Math.max(4, x(hi + 0.45) - x(lo - 0.45)), h: 22, rx: 6, role: 'window', tone: won ? 'success' : undefined }),
-    [1, 25, 50, 75, 100].map((v) => text({ id: `tick${v}`, x: x(v), y: 30, text: String(v), size: 10, role: 'index' })),
-    // one pin per guess, keyed by guess number so earlier pins stay put
+    rect({ id: 'hit', x: W / 2, y: 0, w: W + 20, h: 40, role: 'hit', interactive: true }), // click anywhere on the line
+    rect({ id: 'live', x: (x(lo) + x(hi)) / 2, y: 0, w: Math.max(8, x(hi) - x(lo) + 8), h: 12, rx: 6, tone: won ? 'success' : 'accent' }),
+    path({ id: 'axis', points: [[0, 0], [W, 0]], role: 'axis' }),
+    Array.from({ length: 11 }, (_, k) => {
+      const v = k === 0 ? 1 : k * 10;
+      return [
+        path({ id: `tick${v}`, points: [[x(v), -4], [x(v), 4]], role: 'tick' }),
+        text({ id: `num${v}`, x: x(v), y: 18, text: String(v), size: 11, role: 'index' }),
+      ];
+    }),
     guesses.map((g, i) => {
       const tone = g === secret ? 'success' : g > secret ? 'danger' : 'visited';
       return [
-        path({ id: `pin${i}`, points: [[x(g), -5], [x(g), -26]], role: 'curve', tone, width: 2, enter: { opacity: 0 } }),
-        text({ id: `pin${i}:t`, x: x(g), y: -36, text: String(g), size: 11, role: 'value', tone }),
+        path({ id: `pin${i}`, points: [[x(g), -8], [x(g), -34]], role: 'curve', tone, width: 2 }),
+        text({ id: `pin${i}:t`, x: x(g), y: -44, text: String(g), size: 13, role: 'value' }),
       ];
     }),
-    !won && handle({ id: 'aim', x: x(aim), y: 6, r: 7, hit: 18, hint: !touched, tone: 'active', data: 'aim' }),
-    !won && text({ id: 'aim:t', x: x(aim), y: 50, text: String(aim), size: 13, role: 'value', tone: 'active' }),
-    won && text({ id: 'win', x: x(secret), y: 50, text: `${secret}!`, size: 15, role: 'value', tone: 'success' }),
+    !won && handle({ id: 'aim', x: x(aim), y: 0, r: 7, hint: !touched, tone: 'active' }),
+    !won && text({ id: 'aim:t', x: x(aim), y: 38, text: String(aim), size: 14, role: 'value' }),
     particles,
   );
 
   const status = won
-    ? `Got it in ${guesses.length} ${guesses.length === 1 ? 'guess' : 'guesses'}.`
+    ? `Found ${secret} in ${guesses.length} ${guesses.length === 1 ? 'guess' : 'guesses'}.`
     : last === undefined
-      ? 'Aim with the marker, then press Guess.'
-      : `${last} is too ${last > secret ? 'high' : 'low'}. It's somewhere in ${lo}–${hi} (${hi - lo + 1} left).`;
+      ? 'Aim, then guess. Can you always do it in 7?'
+      : `${last} is too ${last > secret ? 'high' : 'low'}. It's in ${lo}–${hi}.`;
 
   return (
     <>
       <Diagram
         scene={scene}
-        height={130}
-        viewBox={[-14, -52, W + 28, 115]}
-        onDrag={(e) => { setTouched(true); setAim(n(e.x)); }}
-        onClick={(e) => { if (e.id === 'track') { setTouched(true); setAim(n(e.x)); } }}
+        viewBox={[-16, -62, W + 32, 112]}
+        onDrag={(e) => aimAt(e.x)}
+        onClick={(e) => e.id === 'hit' && aimAt(e.x)}
       />
       <p className="status">{status}</p>
       <div className="row">
         <Button variant="primary" onClick={guess} disabled={won}>Guess {won ? '' : aim}</Button>
-        <Button onClick={newGame}>New number</Button>
-        <span className="stats">guesses <b>{guesses.length}</b> · wins <b>{wins.length}</b></span>
+        <Button onClick={() => { setSecret(pick()); setGuesses([]); setAim(50); }}>New number</Button>
       </div>
-      <Challenge
-        goals={[
-          { label: 'Find the number', done: wins.length > 0 },
-          { label: 'Find one in 7 guesses or fewer', done: wins.some((w) => w.count <= 7) },
-          { label: 'Win by always guessing the middle of the live range', done: wins.some((w) => w.middle) },
-        ]}
-      />
     </>
   );
 }

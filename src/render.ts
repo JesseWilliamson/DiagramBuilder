@@ -30,6 +30,15 @@ export interface ViewOptions {
   ease?: Easing;
   /** 'auto' fits the viewBox to the scene (and animates it); or pass a fixed [x, y, w, h]. */
   viewBox?: 'auto' | [number, number, number, number];
+  /**
+   * 'natural' (default): the svg's width/height follow the viewBox, so one scene
+   * unit is one CSS pixel (times `scale`). Text and strokes come out the same
+   * size in every diagram; CSS `max-width: 100%` lets it shrink on small screens.
+   * 'fill': no size attributes; you size the svg with CSS and the drawing stretches.
+   */
+  size?: 'natural' | 'fill';
+  /** Pixels per scene unit in 'natural' mode. Default 1. */
+  scale?: number;
   /** Padding around the scene in 'auto' mode. Default 24. */
   padding?: number;
   /** Inject the default stylesheet into <head>. Default true. */
@@ -105,9 +114,19 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
 
   // The viewBox is animated exactly like a node: from → to over a duration.
   let vb = { from: [0, 0, 1, 1], to: [0, 0, 1, 1], cur: [0, 0, 1, 1], start: 0, dur: 0 };
+  // In natural mode the element's size tracks the viewBox, so 1 unit = `scale` px.
+  const natural = (opts.size ?? 'natural') === 'natural';
+  const scale = opts.scale ?? 1;
+  function setBox(box: number[]) {
+    svg.setAttribute('viewBox', box.map((v) => Math.round(v * 100) / 100).join(' '));
+    if (natural) {
+      svg.setAttribute('width', String(Math.round(box[2] * scale)));
+      svg.setAttribute('height', String(Math.round(box[3] * scale)));
+    }
+  }
   if (Array.isArray(opts.viewBox)) {
     vb.cur = vb.to = vb.from = [...opts.viewBox];
-    svg.setAttribute('viewBox', vb.cur.join(' '));
+    setBox(vb.cur);
   }
 
   const reducedMotion = () =>
@@ -140,7 +159,7 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
       const t = vb.dur <= 0 ? 1 : Math.min(1, (now - vb.start) / vb.dur);
       const k = easeInOutCubic(t);
       vb.cur = vb.to.map((v, i) => lerp(vb.from[i], v, k));
-      svg.setAttribute('viewBox', vb.cur.map((v) => Math.round(v * 100) / 100).join(' '));
+      setBox(vb.cur);
       if (t < 1) busy = true;
     }
     raf = busy ? requestAnimationFrame(frame) : 0;
@@ -299,7 +318,7 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
       opts.viewBox = v;
       if (Array.isArray(v)) {
         vb.cur = vb.to = vb.from = [...v];
-        svg.setAttribute('viewBox', v.join(' '));
+        setBox(v);
       } else render(current, { duration: 0 });
     },
     toWorld,

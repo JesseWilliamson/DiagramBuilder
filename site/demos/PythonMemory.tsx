@@ -32,7 +32,7 @@ const steps: Step[] = [
   { line: 8, frames: [{ name: 'Global', vars: [{ name: 'a', value: ref('L1') }, { name: 'b', value: ref('L1') }, { name: 'c', value: ref('L2') }, { name: 'grow', value: ref('fn') }] }], heap: [{ id: 'L1', kind: 'list', items: [1, 2, 3] }, { id: 'L2', kind: 'list', items: [99, 2, 3, 4] }, fn], note: 'Output: [1, 2, 3] [99, 2, 3, 4]' },
 ];
 
-// Fixed heap positions so objects don't jump when one is added.
+// Fixed heap positions, so an object never jumps when another is added.
 const positions = { L1: { x: 0, y: 20 }, L2: { x: 0, y: 92 }, fn: { x: 0, y: 164 } };
 
 export default function PythonMemory() {
@@ -40,7 +40,7 @@ export default function PythonMemory() {
   const s = player.frame!;
   return (
     <>
-      <Diagram scene={mem.stackHeap(s.frames, s.heap, { tones: s.tones, positions, frameWidth: 150, heapX: 270 })} height={240} viewBox={[-10, -14, 470, 250]} />
+      <Diagram scene={mem.stackHeap(s.frames, s.heap, { tones: s.tones, positions, frameWidth: 150, heapX: 270 })} />
       <p className="status">{s.note}</p>
       <CodeTrace lines={code} active={s.line} />
       <Transport player={player} />

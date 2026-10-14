@@ -38,7 +38,7 @@ export default function BubbleSort() {
 
   return (
     <>
-      <Diagram scene={scene} height={140} />
+      <Diagram scene={scene} />
       <p className="status">
         {f.j < 0 ? 'Sorted.' : f.swap ? `Swapped a[${f.j}] and a[${f.j + 1}].` : `Compare a[${f.j}] and a[${f.j + 1}].`}
       </p>

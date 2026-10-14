@@ -1,49 +1,46 @@
-// Why binary search is fast: every step halves the interval, so n values take about log₂ n steps.
-// The slider moves the EXPONENT, so each notch doubles n.
+// Why binary search is fast: every step halves what's left, so n values need
+// about log₂ n steps. The slider moves the exponent, so each notch doubles n.
+import { useState } from 'react';
 import { combine, rect, text } from 'dsviz';
 import { Diagram, Slider } from 'dsviz/react';
-import { useState } from 'react';
 
 const steps = (n: number) => Math.floor(Math.log2(n)) + 1;
+const short = (v: number) => (v >= 2 ** 20 ? `${v / 2 ** 20}M` : v >= 1024 ? `${v / 1024}k` : String(v));
+
+const CHIP = 36, GAP = 6, PER_ROW = 11, BAR = 280;
 
 export default function WhyFast() {
   const [k, setK] = useState(6);
   const n = 2 ** k;
 
-  // Halving chips: n, n/2, … 1. Keyed by position in the chain, so they slide as n changes.
-  const sizes: number[] = [];
-  for (let s = n; s >= 1; s = Math.floor(s / 2)) sizes.push(s);
-  const chipW = 34, gap = 6;
-  const chips = sizes.flatMap((s, i) => {
-    const x = i * (chipW + gap) + chipW / 2;
-    const label = s >= 1000 ? `${Math.round(s / 1024)}k` : String(s);
+  // n, n/2, …, 1 as chips, wrapping after 11. Keyed by position in the chain,
+  // so moving the slider slides chips along rather than redrawing them.
+  const sizes = Array.from({ length: k + 1 }, (_, i) => n / 2 ** i);
+  const chips = sizes.map((s, i) => {
+    const x = (i % PER_ROW) * (CHIP + GAP) + CHIP / 2, y = Math.floor(i / PER_ROW) * 34;
+    const last = i === sizes.length - 1;
     return [
-      rect({ id: `chip:${i}`, x, y: 12, w: chipW, h: 24, rx: 6, tone: i === sizes.length - 1 ? 'success' : undefined }),
-      text({ id: `chip:${i}:t`, x, y: 12, text: label, size: 10, role: 'value' }),
+      rect({ id: `chip${i}`, x, y, w: CHIP, h: 26, rx: 5, tone: last ? 'success' : undefined }),
+      text({ id: `chip${i}:t`, x, y, text: short(s), size: 12, role: 'value' }),
     ];
   });
 
-  // Both bars on one scale: the linear scan is always full width.
-  const W = 380;
+  // both bars share one scale: the linear scan always fills it
+  const top = 34 * Math.ceil(sizes.length / PER_ROW) + 18;
   const bar = (id: string, y: number, v: number, tone: 'success' | 'muted', label: string) => [
-    text({ id: `${id}:l`, x: 0, y, text: label, size: 11, anchor: 'start', role: 'caption' }),
-    rect({ id: `${id}:track`, x: 100 + W / 2, y, w: W, h: 6, rx: 3, role: 'track' }),
-    rect({ id: `${id}:bar`, x: 100 + Math.max(3, (W * v) / n) / 2, y, w: Math.max(3, (W * v) / n), h: 6, rx: 3, tone }),
-    text({ id: `${id}:v`, x: 100 + W + 50, y, text: v.toLocaleString(), size: 11, anchor: 'end', role: 'value' }),
+    text({ id: `${id}:l`, x: 0, y, text: label, size: 13, anchor: 'start' }),
+    rect({ id: `${id}:track`, x: 110 + BAR / 2, y, w: BAR, h: 10, rx: 5, role: 'track' }),
+    rect({ id: `${id}:bar`, x: 110 + Math.max(10, (BAR * v) / n) / 2, y, w: Math.max(10, (BAR * v) / n), h: 10, rx: 5, tone }),
+    text({ id: `${id}:v`, x: 110 + BAR + 12, y, text: v.toLocaleString(), size: 13, anchor: 'start', role: 'value' }),
   ];
 
   return (
     <>
-      <Slider label="Array size" value={k} onChange={setK} min={1} max={20} ticks={Array.from({ length: 20 }, (_, i) => i + 1)} format={() => `n = ${n.toLocaleString()}`} />
-      <Diagram
-        scene={combine(chips, bar('bin', 72, steps(n), 'success', 'Binary search'), bar('lin', 98, n, 'muted', 'Linear scan'))}
-        height={130}
-        viewBox={[-8, -10, 548, 125]}
-      />
+      <Slider label="Array size" value={k} onChange={setK} min={1} max={20} format={() => `n = ${n.toLocaleString()}`} />
+      <Diagram scene={combine(chips, bar('bin', top, steps(n), 'success', 'Binary search'), bar('lin', top + 28, n, 'muted', 'Linear scan'))} />
       <p className="status">
-        At n = {n.toLocaleString()}, binary search needs <b className="tone-success">{steps(n)}</b> comparisons where a scan needs up to <b>{n.toLocaleString()}</b>.
+        <b className="tone-success">{steps(n)}</b> comparisons for binary search, up to <b>{n.toLocaleString()}</b> for a linear scan.
       </p>
-      <p className="hint">Drag to the end: a million values, twenty-one questions.</p>
     </>
   );
 }

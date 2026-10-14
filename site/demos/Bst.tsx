@@ -60,7 +60,6 @@ export default function Bst() {
     <>
       <Diagram
         scene={scene}
-        height={290}
         onClick={(e) => {
           const key = (e.node.data as { key?: number } | undefined)?.key;
           if (key !== undefined) walk(key, () => setTones({ [key]: 'success' }));

@@ -42,7 +42,6 @@ export default function Inscribed() {
     <>
       <Diagram
         scene={scene}
-        height={320}
         viewBox={[60, 10, 320, 290]}
         onDrag={(e) => {
           setTouched(true);

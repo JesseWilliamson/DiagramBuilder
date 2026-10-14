@@ -28,16 +28,16 @@ export default function Bayes() {
   const W = 380, y = 160;
   const split = W * posterior;
   const bar = [
-    text({ id: 'bar:title', x: 0, y: y - 16, text: 'everyone who tests +', size: 11, role: 'caption', anchor: 'start' }),
+    text({ id: 'bar:title', x: 0, y: y - 18, text: 'everyone who tests +', size: 12, role: 'caption', anchor: 'start' }),
     rect({ id: 'bar:tp', x: split / 2, y, w: Math.max(0, split), h: 18, rx: 3, tone: 'success' }),
     rect({ id: 'bar:fp', x: split + (W - split) / 2, y, w: Math.max(0, W - split), h: 18, rx: 3, tone: 'danger' }),
-    text({ id: 'bar:tp:t', x: 4, y: y + 22, text: `sick ${pct(posterior)}`, size: 11, role: 'value', tone: 'success', anchor: 'start' }),
-    text({ id: 'bar:fp:t', x: W - 4, y: y + 22, text: `healthy ${pct(1 - posterior)}`, size: 11, role: 'value', tone: 'danger', anchor: 'end' }),
+    text({ id: 'bar:tp:t', x: 4, y: y + 22, text: `sick ${pct(posterior)}`, size: 12, role: 'value', tone: 'success', anchor: 'start' }),
+    text({ id: 'bar:fp:t', x: W - 4, y: y + 22, text: `healthy ${pct(1 - posterior)}`, size: 12, role: 'value', tone: 'danger', anchor: 'end' }),
   ];
 
   return (
     <>
-      <Diagram scene={combine(tree, bar)} height={260} />
+      <Diagram scene={combine(tree, bar)} />
       <div className="row"><div className="grow"><Slider label="Prevalence" value={prior} onChange={setPrior} min={0.1} max={20} step={0.1} format={(v) => `${v}%`} /></div></div>
       <div className="row"><div className="grow"><Slider label="Sensitivity" value={sens} onChange={setSens} min={50} max={100} step={0.5} format={(v) => `${v}%`} /></div></div>
       <div className="row"><div className="grow"><Slider label="Specificity" value={spec} onChange={setSpec} min={50} max={100} step={0.5} format={(v) => `${v}%`} /></div></div>

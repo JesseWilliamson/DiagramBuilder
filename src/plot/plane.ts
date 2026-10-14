@@ -62,7 +62,7 @@ export function plane(o: PlaneOptions): Plane {
     clamp: (p) => V2(Math.min(x1, Math.max(x0, p.x)), Math.min(y1, Math.max(y0, p.y))),
     unitX: width / (x1 - x0),
     unitY: height / (y1 - y0),
-    viewBox(pad = [16, 16, 30, 34]) {
+    viewBox(pad = [30, 30, 28, 34]) {
       const [t, r, b, l] = typeof pad === 'number' ? [pad, pad, pad, pad] : pad;
       return [-l, -t, width + l + r, height + t + b];
     },

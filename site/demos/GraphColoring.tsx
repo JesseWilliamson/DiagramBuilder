@@ -2,7 +2,7 @@
 // (connected nodes) must differ. Conflicts light up red as you go.
 import { useState } from 'react';
 import { combine, graph, Tone } from 'dsviz';
-import { Button, Challenge, Diagram, useBurst } from 'dsviz/react';
+import { Button, Diagram, useBurst } from 'dsviz/react';
 
 type Id = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I';
 const pos: Record<Id, [number, number]> = {
@@ -36,7 +36,6 @@ export default function GraphColoring() {
     <>
       <Diagram
         scene={combine(g, particles)}
-        height={300}
         viewBox={[-215, -160, 440, 330]}
         onClick={(e) => {
           const id = (e.node.data as { id?: Id } | undefined)?.id;
@@ -50,13 +49,6 @@ export default function GraphColoring() {
         </p>
         <Button onClick={() => setColour({})}>Clear</Button>
       </div>
-      <Challenge
-        goals={[
-          { label: 'Colour every node with no clashes', done: solved },
-          { label: 'Do it with only 3 colours', done: solved && used <= 3 },
-        ]}
-        onComplete={() => fire(0, 0, { count: 24, radius: 120 })}
-      />
     </>
   );
 }

@@ -63,7 +63,7 @@ export default function BinarySearch() {
   return (
     <>
       <NumberStepper label="Target" value={target} onChange={setTarget} min={-15} max={35} />
-      <Diagram scene={scene} height={150} />
+      <Diagram scene={scene} />
       <p className="status">{f.msg}</p>
       <CodeTrace lines={code} active={f.line} />
       <Transport player={player} />

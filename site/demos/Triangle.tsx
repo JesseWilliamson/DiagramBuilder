@@ -2,7 +2,7 @@
 // (circumcentre, incentre, centroid, orthocentre) follow along.
 import { useState } from 'react';
 import { combine, geom, Vec } from 'dsviz';
-import { Challenge, Diagram, Switch, useBurst } from 'dsviz/react';
+import { Diagram, Switch } from 'dsviz/react';
 
 const W = 440, H = 300;
 const mid = (a: Vec, b: Vec) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
@@ -13,7 +13,6 @@ export default function Triangle() {
   const [show, setShow] = useState({ circum: true, incircle: false, medians: false, altitudes: false });
   const [A, B, C] = pts;
   const [touched, setTouched] = useState(false);
-  const [particles, fire] = useBurst();
   const set = (k: keyof typeof show) => (v: boolean) => setShow((s) => ({ ...s, [k]: v }));
 
   const cc = geom.circumcircle(A, B, C);
@@ -48,14 +47,12 @@ export default function Triangle() {
     geom.angleMark(A, B, C, { id: 'angB', label: true, tone: 'accent' }),
     geom.angleMark(B, C, A, { id: 'angC', label: true, tone: 'accent' }),
     geom.polygon(pts, { id: 'tri', labels: ['A', 'B', 'C'], draggable: true, hint: !touched, fill: false }),
-    particles,
   );
 
   return (
     <>
       <Diagram
         scene={scene}
-        height={310}
         viewBox={[0, 0, W, H]}
         onDrag={(e) => {
           setTouched(true);
@@ -74,14 +71,6 @@ export default function Triangle() {
       <p className="status formula">
         {angles.map((a) => `${a.toFixed(1)}°`).join(' + ')} = <b>{angles.reduce((s, a) => s + a, 0).toFixed(1)}°</b>
       </p>
-      <Challenge
-        goals={[
-          { label: 'Make a right angle (watch the arc turn square)', done: angles.some((a) => Math.abs(a - 90) < 0.5) },
-          { label: 'Make two sides equal (isosceles)', done: same(0, 1) || same(1, 2) || same(0, 2) },
-          { label: 'Push the circumcentre outside the triangle', done: angles.some((a) => a > 91) },
-        ]}
-        onGoal={() => fire(G.x, G.y)}
-      />
     </>
   );
 }

@@ -2,7 +2,7 @@
 // Rectangles are keyed by index, so changing n resizes the ones you have and fades in the rest.
 import { useState } from 'react';
 import { combine, plot } from 'dsviz';
-import { Challenge, Diagram, Segmented, Slider } from 'dsviz/react';
+import { Diagram, Segmented, Slider } from 'dsviz/react';
 
 const f = (x: number) => 1.5 * (0.1 * x ** 3 - 0.9 * x ** 2 + 2 * x + 0.6);
 const p = plot.plane({ x: [-0.5, 6.5], y: [-0.6, 4], width: 440, height: 260 });
@@ -32,7 +32,6 @@ export default function Riemann() {
     <>
       <Diagram
         scene={scene}
-        height={290}
         viewBox={p.viewBox()}
         onDrag={(e) => {
           setTouched(true);
@@ -49,13 +48,6 @@ export default function Riemann() {
         <span>∫ = <b>{exact.toFixed(4)}</b></span>
         <span className={Math.abs(r.sum - exact) < 0.01 ? 'tone-success' : 'tone-danger'}>error = <b>{(r.sum - exact).toFixed(4)}</b></span>
       </div>
-      <Challenge
-        goals={[
-          { label: 'Get the error under 0.01 using at most 10 rectangles', done: n <= 10 && Math.abs(r.sum - exact) < 0.01 },
-          { label: 'Make the sum an UNDER-estimate with the left rule', done: rule === 'left' && r.sum < exact - 0.01 },
-          { label: 'Get the error under 0.001', done: Math.abs(r.sum - exact) < 0.001 && hi - lo > 1 },
-        ]}
-      />
     </>
   );
 }

@@ -42,7 +42,7 @@ export default function Morph() {
 
   return (
     <>
-      <Diagram scene={scene} height={280} viewBox={[-130, -125, 260, 250]} duration={650} />
+      <Diagram scene={scene} viewBox={[-130, -125, 260, 250]} duration={650} />
       <div className="row">
         <Segmented value={shape} onChange={setShape} options={['polygon', 'star', 'heart', 'circle']} />
         <Switch label="Smooth" checked={smooth} onChange={setSmooth} />

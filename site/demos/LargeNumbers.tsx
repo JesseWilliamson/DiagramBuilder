@@ -41,7 +41,7 @@ export default function LargeNumbers() {
 
   return (
     <>
-      <Diagram scene={scene} height={230} viewBox={[-20, -24, 540, 210]} />
+      <Diagram scene={scene} viewBox={[-20, -24, 540, 210]} />
       <div className="row">
         <Button variant="primary" onClick={() => more(1)}>Roll</Button>
         <Button onClick={() => more(10)}>+10</Button>

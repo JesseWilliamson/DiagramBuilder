@@ -36,7 +36,6 @@ export default function Pointers() {
     <>
       <Diagram
         scene={scene}
-        height={150}
         onClick={(e) => { const key = e.id.match(/:g:e(\d+)$/); if (key) setK(+key[1]); }}
       />
       <div className="row">

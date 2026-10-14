@@ -2,7 +2,7 @@
 // the bins fill into a bell shape, the binomial distribution, whatever the bias.
 import { useEffect, useMemo, useState } from 'react';
 import { circle, combine, easeInQuad, path, prob } from 'dsviz';
-import { Button, Challenge, Diagram, Slider, Switch, useTicker } from 'dsviz/react';
+import { Button, Diagram, Slider, Switch, useTicker } from 'dsviz/react';
 
 const ROWS = 10, DX = 26, DY = 20;
 type Ball = { id: number; path: boolean[]; step: number };
@@ -13,7 +13,7 @@ const binomial = (n: number, k: number, p: number) => choose(n, k) * p ** k * (1
 export default function Galton() {
   const [p, setP] = useState(0.5);
   const [balls, setBalls] = useState<Ball[]>([]);
-  const [queue, setQueue] = useState(0);
+  const [queue, setQueue] = useState(40); // start with a few balls in flight
   const [bins, setBins] = useState<number[]>(() => Array(ROWS + 1).fill(0));
   const [nextId, setNextId] = useState(0);
   const [auto, setAuto] = useState(false);
@@ -68,7 +68,7 @@ export default function Galton() {
   const peak = bins.indexOf(Math.max(...bins));
   return (
     <>
-      <Diagram scene={scene} height={340} viewBox={[-160, -24, 320, binY + H + 50]} duration={110} ease={easeInQuad} />
+      <Diagram scene={scene} viewBox={[-160, -24, 320, binY + H + 50]} duration={110} ease={easeInQuad} />
       <div className="row">
         <Button variant="primary" onClick={() => setQueue((q) => q + 1)}>Drop 1</Button>
         <Button onClick={() => setQueue((q) => q + 25)}>Drop 25</Button>
@@ -77,13 +77,6 @@ export default function Galton() {
         <Button onClick={() => { setBins(Array(ROWS + 1).fill(0)); setBalls([]); setQueue(0); setAuto(false); }}>Reset</Button>
       </div>
       <Slider label="Chance of going right" value={p} onChange={setP} min={0.1} max={0.9} step={0.05} format={(v) => `p = ${v.toFixed(2)}`} />
-      <Challenge
-        goals={[
-          { label: 'Drop 100 balls', done: total >= 100 },
-          { label: 'Tilt the board so the tallest bin is right of centre', done: total >= 30 && peak > ROWS / 2 },
-          { label: 'Fill one bin with 40 balls', done: Math.max(...bins) >= 40 },
-        ]}
-      />
     </>
   );
 }

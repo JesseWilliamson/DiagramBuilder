@@ -64,7 +64,7 @@ export default function Lcs() {
 
   return (
     <>
-      <Diagram scene={combine(g, deps)} height={330} />
+      <Diagram scene={combine(g, deps)} />
       <p className="status">{f.msg}</p>
       <Transport player={player} />
       <div className="row">

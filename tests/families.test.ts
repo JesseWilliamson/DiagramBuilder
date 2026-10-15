@@ -163,3 +163,16 @@ describe('camera', () => {
     expect(fitViewBox(frames, 5)).toEqual([-10, -10, 120, 20]);
   });
 });
+
+describe('clipToPlane', () => {
+  const p = plot.plane({ x: [0, 10], y: [0, 10], width: 100, height: 100 });
+  it('keeps a segment that is already inside', () => {
+    expect(plot.clipToPlane(p, { x: 1, y: 1 }, { x: 9, y: 9 })).toEqual([{ x: 1, y: 1 }, { x: 9, y: 9 }]);
+  });
+  it('cuts a segment at the edges it crosses', () => {
+    expect(plot.clipToPlane(p, { x: -5, y: 5 }, { x: 15, y: 5 })).toEqual([{ x: 0, y: 5 }, { x: 10, y: 5 }]);
+  });
+  it('returns null for a segment that misses the box', () => {
+    expect(plot.clipToPlane(p, { x: -5, y: -5 }, { x: -1, y: 20 })).toBeNull();
+  });
+});

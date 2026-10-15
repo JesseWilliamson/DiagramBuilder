@@ -193,6 +193,27 @@ export const derivative = (f: Fn, x: number, h = 1e-4) => (f(x + h) - f(x - h)) 
  * The tangent line to f at x0, drawn `span` world units either side, clipped
  * to the plane. Returns the scene plus the slope it used.
  */
+/**
+ * The part of segment a→b inside the plane's x/y ranges (Liang–Barsky).
+ * Write the segment as a + t·(b − a), t ∈ [0, 1]. Each of the four edges of
+ * the box cuts off t below or above some value; keep the t-range that survives
+ * all four. Returns null if nothing is left.
+ */
+export function clipToPlane(p: Plane, a: Vec, b: Vec): [Vec, Vec] | null {
+  const dx = b.x - a.x, dy = b.y - a.y;
+  let t0 = 0, t1 = 1;
+  const edges: Array<[number, number]> = [
+    [-dx, a.x - p.x[0]], [dx, p.x[1] - a.x], [-dy, a.y - p.y[0]], [dy, p.y[1] - a.y],
+  ];
+  for (const [q, r] of edges) {
+    if (q === 0) { if (r < 0) return null; continue; } // parallel to this edge, and outside it
+    const t = r / q;
+    if (q < 0) t0 = Math.max(t0, t); else t1 = Math.min(t1, t);
+    if (t0 > t1) return null;
+  }
+  return [V2(a.x + dx * t0, a.y + dy * t0), V2(a.x + dx * t1, a.y + dy * t1)];
+}
+
 export function tangent(p: Plane, f: Fn, x0: number, o: LineOptions & { span?: number } = { id: 'tangent' }): Scene & { slope: number } {
   const m = derivative(f, x0);
   const y0 = f(x0);
@@ -200,7 +221,9 @@ export function tangent(p: Plane, f: Fn, x0: number, o: LineOptions & { span?: n
   // shorten the span so the line stays inside the y-range when it is steep
   const maxDx = Math.abs(m) > 1e-9 ? (p.y[1] - p.y[0]) / Math.abs(m) / 1.5 : span;
   const d = Math.min(span, maxDx);
-  return { ...segment(p, V2(x0 - d, y0 - m * d), V2(x0 + d, y0 + m * d), { ...o, tone: o.tone ?? 'active' }), slope: m };
+  // the point itself is inside, so there's always something left after clipping
+  const [s0, s1] = clipToPlane(p, V2(x0 - d, y0 - m * d), V2(x0 + d, y0 + m * d)) ?? [V2(x0, y0), V2(x0, y0)];
+  return { ...segment(p, s0, s1, { ...o, tone: o.tone ?? 'active' }), slope: m };
 }
 
 export interface AreaOptions {

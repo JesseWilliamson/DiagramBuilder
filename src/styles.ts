@@ -105,6 +105,7 @@ export const DEFAULT_CSS = /* css */ `
 .dv-root { overflow: visible; }
 /* the svg itself can take focus on click in Chromium; only its draggable parts are real focus targets */
 .dv-root:focus { outline: none; }
+.dv-root.dv-clip { overflow: hidden; }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):not(.light) :is(.dv-root, .dvc) {${DARK}
   }
@@ -120,7 +121,7 @@ export const DEFAULT_CSS = /* css */ `
 .dv-arrow { --dv-ink: var(--dv-edge); fill: none; stroke: var(--dv-ink); stroke-linecap: round; stroke-linejoin: round; }
 .dv-head-solid { fill: var(--dv-ink); }
 /* lines never steal the pointer from the handle or shape underneath them */
-.dv-arrow:not(.dv-interactive, .dv-draggable), .dv-path.dv-open:not(.dv-interactive, .dv-draggable) { pointer-events: none; }
+.dv-arrow:not(.dv-interactive, .dv-draggable), .dv-path.dv-open:not(.dv-interactive, .dv-draggable), .dv-role-outline { pointer-events: none; }
 .dv-text { fill: var(--dv-fg); pointer-events: none; user-select: none; font-variant-numeric: tabular-nums; font-weight: 500; }
 .dv-dashed { stroke-dasharray: 6 5; }
 

@@ -97,7 +97,7 @@ export function Diagram({ scene, size = 'natural', scale, height = 240, viewBox 
   }, [scene]);
 
   const style = size === 'natural'
-    ? { display: 'block', maxWidth: '100%', height: 'auto', margin: '0 auto', overflow: 'visible' }
+    ? { display: 'block', maxWidth: '100%', height: 'auto', margin: '0 auto' } // overflow comes from the stylesheet: visible, or clipped for a fixed viewBox
     : { width: '100%', height, display: 'block' };
   return <svg ref={svgRef} className={className} style={style} role="img" aria-label={label} data-dv-look={look} />;
 }

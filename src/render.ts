@@ -137,6 +137,9 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
       svg.setAttribute('height', String(Math.round(box[3] * scale)));
     }
   }
+  // A fixed camera IS the figure: clip whatever falls outside it (a huge
+  // circumcircle, a long tangent line) instead of letting it spill over the page.
+  svg.classList.toggle('dv-clip', Array.isArray(opts.viewBox));
   if (Array.isArray(opts.viewBox)) {
     vb.cur = vb.to = vb.from = [...opts.viewBox];
     setBox(vb.cur);
@@ -280,8 +283,20 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
     const e = entries.get(id);
     const set = handlers.get(type);
     if (!e || !set) return;
-    const w = at ?? toWorld((ev as MouseEvent).clientX, (ev as MouseEvent).clientY);
+    let w = at ?? toWorld((ev as MouseEvent).clientX, (ev as MouseEvent).clientY);
+    if (type !== 'click') w = keepInView(w, e.node);
     for (const h of set) h({ type, id, node: e.node, x: w.x, y: w.y, original: ev, keyboard: !!at });
+  }
+
+  // A drag can never take something off the canvas: clamp the reported point to
+  // the camera box, inset by the dragged shape's half-size so all of it stays
+  // visible. (The camera is frozen during a drag, so this box doesn't move.)
+  function keepInView(w: Vec, node: SceneNode): Vec {
+    const [x, y, bw, bh] = vb.to;
+    if (bw <= 1 || bh <= 1) return w;
+    const b = bounds({ nodes: [node] });
+    const mx = Math.min(b.w / 2, bw / 4), my = Math.min(b.h / 2, bh / 4);
+    return V2(Math.max(x + mx, Math.min(x + bw - mx, w.x)), Math.max(y + my, Math.min(y + bh - my, w.y)));
   }
 
   const idOf = (t: EventTarget | null): string | null =>
@@ -363,6 +378,16 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
   const onKeyUp = (ev: KeyboardEvent) => STEPS[ev.key] && endKey(ev);
   const onFocusOut = (ev: FocusEvent) => (endKey(ev), (key = null));
 
+  // Touch: stop the page scrolling when a finger lands on something draggable.
+  // CSS touch-action is unreliable on elements INSIDE an svg, and once the
+  // browser decides a touch is a scroll it cancels the pointer events (the drag
+  // just dies). A non-passive touchstart that cancels only on draggables keeps
+  // scrolling over the rest of the diagram working.
+  const onTouchStart = (ev: TouchEvent) => {
+    const id = idOf(ev.target);
+    if (id && entries.get(id)?.node.draggable) ev.preventDefault();
+  };
+  svg.addEventListener('touchstart', onTouchStart, { passive: false });
   svg.addEventListener('keydown', onKeyDown);
   svg.addEventListener('keyup', onKeyUp);
   svg.addEventListener('focusout', onFocusOut);
@@ -380,6 +405,7 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
     render,
     setViewBox(v) {
       opts.viewBox = v;
+      svg.classList.toggle('dv-clip', Array.isArray(v));
       if (Array.isArray(v)) {
         vb.cur = vb.to = vb.from = [...v];
         setBox(v);
@@ -393,6 +419,7 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
     },
     destroy() {
       if (raf) cancelAnimationFrame(raf);
+      svg.removeEventListener('touchstart', onTouchStart);
       svg.removeEventListener('keydown', onKeyDown);
       svg.removeEventListener('keyup', onKeyUp);
       svg.removeEventListener('focusout', onFocusOut);

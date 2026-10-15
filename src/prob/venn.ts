@@ -14,6 +14,7 @@
  * drag a circle the regions morph smoothly.
  */
 import { circleIntersections } from '../geom/math';
+import { handle } from '../handle';
 import { Scene, SceneNode, Tone, circle, path, text } from '../scene';
 import { Vec, vdist } from '../vec';
 
@@ -98,6 +99,8 @@ export interface VennOptions {
   interactive?: boolean;
   /** Give each circle a drag handle at its centre; drag data is `{ set: 'a' | 'b' }`. */
   draggable?: boolean;
+  /** Pulse the drag handles until the reader first touches one. */
+  hint?: boolean;
 }
 
 export function venn2(a: Disc, b: Disc, o: VennOptions = {}): Scene {
@@ -128,9 +131,12 @@ export function venn2(a: Disc, b: Disc, o: VennOptions = {}): Scene {
     text({ id: `${id}:${k}:label`, x: c.x + Math.cos(away) * c.r * 0.72 - Math.sin(away) * 0, y: c.y - c.r * 0.82, text: s, size: 16, role: 'math' });
   nodes.push(lab(a, dir + Math.PI, la, 'A'), lab(b, dir, lb, 'B'));
   if (o.draggable) {
+    // A small VISIBLE handle at each centre. (An invisible drag zone over the
+    // regions would make the same spot mean "drag" or "click" depending on
+    // where exactly you pressed, with nothing on screen to say which.)
     nodes.push(
-      { kind: 'circle', id: `${id}:A:drag`, x: a.x, y: a.y, r: a.r * 0.45, role: 'hit', draggable: true, data: { set: 'a' } },
-      { kind: 'circle', id: `${id}:B:drag`, x: b.x, y: b.y, r: b.r * 0.45, role: 'hit', draggable: true, data: { set: 'b' } },
+      ...handle({ id: `${id}:A:drag`, x: a.x, y: a.y, hint: o.hint, data: { set: 'a' } }),
+      ...handle({ id: `${id}:B:drag`, x: b.x, y: b.y, hint: o.hint, data: { set: 'b' } }),
     );
   }
   return { nodes };

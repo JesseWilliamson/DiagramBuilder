@@ -35,6 +35,16 @@ pre.code { font: 13px/1.6 var(--mono); background: var(--code-bg); border: 1px s
 .topbar nav a[aria-current="true"], .topbar nav a:hover { color: var(--ink); text-decoration: none; }
 .theme-btn { all: unset; cursor: pointer; font-size: 13px; color: var(--sub); padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px; }
 .theme-btn:hover { color: var(--ink); }
+/* phones: the bar must never be wider than the screen, or the whole page zooms out and pans sideways */
+@media (max-width: 560px) {
+  .topbar-inner { gap: 12px; padding: 0 14px; }
+  .topbar nav { gap: 12px; min-width: 0; }
+  .topbar nav a { font-size: 13.5px; }
+  .topbar nav a[href^="https://github"] { display: none; }
+  .theme-btn { padding: 4px 8px; font-size: 12.5px; }
+}
+/* belt and braces: nothing may make the page itself scroll sideways */
+html, body { overflow-x: clip; }
 .foot { max-width: 1240px; margin: 60px auto 0; padding: 20px; color: var(--faint); font-size: 13px; border-top: 1px solid var(--line); }
 
 /* home */

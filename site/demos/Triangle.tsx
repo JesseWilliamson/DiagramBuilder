@@ -57,8 +57,9 @@ export default function Triangle() {
         onDrag={(e) => {
           setTouched(true);
           const i = (e.node.data as { index: number }).index;
-          // snap to a 5px grid so right angles and equal sides are reachable by hand
-          const p = { x: Math.round(Math.max(10, Math.min(W - 10, e.x)) / 5) * 5, y: Math.round(Math.max(10, Math.min(H - 10, e.y)) / 5) * 5 };
+          // keep corners (and their labels) 28px inside the frame; snap to a 5px grid so
+          // right angles and equal sides are reachable by hand
+          const p = { x: Math.round(Math.max(28, Math.min(W - 28, e.x)) / 5) * 5, y: Math.round(Math.max(28, Math.min(H - 28, e.y)) / 5) * 5 };
           setPts((ps) => ps.map((q, j) => (j === i ? p : q)));
         }}
       />

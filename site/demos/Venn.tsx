@@ -1,4 +1,4 @@
-// Two events as regions of a sample space. Drag the circles; click regions to shade them.
+// Two events as regions of a sample space. Drag a circle by its centre dot; click regions to shade them.
 // P(region) is its area as a fraction of the rectangle U.
 import { useState } from 'react';
 import { prob, Vec } from 'dsviz';
@@ -20,6 +20,7 @@ export default function Venn() {
   const [a, setA] = useState({ x: 170, y: 130, r: 85 });
   const [b, setB] = useState({ x: 275, y: 125, r: 72 });
   const [sel, setSel] = useState<Region[]>(['both']);
+  const [touched, setTouched] = useState(false);
 
   const areas = prob.vennAreas(a, b);
   const total = U[2] * U[3];
@@ -35,10 +36,11 @@ export default function Venn() {
   return (
     <>
       <Diagram
-        scene={prob.venn2(a, b, { highlight: sel, universe: U, interactive: true, draggable: true })}
+        scene={prob.venn2(a, b, { highlight: sel, universe: U, interactive: true, draggable: true, hint: !touched })}
         viewBox={[-10, -10, U[2] + 20, U[3] + 20]}
-        onDrag={(e) => ((e.node.data as { set: 'a' | 'b' }).set === 'a' ? setA((d) => place(d, e)) : setB((d) => place(d, e)))}
-        onClick={(e) => toggle(prob.vennRegionAt(e, a, b))}
+        onDrag={(e) => (setTouched(true), (e.node.data as { set: 'a' | 'b' }).set === 'a' ? setA((d) => place(d, e)) : setB((d) => place(d, e)))}
+        // only regions toggle; a tap on a drag handle is not a click on what's under it
+        onClick={(e) => { const r = (e.node.data as { region?: Region } | undefined)?.region; if (r) toggle(r); }}
       />
       <div className="row">
         {presets.map((regions) => (

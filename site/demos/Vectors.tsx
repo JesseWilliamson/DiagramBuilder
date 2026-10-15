@@ -14,6 +14,19 @@ const fmt = (v: Vec) => `(${+v.x.toFixed(2)}, ${+v.y.toFixed(2)})`;
 
 type Mode = 'sum' | 'difference' | 'projection';
 
+const projOf = (u: Vec, v: Vec) => scale(v, geom.dot(u, v) / (geom.dot(v, v) || 1));
+// Every point the current mode draws. The handles are clamped to the plane,
+// but u + v or u − v can still land outside it, so we check those too.
+const drawn = (u: Vec, v: Vec, mode: Mode) => [u, v, mode === 'sum' ? add(u, v) : mode === 'difference' ? sub(u, v) : projOf(u, v)];
+const fits = (u: Vec, v: Vec, mode: Mode) =>
+  drawn(u, v, mode).every((q) => q.x >= p.x[0] && q.x <= p.x[1] && q.y >= p.y[0] && q.y <= p.y[1]);
+// A starting position that fits, for each mode.
+const presets: Record<Mode, [Vec, Vec]> = {
+  sum: [{ x: 3.5, y: 1 }, { x: 1.25, y: 2.5 }],
+  difference: [{ x: 3.5, y: 1.5 }, { x: 1.25, y: 2.5 }],
+  projection: [{ x: 3.5, y: 1 }, { x: 1.25, y: 2.5 }],
+};
+
 export default function Vectors() {
   const [u, setU] = useState<Vec>({ x: 3.5, y: 1 });
   const [v, setV] = useState<Vec>({ x: 1.25, y: 2.5 });
@@ -21,7 +34,7 @@ export default function Vectors() {
   const [touched, setTouched] = useState(false);
 
   const dot = geom.dot(u, v);
-  const proj = scale(v, dot / (geom.dot(v, v) || 1));
+  const proj = projOf(u, v);
   const theta = geom.toDegrees(geom.angleAt(p.toPx(u), p.toPx(O), p.toPx(v)));
 
   const scene = combine(
@@ -55,10 +68,22 @@ export default function Vectors() {
         onDrag={(e) => {
           setTouched(true);
           const w = p.clamp(p.toWorld(e.x, e.y));
-          (e.id === 'U' ? setU : setV)({ x: snap(w.x), y: snap(w.y) });
+          const cur = e.id === 'U' ? u : v;
+          const ok = (q: Vec) => (e.id === 'U' ? fits(q, v, mode) : fits(u, q, mode));
+          // Walk from where the handle is toward the pointer and stop at the last
+          // spot where everything still fits (binary search on the straight path),
+          // so dragging too far feels like hitting a wall rather than jumping.
+          let lo = 0, hi = 1;
+          if (!ok(w)) for (let i = 0; i < 14; i++) {
+            const t = (lo + hi) / 2;
+            ok({ x: cur.x + (w.x - cur.x) * t, y: cur.y + (w.y - cur.y) * t }) ? (lo = t) : (hi = t);
+          } else lo = 1;
+          let next = { x: snap(cur.x + (w.x - cur.x) * lo), y: snap(cur.y + (w.y - cur.y) * lo) };
+          if (!ok(next)) next = cur; // snapping nudged it out: stay put
+          (e.id === 'U' ? setU : setV)(next);
         }}
       />
-      <Segmented value={mode} onChange={setMode} options={['sum', 'difference', 'projection']} />
+      <Segmented value={mode} onChange={(m) => { if (!fits(u, v, m)) (setU(presets[m][0]), setV(presets[m][1])); setMode(m); }} options={['sum', 'difference', 'projection']} />
       <div className="stats formula">
         <span className="tone-accent"><MathText tex="u =" /> <b>{fmt(u)}</b></span>
         <span className="tone-visited"><MathText tex="v =" /> <b>{fmt(v)}</b></span>

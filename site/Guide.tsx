@@ -87,6 +87,9 @@ p.toWorld(e.x, e.y);                                        // drag position →
   --dv-font: "Inter", sans-serif;
 }`}</Code>
           <p>Dark mode switches on <code>[data-theme="dark"]</code> or <code>.dark</code> on any ancestor, or follows the OS when neither is set.</p>
+          <h3>The tactile look</h3>
+          <p>Put <code>data-dv-look="tactile"</code> on any ancestor (this site does it on <code>&lt;html&gt;</code>; the toggle in the top bar flips it), or pass <code>look="tactile"</code> to one <code>&lt;Diagram&gt;</code>. Solid shapes then sit on a lip in a darker shade of their colour, clickable ones lift on hover and sink when pressed, and a dragged shape lifts right off. The controls become chunky 3D buttons to match.</p>
+          <p>It's all CSS, so no layout knows about it. The lip is a hard <code>drop-shadow(0 4px 0 lip)</code>; pressing moves the shape down 4px while the shadow shrinks to 0, so its bottom edge stays put and it looks pushed in. Labels move with their shape because every layout emits a shape's label right after it, so <code>shape:active + text</code> can move both. Tune the depth with <code>--dv-depth</code>, the colours with <code>--dv-lip</code> and <code>--dv-&lt;tone&gt;-lip</code>.</p>
         </Section>
 
         <Section id="motion" title="Animation">

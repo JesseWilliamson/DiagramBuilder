@@ -69,7 +69,8 @@ export function binaryTree(root: BinaryTreeNode | null | undefined, o: TreeOptio
   const pos = new Map<string, Vec>();
   for (const p of placed) pos.set(String(p.node.key), V2(x0 + (p.order - (counter - 1) / 2) * dx, y0 + p.depth * dy));
 
-  // 3. emit nodes: edges first so they sit underneath the circles
+  // 3. emit nodes: edges first so they sit underneath the circles; each label
+  //    right after its circle, so CSS can move them together
   const edges: SceneNode[] = [];
   const circles: SceneNode[] = [];
   const labels: SceneNode[] = [];
@@ -79,7 +80,7 @@ export function binaryTree(root: BinaryTreeNode | null | undefined, o: TreeOptio
     const enter = from ? { x: from.x, y: from.y } : undefined;
     const tone = resolveTone(o.tones, node.key, node);
     circles.push(circle({ id: `${id}:node:${node.key}`, x: p.x, y: p.y, r, tone, enter, interactive: o.interactive, data: node }));
-    labels.push(text({ id: `${id}:label:${node.key}`, x: p.x, y: p.y, text: show(node.label ?? node.key), size: 15, weight: 600, role: 'value', tone, enter }));
+    circles.push(text({ id: `${id}:label:${node.key}`, x: p.x, y: p.y, text: show(node.label ?? node.key), size: 15, weight: 600, role: 'value', tone, enter }));
     if (from) {
       const a = circleEdge(from, p, r), b = circleEdge(p, from, r);
       edges.push(

@@ -22,7 +22,7 @@
  */
 const TONES = ['active', 'accent', 'success', 'danger', 'visited', 'orange'];
 const toneVars = (t: string) =>
-  `.dv-tone-${t} { --dv-c: var(--dv-${t}); --dv-cf: var(--dv-${t}-fill); --dv-cs: var(--dv-${t}-stroke); }`;
+  `.dv-tone-${t} { --dv-c: var(--dv-${t}); --dv-cf: var(--dv-${t}-fill); --dv-cs: var(--dv-${t}-stroke); --dv-cl: var(--dv-${t}-lip); }`;
 const anyTone = `:is(${TONES.map((t) => `.dv-tone-${t}`).join(', ')})`;
 
 // palette: 200 / 400 / 500 / 700 steps of each hue
@@ -45,7 +45,9 @@ const LIGHT = `
   --dv-danger: ${P.red[3]}; --dv-danger-fill: ${P.red[1]}; --dv-danger-stroke: #000;
   --dv-visited: ${P.purple[3]}; --dv-visited-fill: ${P.purple[1]}; --dv-visited-stroke: #000;
   --dv-orange: ${P.orange[3]}; --dv-orange-fill: ${P.orange[0]}; --dv-orange-stroke: ${P.orange[1]};
-  --dv-band: ${P.yellow[0]};`;
+  --dv-band: ${P.yellow[0]};
+  --dv-lip: #d4d4d4; --dv-active-lip: ${P.yellow[3]}; --dv-accent-lip: ${P.blue[3]}; --dv-success-lip: ${P.green[3]};
+  --dv-danger-lip: ${P.red[3]}; --dv-visited-lip: ${P.purple[3]}; --dv-orange-lip: ${P.orange[3]}; --dv-muted-lip: #e5e5e5;`;
 
 const DARK = `
   --dv-fg: #fff; --dv-muted: #8c8c8c; --dv-faint: #4c4c4c; --dv-surface: #1e1e1e; --dv-muted-fill: #2a2a2a;
@@ -57,7 +59,39 @@ const DARK = `
   --dv-danger: ${P.red[1]}; --dv-danger-fill: #e14b4b; --dv-danger-stroke: #f2f2f2;
   --dv-visited: ${P.purple[1]}; --dv-visited-fill: #874de5; --dv-visited-stroke: #f2f2f2;
   --dv-orange: ${P.orange[1]}; --dv-orange-fill: #673404; --dv-orange-stroke: #ce6809;
-  --dv-band: #5c4400;`;
+  --dv-band: #5c4400;
+  --dv-lip: #4c4c4c; --dv-active-lip: #5c4400; --dv-accent-lip: #142563; --dv-success-lip: #004e16;
+  --dv-danger-lip: #621c1c; --dv-visited-lip: #381d66; --dv-orange-lip: #291502; --dv-muted-lip: #333;`;
+
+/*
+ * The tactile look: solid things sit on a lip, like Brilliant's chunky tiles.
+ * Opt in with data-dv-look="tactile" on any ancestor (data-dv-look="flat" on
+ * a diagram opts back out). It is pure CSS, so layouts know nothing about it:
+ *
+ *   - the lip is a hard drop-shadow (no blur) in a darker shade of the fill;
+ *   - hover lifts a clickable shape 1px, pressing sinks it onto its lip;
+ *   - a dragged shape gets .dv-grabbed from the renderer and lifts right off;
+ *   - each layout emits a shape's label right after it, so "shape + text"
+ *     selectors carry the label along with the shape.
+ */
+const T = ':is(:where([data-dv-look="tactile"]) .dv-root, .dv-root[data-dv-look="tactile"]):not([data-dv-look="flat"])';
+const SOLID = ':is(.dv-rect, .dv-circle):not([class*="dv-role-"], .dv-tone-ghost)';
+const lip = (extra = '0px') => `drop-shadow(0 calc(var(--dv-depth) + ${extra}) 0 var(--dv-cl, var(--dv-lip)))`;
+const TACTILE = /* css */ `
+${T} { --dv-depth: 4px; }
+/* outline and lip are one colour: the tile reads as a single solid object */
+${T} ${SOLID} { stroke: var(--dv-cl, var(--dv-lip)); stroke-width: 2px; filter: ${lip()}; }
+${T} ${SOLID}.dv-tone-muted { --dv-cl: var(--dv-muted-lip); }
+${T} ${SOLID}.dv-interactive:not(.dv-draggable):hover { transform: translateY(-1px); filter: ${lip('1px')}; }
+${T} ${SOLID}.dv-interactive:not(.dv-draggable):hover + .dv-text { transform: translateY(-1px); }
+${T} ${SOLID}.dv-interactive:not(.dv-draggable):active { transform: translateY(var(--dv-depth)); filter: ${lip('-1 * var(--dv-depth)')}; transition-duration: .05s; }
+${T} ${SOLID}.dv-interactive:not(.dv-draggable):active + .dv-text { transform: translateY(var(--dv-depth)); transition-duration: .05s; }
+${T} ${SOLID}.dv-grabbed { transform: translateY(-4px); filter: ${lip('4px')} drop-shadow(0 10px 8px rgb(0 0 0 / .18)); }
+${T} ${SOLID}.dv-grabbed + .dv-text { transform: translateY(-4px); }
+/* handles become little buttons too */
+${T} .dv-circle.dv-role-handle { filter: drop-shadow(0 3px 0 color-mix(in srgb, var(--dv-c, var(--dv-point)) 55%, #000)); }
+${T} .dv-role-hit.dv-grabbed + .dv-role-handle { transform: translateY(-3px) scale(1.35); filter: drop-shadow(0 6px 0 color-mix(in srgb, var(--dv-c, var(--dv-point)) 55%, #000)) drop-shadow(0 10px 8px rgb(0 0 0 / .2)); }
+`;
 
 export const DEFAULT_CSS = /* css */ `
 /* ── 1. vocabulary ─────────────────────────────────────────────── */
@@ -69,6 +103,8 @@ export const DEFAULT_CSS = /* css */ `
   font-family: var(--dv-font);
 }
 .dv-root { overflow: visible; }
+/* the svg itself can take focus on click in Chromium; only its draggable parts are real focus targets */
+.dv-root:focus { outline: none; }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):not(.light) :is(.dv-root, .dvc) {${DARK}
   }
@@ -77,7 +113,7 @@ export const DEFAULT_CSS = /* css */ `
 }
 
 /* ── 2. base rules ─────────────────────────────────────────────── */
-.dv { transition: fill .25s ease, stroke .25s ease, filter .12s ease; }
+.dv { transition: fill .25s ease, stroke .25s ease, filter .12s ease, transform .12s ease; }
 .dv-circle, .dv-rect, .dv-path { fill: var(--dv-surface); stroke: var(--dv-stroke); stroke-width: var(--dv-stroke-w); }
 .dv-path { stroke-linecap: round; stroke-linejoin: round; }
 .dv-path.dv-open { fill: none; }
@@ -168,6 +204,7 @@ ${TONES.map(toneVars).join('\n')}
 .dv-draggable { cursor: grab; touch-action: none; }
 .dv-root.dv-dragging, .dv-root.dv-dragging .dv-draggable { cursor: grabbing; }
 @media (prefers-reduced-motion: reduce) { .dv-circle.dv-role-pulse { animation: none; opacity: .5; } }
+${TACTILE}
 `;
 
 const STYLE_ID = 'dsviz-default-styles';

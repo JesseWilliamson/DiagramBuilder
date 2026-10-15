@@ -42,7 +42,8 @@ export function grid<T>(rows: readonly (readonly T[])[], o: GridOptions<T> = {})
       const tone = o.tones?.(r, c, v);
       nodes.push(rect({ id: `${id}:cell:${r},${c}`, x: p.x, y: p.y, w: cell, h: cell, rx: 6, tone, interactive: o.interactive, data: { r, c, value: v } }));
       const s = o.format ? o.format(v, r, c) : show(v);
-      if (s) texts.push(text({ id: `${id}:val:${r},${c}`, x: p.x, y: p.y, text: s, size: Math.round(cell * 0.38), weight: 600, role: 'value', tone }));
+      // the value goes right after its cell: CSS moves it with the cell (`cell:active + text`)
+      if (s) nodes.push(text({ id: `${id}:val:${r},${c}`, x: p.x, y: p.y, text: s, size: Math.round(cell * 0.38), weight: 600, role: 'value', tone }));
     }),
   );
   o.colLabels?.forEach((l, c) => {

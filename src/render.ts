@@ -97,6 +97,8 @@ interface Entry {
   dur: number;
   exiting: boolean;
   settled: boolean;
+  /** Being dragged right now: gets the `dv-grabbed` class (the tactile look lifts it). */
+  grabbed?: boolean;
 }
 
 /** `{ ...defaults, ...options }` lets an explicit `undefined` erase a default; drop those keys first. */
@@ -145,6 +147,7 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
 
   function paint(e: Entry) {
     const d = describe(e.node, e.cur, geometry);
+    if (e.grabbed) d.attrs.class += ' dv-grabbed';
     for (const k in d.attrs) {
       if (e.el.getAttribute(k) !== d.attrs[k]) e.el.setAttribute(k, d.attrs[k]);
     }
@@ -284,6 +287,11 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
   const idOf = (t: EventTarget | null): string | null =>
     t instanceof Element ? (t.closest('[data-id]')?.getAttribute('data-id') ?? null) : null;
 
+  const grab = (id: string, on: boolean) => {
+    const e = entries.get(id);
+    if (e) (e.grabbed = on), paint(e);
+  };
+
   let drag: { id: string; pointer: number; sx: number; sy: number; moved: boolean } | null = null;
   let swallowClick = false;
 
@@ -295,6 +303,7 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
     svg.setPointerCapture(ev.pointerId);
     key = null;
     drag = { id, pointer: ev.pointerId, sx: ev.clientX, sy: ev.clientY, moved: false };
+    grab(id, true);
     svg.classList.add('dv-dragging');
     emit('dragstart', id, ev);
   };
@@ -307,6 +316,7 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
     if (!drag || ev.pointerId !== drag.pointer) return;
     swallowClick = drag.moved; // a drag shouldn't also count as a click
     emit('dragend', drag.id, ev);
+    grab(drag.id, false);
     svg.classList.remove('dv-dragging');
     drag = null;
   };

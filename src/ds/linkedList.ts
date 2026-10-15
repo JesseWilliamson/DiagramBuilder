@@ -84,8 +84,8 @@ export function linkedList(list: readonly ListNodeSpec[], o: LinkedListOptions =
     const pc = V2(c.x + w / 2 + pw / 2, c.y); // pointer compartment centre
     boxes.push(
       rect({ id: `${id}:val:${n.key}`, x: c.x, y: c.y, w, h, rx: 6, tone: n.tone, data: n }),
-      rect({ id: `${id}:ptr:${n.key}`, x: pc.x, y: pc.y, w: pw, h, rx: 6, tone: n.tone }),
       text({ id: `${id}:txt:${n.key}`, x: c.x, y: c.y, text: show(n.value), size: 15, role: 'value', tone: n.tone }),
+      rect({ id: `${id}:ptr:${n.key}`, x: pc.x, y: pc.y, w: pw, h, rx: 6, tone: n.tone }),
     );
     const target = n.next == null ? undefined : byKey.get(String(n.next));
     if (!target) {

@@ -32,6 +32,12 @@ export interface DiagramProps {
   onDragStart?: (e: ViewEvent) => void;
   onDrag?: (e: ViewEvent) => void;
   onDragEnd?: (e: ViewEvent) => void;
+  /**
+   * 'tactile': chunky shapes on a solid lip that lift on hover and sink when
+   * pressed. 'flat': the plain textbook look. Default: inherit from the
+   * nearest `data-dv-look` attribute (flat if there is none).
+   */
+  look?: 'tactile' | 'flat';
   className?: string;
   /** Accessible description of what the diagram shows. */
   label?: string;
@@ -47,7 +53,7 @@ export interface DiagramProps {
  *  - Event handlers are read through a ref, so passing a fresh inline `onDrag`
  *    every render doesn't tear down and rebuild the view's listeners.
  */
-export function Diagram({ scene, size = 'natural', scale, height = 240, viewBox = 'auto', camera, padding, duration, ease, onClick, onDragStart, onDrag, onDragEnd, className, label }: DiagramProps) {
+export function Diagram({ scene, size = 'natural', scale, height = 240, viewBox = 'auto', camera, padding, duration, ease, onClick, onDragStart, onDrag, onDragEnd, look, className, label }: DiagramProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const viewRef = useRef<View | null>(null);
   const dragging = useRef<null | 'pointer' | 'key'>(null);
@@ -93,5 +99,5 @@ export function Diagram({ scene, size = 'natural', scale, height = 240, viewBox 
   const style = size === 'natural'
     ? { display: 'block', maxWidth: '100%', height: 'auto', margin: '0 auto', overflow: 'visible' }
     : { width: '100%', height, display: 'block' };
-  return <svg ref={svgRef} className={className} style={style} role="img" aria-label={label} />;
+  return <svg ref={svgRef} className={className} style={style} role="img" aria-label={label} data-dv-look={look} />;
 }

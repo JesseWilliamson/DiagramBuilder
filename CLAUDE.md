@@ -37,6 +37,10 @@ Motion, a real bundler) instead of hand-rolling substitutes.
     50% fill). Policy: plots/draggables fixed; step-throughs `fitViewBox(player.frames.map(draw))`; camera frozen while
     dragging. `mathtext.ts`: TeX-lite (`a^2`, `x_{i}`, `\cap`, `\text{}`) used for `role: 'math'` text and `<MathText>`.
   - Draggable nodes get `tabindex=0`; arrow keys emit the normal drag events from a virtual pointer (`e.keyboard`).
+  - Tactile look (Brilliant-style chunky tiles + 3D controls): opt-in via `data-dv-look="tactile"` on an ancestor or
+    `<Diagram look="tactile">`; pure CSS (`TACTILE` blocks in `styles.ts` and `controls-styles.ts`). Lip = hard
+    drop-shadow in `--dv-<tone>-lip`; renderer adds `dv-grabbed` while dragging. Layout convention it relies on: a
+    shape's label is emitted right after the shape. The site defaults to tactile (top-bar toggle).
   - `styles.ts`: ONE theme: white canvas, 1.5px ink lines, flat yellow/blue/green/red/purple/orange fills,
     #e5e5e5 grids, thick blue curves, italic serif maths labels. `--dv-*` variables on `.dv-root` / `.dvc`; dark via
     `[data-theme="dark"]` or `.dark` (or the OS setting).

@@ -93,7 +93,7 @@ export function graph(nodes: readonly GraphNodeSpec[], edges: readonly GraphEdge
     out.push(
       circle({ id: `${id}:node:${n.id}`, x: p.x, y: p.y, r, tone: n.tone, draggable: o.draggable, interactive: o.interactive, data: n }),
     );
-    labels.push(text({ id: `${id}:label:${n.id}`, x: p.x, y: p.y, text: show(n.label ?? n.id), size: 15, weight: 600, role: 'value', tone: n.tone }));
+    out.push(text({ id: `${id}:label:${n.id}`, x: p.x, y: p.y, text: show(n.label ?? n.id), size: 15, weight: 600, role: 'value', tone: n.tone }));
   }
   return {
     nodes: [...out, ...labels],

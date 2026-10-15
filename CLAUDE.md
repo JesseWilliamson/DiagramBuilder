@@ -50,13 +50,17 @@ Motion, a real bundler) instead of hand-rolling substitutes.
     `prob/` (bars, sampleSpace, diePips, probTree, venn2 + vennRegions/vennAreas/vennRegionAt),
     `geom/` (polygon, segment, tickMarks, angleMark, circle, pointLabel + intersection/centre helpers),
     `sched/` (simulate: fcfs/sjf/srtf/rr/priority; gantt), `mem/` (stackHeap, memory, hex).
-    Non-ds families are namespaces: `import { plot, prob, geom, sched, mem } from 'dsviz'`.
+    `uml/` (classDiagram + RELATION_STYLE, sequence + activations(), stateMachine), `sys/` (architecture with
+    component kinds client/user/lb/gateway/service/cache/db/queue/cdn/storage → role `sys-<kind>`, packet, along()).
+    Both use core `connector.ts` (line + end markers 'arrow'|'open'|'triangle'|'diamond'|'diamond-filled', straight /
+    elbow / via routes, rectEdge).
+    Non-ds families are namespaces: `import { plot, prob, geom, sched, mem, uml, sys } from 'dsviz'`.
 - `src/react/` — `<Diagram>` (natural size by default: 1 scene unit = 1 CSS px, shrinks on narrow screens; `scale`,
   `size="fill"`, fixed `viewBox`, `duration`, `ease`), `usePlayer` (`start: 'end'`), `useTicker`, `useBurst`, and small
   neutral controls on Radix: `Slider`, `Segmented`, `Select`, `Switch`, `NumberStepper`, `Button`, `TextInput`,
   `Transport` (`<Transport player={player} />`), `CodeTrace`, `MathText`.
 - `site/` — docs site (Vite + React, hash routes): home (`#/`, intro + live featured examples + usage), examples
-  (`#/examples`: 26 examples grouped by family, each the live diagram beside its editable source), guide
+  (`#/examples`: 33 examples grouped by family, each the live diagram beside its editable source), guide
   (`#/guide`), API (`#/api`). Every `site/demos/*.tsx` is a real module importing from `dsviz` / `dsviz/react`;
   `site/live/useLive.tsx` + sucrase `compile.ts` + CodeMirror make the source editable in the page.
 - Install in another project: `npm install github:JesseWilliamson/DiagramBuilder` (the `prepare` script builds `dist/`).

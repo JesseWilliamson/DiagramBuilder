@@ -39,6 +39,16 @@ const rows: Array<[string, string] | string> = [
   ['gantt(segments, opts)', 'Lanes, time axis, now cursor, arrival markers; bars keyed by process and segment.'],
   ['stackHeap(frames, heap, opts)', 'Frames and heap objects with reference arrows.'],
   ['memory(opts) · hex', 'A byte strip with typed groups and hex addresses.'],
+  'Connectors (top level)',
+  ['connector({ id, from, to, start, end, route, via, dashed, label, startLabel, endLabel })', "A line between boxes or points with end markers: 'arrow' · 'open' · 'triangle' · 'diamond' · 'diamond-filled'. route: 'straight' or 'elbow'. Returns points and along(t)."],
+  ['rectEdge(frame, toward) · route · pointAlong', 'Where a ray leaves a box; the polyline a connector follows; a point by length along it.'],
+  'uml.*',
+  ['classDiagram(classes, relations, opts)', 'Class boxes (name / attributes / methods, «stereotype», abstract in italics) and the six relationships: inherits, implements, composition, aggregation, association, dependency. Options: collapsed, dim, interactive, draggable, route. RELATION_STYLE maps kind → line and markers.'],
+  ['sequence(participants, messages, { upTo, numbered, gap, row })', 'Lifelines, call / return / async messages, self-calls; upTo reveals messages one at a time. activations(messages) derives the bars from the call stack.'],
+  ['stateMachine(states, transitions, { current, fired })', 'Rounded states, initial / final / choice pseudostates, labelled (and bendable) transitions, self-loops.'],
+  'sys.*',
+  ['architecture(components, links, opts)', "Components by kind: client · user · lb · gateway · service · cache · db · queue · cdn · storage (role sys-<kind>, coloured by the stylesheet). Returns frame(id) and along(from, to, t) for animating along links."],
+  ['component(c) · packet({ id, x, y, tone, label })', 'One component on its own; a request dot that glides between renders when its id is kept.'],
 ];
 
 export function Api() {

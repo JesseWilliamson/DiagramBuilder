@@ -88,6 +88,13 @@ ${T} ${SOLID}.dv-interactive:not(.dv-draggable):active { transform: translateY(v
 ${T} ${SOLID}.dv-interactive:not(.dv-draggable):active + .dv-text { transform: translateY(var(--dv-depth)); transition-duration: .05s; }
 ${T} ${SOLID}.dv-grabbed { transform: translateY(-4px); filter: ${lip('4px')} drop-shadow(0 10px 8px rgb(0 0 0 / .18)); }
 ${T} ${SOLID}.dv-grabbed + .dv-text { transform: translateY(-4px); }
+/* cards, UML boxes and system components: a lip, but no press (they hold several labels) */
+${T} .dv-rect.dv-role-card { stroke: var(--dv-cl, var(--dv-lip)); stroke-width: 2px; filter: ${lip()}; }
+${T} .dv-path.dv-role-divider { stroke: var(--dv-lip); stroke-width: 2px; }
+${T} .dv-rect.dv-role-activation { stroke: var(--dv-lip); stroke-width: 2px; }
+${T} [class*="dv-role-sys-"]:is(.dv-rect, .dv-circle, .dv-path:not(.dv-open)) { stroke: var(--dv-kl, var(--dv-lip)); stroke-width: 2px; filter: drop-shadow(0 var(--dv-depth) 0 var(--dv-kl, var(--dv-lip))); }
+${T} .dv-path.dv-open[class*="dv-role-sys-"] { stroke: var(--dv-kl, var(--dv-lip)); stroke-width: 2px; }
+${T} :is(.dv-role-card, [class*="dv-role-sys-"]).dv-grabbed { filter: ${lip('2px')} drop-shadow(0 10px 8px rgb(0 0 0 / .18)); }
 /* handles become little buttons too */
 ${T} .dv-circle.dv-role-handle { filter: drop-shadow(0 3px 0 color-mix(in srgb, var(--dv-c, var(--dv-point)) 55%, #000)); }
 ${T} .dv-role-hit.dv-grabbed + .dv-role-handle { transform: translateY(-3px) scale(1.35); filter: drop-shadow(0 6px 0 color-mix(in srgb, var(--dv-c, var(--dv-point)) 55%, #000)) drop-shadow(0 10px 8px rgb(0 0 0 / .2)); }
@@ -180,6 +187,46 @@ ${TONES.map(toneVars).join('\n')}
 .dv-rect.dv-role-universe${anyTone} { fill: var(--dv-cf); }
 .dv-rect.dv-role-frame { fill: var(--dv-muted-fill); stroke: none; }
 .dv-rect.dv-role-frame${anyTone} { fill: color-mix(in srgb, var(--dv-cf) 45%, var(--dv-surface)); }
+
+/* connectors (UML relationships, architecture links): line + end markers */
+.dv-path.dv-role-connector { fill: none; stroke: var(--dv-edge); pointer-events: none; }
+.dv-path.dv-role-connector${anyTone} { stroke: var(--dv-c); }
+.dv-path.dv-role-end-solid { fill: var(--dv-edge); stroke: var(--dv-edge); pointer-events: none; }
+.dv-path.dv-role-end-solid${anyTone} { fill: var(--dv-c); stroke: var(--dv-c); }
+.dv-path.dv-role-end-hollow { fill: var(--dv-surface); stroke: var(--dv-edge); pointer-events: none; }
+.dv-path.dv-role-end-hollow${anyTone} { fill: var(--dv-surface); stroke: var(--dv-c); }
+.dv-path.dv-role-end-open { fill: none; stroke: var(--dv-edge); pointer-events: none; }
+.dv-path.dv-role-end-open${anyTone} { stroke: var(--dv-c); }
+.dv-text.dv-role-end-label { fill: var(--dv-muted); font-family: var(--dv-mono); font-weight: 500; }
+
+/* UML */
+.dv-rect.dv-role-card { fill: var(--dv-surface); stroke: var(--dv-stroke); }
+.dv-rect.dv-role-card${anyTone} { fill: color-mix(in srgb, var(--dv-cf) 55%, var(--dv-surface)); stroke: var(--dv-cs); }
+.dv-text.dv-role-stereotype { fill: var(--dv-muted); font-style: italic; font-weight: 400; }
+.dv-text:is(.dv-role-class-name, .dv-role-class-name-abstract) { font-weight: 700; }
+.dv-text.dv-role-class-name-abstract { font-style: italic; }
+.dv-text.dv-role-member { font-family: var(--dv-mono); font-weight: 400; }
+.dv-path.dv-role-divider { stroke: var(--dv-stroke); fill: none; }
+.dv-path.dv-role-lifeline { stroke: var(--dv-faint); fill: none; stroke-dasharray: 5 5; }
+.dv-rect.dv-role-activation { fill: var(--dv-muted-fill); stroke: var(--dv-stroke); }
+.dv-text.dv-role-message { font-family: var(--dv-mono); font-weight: 500; paint-order: stroke; stroke: var(--dv-halo); stroke-width: 4px; stroke-linejoin: round; }
+.dv-text.dv-role-message${anyTone} { fill: var(--dv-c); }
+.dv-circle.dv-role-pseudo { fill: var(--dv-fg); stroke: none; }
+.dv-circle.dv-role-pseudo${anyTone} { fill: var(--dv-c); }
+.dv-circle.dv-role-figure { fill: var(--dv-surface); stroke: var(--dv-fg); }
+.dv-path.dv-role-figure-line { fill: none; stroke: var(--dv-fg); }
+
+/* system design: each kind sets its colour (--dv-k) and lip (--dv-kl); fills are a tint of it */
+.dv-role-sys-lb, .dv-role-sys-gateway { --dv-k: var(--dv-accent-fill); --dv-kl: var(--dv-accent-lip); }
+.dv-role-sys-cache { --dv-k: var(--dv-orange-stroke); --dv-kl: var(--dv-orange-lip); }
+.dv-role-sys-db { --dv-k: var(--dv-success-fill); --dv-kl: var(--dv-success-lip); }
+.dv-role-sys-queue { --dv-k: var(--dv-visited-fill); --dv-kl: var(--dv-visited-lip); }
+.dv-role-sys-cdn, .dv-role-sys-storage { --dv-k: var(--dv-active-fill); --dv-kl: var(--dv-active-lip); }
+[class*="dv-role-sys-"]:is(.dv-rect, .dv-circle, .dv-path:not(.dv-open)) { fill: color-mix(in srgb, var(--dv-k, var(--dv-surface)) 45%, var(--dv-surface)); stroke: var(--dv-stroke); }
+[class*="dv-role-sys-"]:is(.dv-rect, .dv-circle, .dv-path:not(.dv-open))${anyTone} { fill: var(--dv-cf); --dv-kl: var(--dv-cl); }
+.dv-path.dv-open[class*="dv-role-sys-"] { fill: none; stroke: var(--dv-stroke); }
+.dv-circle.dv-role-packet { fill: var(--dv-c, var(--dv-point)); stroke: var(--dv-surface); stroke-width: 2px; filter: drop-shadow(0 1px 2px rgb(0 0 0 / .3)); pointer-events: none; }
+.dv-text.dv-role-packet-label { font-family: var(--dv-mono); font-size: 10.5px; fill: var(--dv-c, var(--dv-fg)); paint-order: stroke; stroke: var(--dv-halo); stroke-width: 3px; }
 
 /* draggable handles: a big invisible hit target, then the visible dot */
 :is(.dv-circle, .dv-rect).dv-role-hit { fill: transparent; stroke: none; pointer-events: all; }

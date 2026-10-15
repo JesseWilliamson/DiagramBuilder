@@ -80,4 +80,18 @@ export const groups: Group[] = [
       { name: 'Pointers', title: 'Pointer arithmetic', desc: 'The same bytes as char, int or double.' },
     ],
   },
+  {
+    id: 'design',
+    title: 'Software design',
+    intro: 'UML (uml.classDiagram, uml.sequence, uml.stateMachine) and system design (sys.architecture, sys.packet). Lines and their end markers come from connector().',
+    items: [
+      { name: 'UmlArrows', title: 'UML relationships', desc: 'The six arrows, each beside the code that creates it.' },
+      { name: 'ClassDiagram', title: 'Class diagram', desc: 'Drag the classes; click one to see only its relationships.' },
+      { name: 'Sequence', title: 'Sequence diagram', desc: 'A login, step by step. Activation bars follow the call stack.' },
+      { name: 'StateMachine', title: 'State machine', desc: 'An order lifecycle. Only legal events are enabled.' },
+      { name: 'RequestFlow', title: 'A request through a web stack', desc: 'Hop by hop with latency: cache hit versus miss.' },
+      { name: 'LoadBalancer', title: 'Load balancing', desc: 'Round robin, least connections and random, with a slow server. Click a server to take it down.' },
+      { name: 'ConsistentHashing', title: 'Consistent hashing', desc: 'Add or remove a server and count the keys that move, ring versus hash % N.' },
+    ],
+  },
 ];

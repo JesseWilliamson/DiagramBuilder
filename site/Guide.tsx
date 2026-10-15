@@ -22,6 +22,7 @@ const toc = [
   ['camera', 'The camera'],
   ['math', 'Maths labels'],
   ['sizing', 'Sizing'],
+  ['design', 'Software design'],
   ['vanilla', 'Without React'],
   ['exercises', 'Exercises'],
 ];
@@ -146,6 +147,19 @@ plot.vector(p, O, proj, { id: 'r', label: 'proj_v u' })      // labels on marks 
 
         <Section id="sizing" title="Sizing">
           <p>By default diagrams are drawn at their natural size: one scene unit is one CSS pixel, centred, and scaled down only when the container is narrower. That keeps text and line weights identical across every diagram. Pass <code>scale</code> to draw bigger, or <code>size="fill"</code> with a <code>height</code> to stretch to the container instead.</p>
+        </Section>
+
+        <Section id="design" title="Software design diagrams">
+          <p>Two families draw software: <code>uml</code> (class, sequence and state diagrams) and <code>sys</code> (architecture: clients, load balancers, services, caches, databases, queues). Both are built on <code>connector()</code>, a line with a marker at either end. Each marker is a small shape with its own role (<code>end-solid</code>, <code>end-hollow</code>, <code>end-open</code>), and the line stops where the marker starts, so it never shows through a hollow triangle.</p>
+          <Code>{`
+uml.classDiagram(
+  [{ id: 'Square', name: 'Square', x: 0, y: 200 }, { id: 'Rect', name: 'Rectangle', x: 0, y: 0, attributes: ['# w: number'] }],
+  [{ from: 'Square', to: 'Rect', kind: 'inherits' }],
+);
+uml.sequence(people, messages, { upTo: player.frame });   // reveal one message per step
+const a = sys.architecture(components, links);
+combine(a, sys.packet({ id: 'req', ...a.along('lb', 'app', 1) }));  // same id → it glides`}</Code>
+          <p>You place things (x, y); the layouts size boxes from their text and route the lines. Sequence diagrams compute their activation bars from the calls and returns, the same stack a running program keeps. Component colours come from the stylesheet by kind (<code>.dv-role-sys-db</code>), so a host app can restyle every database in one rule.</p>
         </Section>
 
         <Section id="vanilla" title="Without React">

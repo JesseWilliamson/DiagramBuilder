@@ -311,6 +311,7 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
   let swallowClick = false;
 
   const onPointerDown = (ev: PointerEvent) => {
+    swallowClick = false; // a fresh press: whatever the last one left behind no longer applies
     const id = idOf(ev.target);
     const e = id ? entries.get(id) : undefined;
     if (!id || !e?.node.draggable) return;
@@ -329,8 +330,13 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
   };
   const onPointerUp = (ev: PointerEvent) => {
     if (!drag || ev.pointerId !== drag.pointer) return;
-    swallowClick = drag.moved; // a drag shouldn't also count as a click
+    // Pointer capture sends the browser's click to the <svg>, not the node, so
+    // we decide here: a press that didn't move is a click on the node itself.
+    // The native click that follows is swallowed either way.
+    const cancelled = ev.type === 'pointercancel';
+    swallowClick = !cancelled;
     emit('dragend', drag.id, ev);
+    if (!drag.moved && !cancelled) emit('click', drag.id, ev);
     grab(drag.id, false);
     svg.classList.remove('dv-dragging');
     drag = null;

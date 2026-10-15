@@ -4,7 +4,7 @@
  *   - crisp 1.5px ink lines and arrows, filled triangle arrowheads
  *   - solid things (cells, nodes, boxes, components) in flat fills from one
  *     palette (yellow / blue / green / red / purple / orange), outlined in a
- *     darker shade of their own colour and sitting on a lip of it (see DEPTH)
+ *     darker shade of their own colour (see OUTLINES)
  *   - very light #e5e5e5 grids, thick blue curves, pale blue areas
  *   - maths labels in an italic serif, everything else in a plain sans
  *
@@ -19,12 +19,12 @@
  * Tones (`tone: 'active'`) become classes. Each tone has three colours:
  *   --dv-c   ink    (text, arrows, curves)
  *   --dv-cf  fill   (shapes)
- *   --dv-cs  stroke (outlines of shapes without depth: ink by default)
- *   --dv-cl  lip    (outline + lip of solid shapes: a darker shade of the fill)
+ *   --dv-cs  stroke  (outlines of other shapes: ink by default)
+ *   --dv-co  outline (outlines of solid shapes: a darker shade of the fill)
  */
 const TONES = ['active', 'accent', 'success', 'danger', 'visited', 'orange'];
 const toneVars = (t: string) =>
-  `.dv-tone-${t} { --dv-c: var(--dv-${t}); --dv-cf: var(--dv-${t}-fill); --dv-cs: var(--dv-${t}-stroke); --dv-cl: var(--dv-${t}-lip); }`;
+  `.dv-tone-${t} { --dv-c: var(--dv-${t}); --dv-cf: var(--dv-${t}-fill); --dv-cs: var(--dv-${t}-stroke); --dv-co: var(--dv-${t}-outline); }`;
 const anyTone = `:is(${TONES.map((t) => `.dv-tone-${t}`).join(', ')})`;
 
 // palette: 200 / 400 / 500 / 700 steps of each hue
@@ -48,8 +48,8 @@ const LIGHT = `
   --dv-visited: ${P.purple[3]}; --dv-visited-fill: ${P.purple[1]}; --dv-visited-stroke: #000;
   --dv-orange: ${P.orange[3]}; --dv-orange-fill: ${P.orange[0]}; --dv-orange-stroke: ${P.orange[1]};
   --dv-band: ${P.yellow[0]};
-  --dv-lip: #d4d4d4; --dv-active-lip: ${P.yellow[3]}; --dv-accent-lip: ${P.blue[3]}; --dv-success-lip: ${P.green[3]};
-  --dv-danger-lip: ${P.red[3]}; --dv-visited-lip: ${P.purple[3]}; --dv-orange-lip: ${P.orange[3]}; --dv-muted-lip: #e5e5e5;`;
+  --dv-outline: #d4d4d4; --dv-active-outline: ${P.yellow[3]}; --dv-accent-outline: ${P.blue[3]}; --dv-success-outline: ${P.green[3]};
+  --dv-danger-outline: ${P.red[3]}; --dv-visited-outline: ${P.purple[3]}; --dv-orange-outline: ${P.orange[3]}; --dv-muted-outline: #e5e5e5;`;
 
 const DARK = `
   --dv-fg: #fff; --dv-muted: #8c8c8c; --dv-faint: #4c4c4c; --dv-surface: #1e1e1e; --dv-muted-fill: #2a2a2a;
@@ -62,40 +62,34 @@ const DARK = `
   --dv-visited: ${P.purple[1]}; --dv-visited-fill: #874de5; --dv-visited-stroke: #f2f2f2;
   --dv-orange: ${P.orange[1]}; --dv-orange-fill: #673404; --dv-orange-stroke: #ce6809;
   --dv-band: #5c4400;
-  --dv-lip: #4c4c4c; --dv-active-lip: #5c4400; --dv-accent-lip: #142563; --dv-success-lip: #004e16;
-  --dv-danger-lip: #621c1c; --dv-visited-lip: #381d66; --dv-orange-lip: #291502; --dv-muted-lip: #333;`;
+  --dv-outline: #4c4c4c; --dv-active-outline: #5c4400; --dv-accent-outline: #142563; --dv-success-outline: #004e16;
+  --dv-danger-outline: #621c1c; --dv-visited-outline: #381d66; --dv-orange-outline: #291502; --dv-muted-outline: #333;`;
 
 /*
- * Depth: solid things (array cells, tree and graph nodes, UML boxes, system
- * components) sit on a lip, and their outline is a darker shade of their own
- * colour rather than black, so each tile reads as one coloured object.
+ * Outlines: solid things (array cells, tree and graph nodes, UML boxes, system
+ * components) are outlined in a darker shade of their own colour rather than
+ * black, so each tile reads as one coloured object. Lines, arrows and plots
+ * stay ink, which keeps the connections visually separate from the things
+ * they connect.
  *
- * The lip is a hard drop-shadow (no blur) in the tile's lip colour. It's pure
- * CSS, so layouts know nothing about it. Set --dv-depth: 0 to flatten.
- *
- * Interaction feedback stays quiet: hover brightens a clickable shape (keeping
- * its lip), and a dragged shape (.dv-grabbed, set by the renderer) gets a soft
- * shadow. One gotcha: `filter` holds ONE value, so any rule that sets a filter
- * on a solid shape has to repeat the lip, or the lip vanishes.
+ * Interaction feedback stays quiet: hover brightens a clickable shape, and a
+ * dragged shape (.dv-grabbed, set by the renderer) gets a soft shadow.
  */
 const R = '.dv-root';
 const SOLID = ':is(.dv-rect, .dv-circle):not([class*="dv-role-"], .dv-tone-ghost)';
-const lip = (c = 'var(--dv-cl, var(--dv-lip))') => `drop-shadow(0 var(--dv-depth) 0 ${c})`;
-const LIFTED = 'drop-shadow(0 8px 8px rgb(0 0 0 / .16))';
-const DEPTH = /* css */ `
-${R} ${SOLID} { stroke: var(--dv-cl, var(--dv-lip)); stroke-width: 2px; filter: ${lip()}; }
-${R} ${SOLID}.dv-tone-muted { --dv-cl: var(--dv-muted-lip); }
-${R} ${SOLID}.dv-interactive:hover { filter: ${lip()} brightness(.97); stroke-width: 2px; }
-:root[data-theme="dark"] ${R} ${SOLID}.dv-interactive:hover { filter: ${lip()} brightness(1.15); }
-${R} ${SOLID}.dv-grabbed { filter: ${lip()} ${LIFTED}; }
+const LIFTED = 'drop-shadow(0 6px 8px rgb(0 0 0 / .16))';
+const OUTLINES = /* css */ `
+${R} ${SOLID} { stroke: var(--dv-co, var(--dv-outline)); stroke-width: 2px; }
+${R} ${SOLID}.dv-tone-muted { --dv-co: var(--dv-muted-outline); }
+${R} ${SOLID}.dv-interactive:hover { filter: brightness(.97); stroke-width: 2px; }
+${R} ${SOLID}.dv-grabbed { filter: ${LIFTED}; }
 /* cards (UML boxes, sequence heads) and system components */
-${R} .dv-rect.dv-role-card { stroke: var(--dv-cl, var(--dv-lip)); stroke-width: 2px; filter: ${lip()}; }
-${R} .dv-path.dv-role-divider { stroke: var(--dv-cl, var(--dv-lip)); stroke-width: 2px; }
-${R} .dv-rect.dv-role-activation { stroke: var(--dv-lip); stroke-width: 2px; }
-${R} [class*="dv-role-sys-"]:is(.dv-rect, .dv-circle, .dv-path:not(.dv-open)) { stroke: var(--dv-kl, var(--dv-lip)); stroke-width: 2px; filter: ${lip('var(--dv-kl, var(--dv-lip))')}; }
-${R} .dv-path.dv-open[class*="dv-role-sys-"] { stroke: var(--dv-kl, var(--dv-lip)); stroke-width: 2px; }
-${R} :is(.dv-role-card, [class*="dv-role-sys-"]).dv-interactive:hover { filter: ${lip('var(--dv-kl, var(--dv-cl, var(--dv-lip)))')} brightness(.97); }
-${R} :is(.dv-role-card, [class*="dv-role-sys-"]).dv-grabbed { filter: ${lip('var(--dv-kl, var(--dv-cl, var(--dv-lip)))')} ${LIFTED}; }
+${R} .dv-rect.dv-role-card { stroke: var(--dv-co, var(--dv-outline)); stroke-width: 2px; }
+${R} .dv-path.dv-role-divider { stroke: var(--dv-co, var(--dv-outline)); stroke-width: 2px; }
+${R} .dv-rect.dv-role-activation { stroke: var(--dv-outline); stroke-width: 2px; }
+${R} [class*="dv-role-sys-"]:is(.dv-rect, .dv-circle, .dv-path:not(.dv-open)) { stroke: var(--dv-ko, var(--dv-outline)); stroke-width: 2px; }
+${R} .dv-path.dv-open[class*="dv-role-sys-"] { stroke: var(--dv-ko, var(--dv-outline)); stroke-width: 2px; }
+${R} :is(.dv-role-card, [class*="dv-role-sys-"]).dv-grabbed { filter: ${LIFTED}; }
 `;
 
 export const DEFAULT_CSS = /* css */ `
@@ -104,7 +98,7 @@ export const DEFAULT_CSS = /* css */ `
   --dv-font: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --dv-mono: "Source Code Pro", ui-monospace, "SF Mono", Menlo, monospace;
   --dv-math-font: "STIX Two Text", "Latin Modern Roman", "Cambria Math", "Times New Roman", serif;
-  --dv-stroke-w: 1.5px; --dv-depth: 4px;${LIGHT}
+  --dv-stroke-w: 1.5px;${LIGHT}
   font-family: var(--dv-font);
 }
 .dv-root { overflow: visible; }
@@ -214,14 +208,14 @@ ${TONES.map(toneVars).join('\n')}
 .dv-circle.dv-role-figure { fill: var(--dv-surface); stroke: var(--dv-fg); }
 .dv-path.dv-role-figure-line { fill: none; stroke: var(--dv-fg); }
 
-/* system design: each kind sets its colour (--dv-k) and lip (--dv-kl); fills are a tint of it */
-.dv-role-sys-lb, .dv-role-sys-gateway { --dv-k: var(--dv-accent-fill); --dv-kl: var(--dv-accent-lip); }
-.dv-role-sys-cache { --dv-k: var(--dv-orange-stroke); --dv-kl: var(--dv-orange-lip); }
-.dv-role-sys-db { --dv-k: var(--dv-success-fill); --dv-kl: var(--dv-success-lip); }
-.dv-role-sys-queue { --dv-k: var(--dv-visited-fill); --dv-kl: var(--dv-visited-lip); }
-.dv-role-sys-cdn, .dv-role-sys-storage { --dv-k: var(--dv-active-fill); --dv-kl: var(--dv-active-lip); }
+/* system design: each kind sets its colour (--dv-k) and outline (--dv-ko); fills are a tint of it */
+.dv-role-sys-lb, .dv-role-sys-gateway { --dv-k: var(--dv-accent-fill); --dv-ko: var(--dv-accent-outline); }
+.dv-role-sys-cache { --dv-k: var(--dv-orange-stroke); --dv-ko: var(--dv-orange-outline); }
+.dv-role-sys-db { --dv-k: var(--dv-success-fill); --dv-ko: var(--dv-success-outline); }
+.dv-role-sys-queue { --dv-k: var(--dv-visited-fill); --dv-ko: var(--dv-visited-outline); }
+.dv-role-sys-cdn, .dv-role-sys-storage { --dv-k: var(--dv-active-fill); --dv-ko: var(--dv-active-outline); }
 [class*="dv-role-sys-"]:is(.dv-rect, .dv-circle, .dv-path:not(.dv-open)) { fill: color-mix(in srgb, var(--dv-k, var(--dv-surface)) 45%, var(--dv-surface)); stroke: var(--dv-stroke); }
-[class*="dv-role-sys-"]:is(.dv-rect, .dv-circle, .dv-path:not(.dv-open))${anyTone} { fill: var(--dv-cf); --dv-kl: var(--dv-cl); }
+[class*="dv-role-sys-"]:is(.dv-rect, .dv-circle, .dv-path:not(.dv-open))${anyTone} { fill: var(--dv-cf); --dv-ko: var(--dv-co); }
 .dv-path.dv-open[class*="dv-role-sys-"] { fill: none; stroke: var(--dv-stroke); }
 .dv-circle.dv-role-packet { fill: var(--dv-c, var(--dv-point)); stroke: var(--dv-surface); stroke-width: 2px; filter: drop-shadow(0 1px 2px rgb(0 0 0 / .3)); pointer-events: none; }
 .dv-text.dv-role-packet-label { font-family: var(--dv-mono); font-size: 10.5px; fill: var(--dv-c, var(--dv-fg)); paint-order: stroke; stroke: var(--dv-halo); stroke-width: 3px; }
@@ -250,7 +244,7 @@ ${TONES.map(toneVars).join('\n')}
 .dv-draggable { cursor: grab; touch-action: none; }
 .dv-root.dv-dragging, .dv-root.dv-dragging .dv-draggable { cursor: grabbing; }
 @media (prefers-reduced-motion: reduce) { .dv-circle.dv-role-pulse { animation: none; opacity: .5; } }
-${DEPTH}
+${OUTLINES}
 `;
 
 const STYLE_ID = 'dsviz-default-styles';

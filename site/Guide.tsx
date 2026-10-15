@@ -88,8 +88,8 @@ p.toWorld(e.x, e.y);                                        // drag position →
   --dv-font: "Inter", sans-serif;
 }`}</Code>
           <p>Dark mode switches on <code>[data-theme="dark"]</code> or <code>.dark</code> on any ancestor, or follows the OS when neither is set.</p>
-          <h3>Depth</h3>
-          <p>Solid shapes (array cells, tree and graph nodes, UML boxes, system components) are outlined in a darker shade of their own colour and sit on a 4px lip of it, so a coloured tile reads as one object instead of a fill inside a black line. It's all CSS: the lip is a hard <code>drop-shadow(0 4px 0 lip)</code> with no blur, and no layout knows about it. Set <code>--dv-depth: 0</code> to flatten, or change the colours with <code>--dv-lip</code> and <code>--dv-&lt;tone&gt;-lip</code>. Lines, arrows, curves and plots stay crisp ink.</p>
+          <h3>Coloured outlines</h3>
+          <p>Solid shapes (array cells, tree and graph nodes, UML boxes, system components) are outlined in a darker shade of their own colour rather than black, so a coloured tile reads as one object. Lines, arrows, curves and plots stay crisp ink, which keeps the connections visually separate from the things they connect. Change the colours with <code>--dv-outline</code> (untoned shapes) and <code>--dv-&lt;tone&gt;-outline</code>.</p>
         </Section>
 
         <Section id="motion" title="Animation">

@@ -39,9 +39,9 @@ Motion, a real bundler) instead of hand-rolling substitutes.
   - Draggable nodes get `tabindex=0`; arrow keys emit the normal drag events from a virtual pointer (`e.keyboard`).
   - `styles.ts`: ONE theme (merged from the old flat + tactile looks, per Jesse): white canvas, 1.5px ink lines and
     arrows, #e5e5e5 grids, thick blue curves, maths in STIX. Solid shapes (cells, nodes, UML cards, sys components) are
-    COLOURED: flat palette fill, outline + 4px hard drop-shadow lip in a darker shade (`--dv-<tone>-lip`, `--dv-depth`;
-    the DEPTH block). Interaction feedback is quiet (hover brightens, keeps the lip; `dv-grabbed` adds a soft shadow;
-    no press/lift motion). Controls are flat and quiet, except the slider: 8px track with dot notches.
+    COLOURED: flat palette fill, 2px outline in a darker shade of it (`--dv-outline`, `--dv-<tone>-outline`; the
+    OUTLINES block). No lips/3D (removed at Jesse's request). Interaction feedback is quiet (hover brightens;
+    `dv-grabbed` adds a soft shadow; no press/lift motion). Controls are flat and quiet, except the slider: 8px track with dot notches.
     `--dv-*` variables on `.dv-root` / `.dvc`; dark via `[data-theme="dark"]` or `.dark` (or the OS setting).
     Roles (`grid`, `axis`, `curve`, `area`, `region`, `bar`, `guide`, `glow`, `handle`, `hit`, `math`…) decide looks.
   - Families: `ds/` (array, pointer, linkedList, binaryTree, graph, grid, stack, queue — also exported top-level),

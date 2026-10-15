@@ -43,7 +43,9 @@ ${T} .dvc-switch[data-state="checked"] { background: var(--dvc-accent); box-shad
 
 ${T} .dvc-track { height: 8px; border-radius: 4px; }
 ${T} .dvc-range { border-radius: 4px; box-shadow: inset 0 -2px 0 var(--dvc-accent-lip); }
-${T} .dvc-thumb { width: 20px; height: 20px; border: 2px solid var(--dvc-lip); transform: translateY(-2px); ${press('3px', 'var(--dvc-lip)')} }
+${T} .dvc-slider { --dvc-thumb: 20px; }
+${T} .dvc-tick { width: 4px; height: 4px; }
+${T} .dvc-thumb { border: 2px solid var(--dvc-lip); transform: translateY(-2px); ${press('3px', 'var(--dvc-lip)')} }
 ${T} .dvc-thumb:hover { box-shadow: 0 3px 0 var(--dvc-lip), 0 0 0 6px color-mix(in srgb, var(--dvc-accent) 15%, transparent); }
 ${T} .dvc-thumb:active { transform: translateY(1px); box-shadow: 0 0 0 var(--dvc-lip); }
 
@@ -76,7 +78,9 @@ export const CONTROLS_CSS = /* css */ `
 }
 .dvc-field { display: flex; align-items: center; gap: 10px; font-size: 13px; }
 .dvc-label { color: var(--dvc-sub); white-space: nowrap; }
-.dvc-readout { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; min-width: 3ch; }
+.dvc-readout { display: inline-grid; justify-items: end; font-variant-numeric: tabular-nums; font-kerning: none; font-weight: 600; white-space: nowrap; min-width: 3ch; flex: none; }
+.dvc-readout > * { grid-area: 1 / 1; }
+.dvc-readout-sizer { visibility: hidden; }
 
 .dvc-btn { all: unset; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 30px; padding: 0 12px; border-radius: 7px; cursor: pointer; font: 500 13px var(--dv-font); color: var(--dvc-ink); background: var(--dvc-bg); border: 1px solid var(--dvc-line); transition: background .12s, border-color .12s; }
 .dvc-btn:hover:not(:disabled) { background: var(--dvc-soft); }
@@ -89,8 +93,12 @@ export const CONTROLS_CSS = /* css */ `
 .dvc-slider { position: relative; display: flex; align-items: center; flex: 1; height: 22px; touch-action: none; user-select: none; min-width: 90px; }
 .dvc-track { position: relative; flex: 1; height: 4px; border-radius: 2px; background: var(--dvc-track); }
 .dvc-range { position: absolute; height: 100%; border-radius: 2px; background: var(--dvc-accent); }
-.dvc-tick { position: absolute; top: 50%; width: 1px; height: 7px; transform: translate(-50%, -50%); background: var(--dvc-line); pointer-events: none; }
-.dvc-thumb { display: block; width: 16px; height: 16px; border-radius: 50%; background: var(--dvc-bg); border: 2px solid var(--dvc-accent); box-shadow: 0 1px 2px rgb(0 0 0 / .2); cursor: grab; }
+.dvc-slider { --dvc-thumb: 16px; }
+/* notches: dots inside the track, in a layer inset by half a thumb so they line up with its centre */
+.dvc-ticks { position: absolute; top: 0; bottom: 0; left: calc(var(--dvc-thumb) / 2); right: calc(var(--dvc-thumb) / 2); pointer-events: none; }
+.dvc-tick { position: absolute; top: 50%; width: 3px; height: 3px; border-radius: 50%; transform: translate(-50%, -50%); background: color-mix(in srgb, var(--dvc-sub) 45%, transparent); }
+.dvc-tick.is-on { background: rgb(255 255 255 / .75); }
+.dvc-thumb { box-sizing: border-box; display: block; width: var(--dvc-thumb); height: var(--dvc-thumb); border-radius: 50%; background: var(--dvc-bg); border: 2px solid var(--dvc-accent); box-shadow: 0 1px 2px rgb(0 0 0 / .2); cursor: grab; }
 .dvc-thumb:hover { box-shadow: 0 0 0 5px color-mix(in srgb, var(--dvc-accent) 18%, transparent); }
 .dvc-thumb:focus-visible { outline: none; box-shadow: 0 0 0 5px color-mix(in srgb, var(--dvc-accent) 35%, transparent); }
 .dvc-thumb:active { cursor: grabbing; }

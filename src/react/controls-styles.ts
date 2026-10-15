@@ -6,60 +6,6 @@ import { injectStyles } from '../styles';
  * --dv-* variables as the diagrams (defined on `.dvc`), so a host app restyles
  * both from one place, or swaps the controls for its own entirely.
  */
-/*
- * Tactile controls (data-dv-look="tactile" on any ancestor): chunky 3D
- * buttons. The lip is a hard box-shadow `0 D 0` (no blur). Pressing moves the
- * button down by D and shrinks the shadow to 0 at the same time, so the
- * bottom edge stays put and the button looks pushed into its base.
- */
-const T = ':where([data-dv-look="tactile"])';
-const press = (d: string, lip: string) => `
-  box-shadow: 0 ${d} 0 ${lip}; transition: transform .08s, box-shadow .08s, background .12s;`;
-const TACTILE = /* css */ `
-${T} .dvc { --dvc-lip: #d4d4d4; --dvc-accent-lip: #294bc6; --dvc-strong-lip: #000; }
-:where([data-dv-look="tactile"][data-theme="dark"], [data-dv-look="tactile"] .dark) .dvc { --dvc-lip: #4c4c4c; --dvc-accent-lip: #2d4bc0; --dvc-strong-lip: #9a9a9a; }
-
-${T} .dvc-btn { height: 36px; padding: 0 16px; border-radius: 12px; font-weight: 600; border: 2px solid var(--dvc-lip); margin-bottom: 4px; ${press('4px', 'var(--dvc-lip)')} }
-${T} .dvc-btn:hover:not(:disabled) { background: var(--dvc-bg); transform: translateY(-1px); box-shadow: 0 5px 0 var(--dvc-lip); }
-${T} .dvc-btn:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 var(--dvc-lip); }
-${T} .dvc-btn.is-primary { background: var(--dvc-accent); border-color: var(--dvc-accent-lip); color: #fff; box-shadow: 0 4px 0 var(--dvc-accent-lip); }
-${T} .dvc-btn.is-primary:hover:not(:disabled) { background: var(--dvc-accent); box-shadow: 0 5px 0 var(--dvc-accent-lip); }
-${T} .dvc-btn.is-primary:active:not(:disabled) { box-shadow: 0 0 0 var(--dvc-accent-lip); }
-
-${T} .dvc-seg { padding: 3px; gap: 3px; border-radius: 12px; }
-${T} .dvc-seg-item { padding: 5px 12px; border-radius: 9px; font-weight: 600; border: 2px solid transparent; }
-${T} .dvc-seg-item[data-state="on"] { border-color: var(--dvc-lip); ${press('3px', 'var(--dvc-lip)')} transform: translateY(-2px); }
-${T} .dvc-seg-item:active { transform: translateY(1px); box-shadow: none; }
-
-${T} .dvc-stepper { height: 36px; border-radius: 12px; border: 2px solid var(--dvc-lip); margin-bottom: 4px; ${press('4px', 'var(--dvc-lip)')} }
-${T} .dvc-stepper button { width: 32px; font-weight: 700; }
-${T} .dvc-stepper button:active:not(:disabled) { background: var(--dvc-soft); }
-${T} .dvc-stepper output { border-inline-width: 2px; font-size: 14px; }
-
-${T} .dvc-switch { width: 38px; height: 22px; border-radius: 11px; }
-${T} .dvc-switch-thumb { width: 18px; height: 18px; transform: translateX(2px) translateY(-1px); box-shadow: 0 2px 0 rgb(0 0 0 / .25); }
-${T} .dvc-switch-thumb[data-state="checked"] { transform: translateX(18px) translateY(-1px); }
-${T} .dvc-switch[data-state="checked"] { background: var(--dvc-accent); box-shadow: inset 0 -2px 0 var(--dvc-accent-lip); }
-
-${T} .dvc-track { height: 8px; border-radius: 4px; }
-${T} .dvc-range { border-radius: 4px; box-shadow: inset 0 -2px 0 var(--dvc-accent-lip); }
-${T} .dvc-slider { --dvc-thumb: 20px; }
-${T} .dvc-tick { width: 4px; height: 4px; }
-${T} .dvc-thumb { border: 2px solid var(--dvc-lip); transform: translateY(-2px); ${press('3px', 'var(--dvc-lip)')} }
-${T} .dvc-thumb:hover { box-shadow: 0 3px 0 var(--dvc-lip), 0 0 0 6px color-mix(in srgb, var(--dvc-accent) 15%, transparent); }
-${T} .dvc-thumb:active { transform: translateY(1px); box-shadow: 0 0 0 var(--dvc-lip); }
-
-${T} .dvc-transport button.is-play { width: 34px; height: 34px; margin-bottom: 4px; ${press('4px', 'var(--dvc-accent-lip)')} }
-${T} .dvc-transport button.is-play:hover { background: var(--dvc-accent); transform: translateY(-1px); box-shadow: 0 5px 0 var(--dvc-accent-lip); }
-${T} .dvc-transport button.is-play:active { transform: translateY(4px); box-shadow: 0 0 0 var(--dvc-accent-lip); }
-
-${T} :is(.dvc-select, .dvc-input) { height: 36px; border-radius: 12px; border: 2px solid var(--dvc-lip); }
-${T} .dvc-select { margin-bottom: 4px; ${press('4px', 'var(--dvc-lip)')} }
-${T} .dvc-select:active { transform: translateY(4px); box-shadow: 0 0 0 var(--dvc-lip); }
-${T} .dvc-menu { border: 2px solid var(--dvc-lip); border-radius: 12px; box-shadow: 0 4px 0 var(--dvc-lip); }
-${T} .dvc-code { border-radius: 12px; }
-`;
-
 export const CONTROLS_CSS = /* css */ `
 .dvc {
   --dvc-ink: var(--dv-fg); --dvc-sub: #6b6b6b; --dvc-line: #d9d9d9; --dvc-track: #ececec; --dvc-bg: #fff; --dvc-soft: #f5f5f5;
@@ -91,12 +37,12 @@ export const CONTROLS_CSS = /* css */ `
 .dvc-btn.is-primary:hover:not(:disabled) { background: color-mix(in srgb, var(--dvc-strong) 85%, #888); }
 
 .dvc-slider { position: relative; display: flex; align-items: center; flex: 1; height: 22px; touch-action: none; user-select: none; min-width: 90px; }
-.dvc-track { position: relative; flex: 1; height: 4px; border-radius: 2px; background: var(--dvc-track); }
-.dvc-range { position: absolute; height: 100%; border-radius: 2px; background: var(--dvc-accent); }
-.dvc-slider { --dvc-thumb: 16px; }
+.dvc-track { position: relative; flex: 1; height: 8px; border-radius: 4px; background: var(--dvc-track); }
+.dvc-range { position: absolute; height: 100%; border-radius: 4px; background: var(--dvc-accent); }
+.dvc-slider { --dvc-thumb: 18px; }
 /* notches: dots inside the track, in a layer inset by half a thumb so they line up with its centre */
 .dvc-ticks { position: absolute; top: 0; bottom: 0; left: calc(var(--dvc-thumb) / 2); right: calc(var(--dvc-thumb) / 2); pointer-events: none; }
-.dvc-tick { position: absolute; top: 50%; width: 3px; height: 3px; border-radius: 50%; transform: translate(-50%, -50%); background: color-mix(in srgb, var(--dvc-sub) 45%, transparent); }
+.dvc-tick { position: absolute; top: 50%; width: 4px; height: 4px; border-radius: 50%; transform: translate(-50%, -50%); background: color-mix(in srgb, var(--dvc-sub) 45%, transparent); }
 .dvc-tick.is-on { background: rgb(255 255 255 / .75); }
 .dvc-thumb { box-sizing: border-box; display: block; width: var(--dvc-thumb); height: var(--dvc-thumb); border-radius: 50%; background: var(--dvc-bg); border: 2px solid var(--dvc-accent); box-shadow: 0 1px 2px rgb(0 0 0 / .2); cursor: grab; }
 .dvc-thumb:hover { box-shadow: 0 0 0 5px color-mix(in srgb, var(--dvc-accent) 18%, transparent); }
@@ -148,7 +94,6 @@ export const CONTROLS_CSS = /* css */ `
 .dvc-math { font-family: var(--dv-math-font, "STIX Two Text", "Times New Roman", serif); font-size: 1.12em; white-space: nowrap; }
 .dvc-math i { font-style: italic; }
 .dvc-math sup, .dvc-math sub { font-size: .7em; line-height: 0; }
-${TACTILE}
 @media (prefers-reduced-motion: reduce) { .dvc, .dvc * { transition: none !important; } }
 `;
 

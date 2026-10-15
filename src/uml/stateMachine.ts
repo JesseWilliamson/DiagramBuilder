@@ -122,7 +122,7 @@ export function stateMachine(states: readonly UmlState[], transitions: readonly 
         shapes.push(path({ id: k, points: [[s.x, s.y - 13], [s.x + 13, s.y], [s.x, s.y + 13], [s.x - 13, s.y]], closed: true, tone, data }));
         break;
       default:
-        // the box first, the name right after it (the tactile look moves them together)
+        // the box first, the name right after it (a label always follows its shape)
         shapes.push(
           rect({ id: k, x: s.x, y: s.y, w: f.w, h: f.h, rx: f.h / 2, tone, interactive: o.interactive, data }),
           text({ id: `${k}:label`, x: s.x, y: s.y, text: s.label ?? s.id, size: 13, role: 'value', tone }),

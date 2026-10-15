@@ -17,20 +17,6 @@ function ThemeToggle() {
   );
 }
 
-// The tactile look is a single attribute on any ancestor: data-dv-look="tactile".
-function LookToggle() {
-  const [look, setLook] = useState(() => document.documentElement.dataset.dvLook ?? 'tactile');
-  useEffect(() => {
-    document.documentElement.dataset.dvLook = look;
-    try { localStorage.setItem('dsviz-look', look); } catch { /* storage blocked */ }
-  }, [look]);
-  return (
-    <button className="theme-btn" type="button" onClick={() => setLook(look === 'flat' ? 'tactile' : 'flat')} aria-label="Toggle tactile look">
-      {look === 'flat' ? 'Tactile' : 'Flat'}
-    </button>
-  );
-}
-
 export function App() {
   const [page] = useRoute();
   return (
@@ -44,7 +30,6 @@ export function App() {
             <a href="#/api" aria-current={page === 'api'}>API</a>
             <a href="https://github.com/JesseWilliamson/DiagramBuilder" target="_blank" rel="noreferrer">GitHub</a>
           </nav>
-          <LookToggle />
           <ThemeToggle />
         </div>
       </header>

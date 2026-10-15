@@ -97,7 +97,7 @@ interface Entry {
   dur: number;
   exiting: boolean;
   settled: boolean;
-  /** Being dragged right now: gets the `dv-grabbed` class (the tactile look lifts it). */
+  /** Being dragged right now: gets the `dv-grabbed` class (the stylesheet gives it a lifted shadow). */
   grabbed?: boolean;
 }
 

@@ -1,9 +1,10 @@
 /**
- * Stylesheet. The look: clean textbook figures with a little colour.
+ * Stylesheet. The look: clean textbook figures with plenty of colour.
  *
- *   - crisp 1.5px ink lines, filled triangle arrowheads
- *   - flat fills from one palette (yellow / blue / green / red / purple /
- *     orange), always outlined in ink
+ *   - crisp 1.5px ink lines and arrows, filled triangle arrowheads
+ *   - solid things (cells, nodes, boxes, components) in flat fills from one
+ *     palette (yellow / blue / green / red / purple / orange), outlined in a
+ *     darker shade of their own colour and sitting on a lip of it (see DEPTH)
  *   - very light #e5e5e5 grids, thick blue curves, pale blue areas
  *   - maths labels in an italic serif, everything else in a plain sans
  *
@@ -18,7 +19,8 @@
  * Tones (`tone: 'active'`) become classes. Each tone has three colours:
  *   --dv-c   ink    (text, arrows, curves)
  *   --dv-cf  fill   (shapes)
- *   --dv-cs  stroke (shape outlines: ink by default)
+ *   --dv-cs  stroke (outlines of shapes without depth: ink by default)
+ *   --dv-cl  lip    (outline + lip of solid shapes: a darker shade of the fill)
  */
 const TONES = ['active', 'accent', 'success', 'danger', 'visited', 'orange'];
 const toneVars = (t: string) =>
@@ -64,40 +66,36 @@ const DARK = `
   --dv-danger-lip: #621c1c; --dv-visited-lip: #381d66; --dv-orange-lip: #291502; --dv-muted-lip: #333;`;
 
 /*
- * The tactile look: solid things sit on a lip, like Brilliant's chunky tiles.
- * Opt in with data-dv-look="tactile" on any ancestor (data-dv-look="flat" on
- * a diagram opts back out). It is pure CSS, so layouts know nothing about it:
+ * Depth: solid things (array cells, tree and graph nodes, UML boxes, system
+ * components) sit on a lip, and their outline is a darker shade of their own
+ * colour rather than black, so each tile reads as one coloured object.
  *
- *   - the lip is a hard drop-shadow (no blur) in a darker shade of the fill;
- *   - hover lifts a clickable shape 1px, pressing sinks it onto its lip;
- *   - a dragged shape gets .dv-grabbed from the renderer and lifts right off;
- *   - each layout emits a shape's label right after it, so "shape + text"
- *     selectors carry the label along with the shape.
+ * The lip is a hard drop-shadow (no blur) in the tile's lip colour. It's pure
+ * CSS, so layouts know nothing about it. Set --dv-depth: 0 to flatten.
+ *
+ * Interaction feedback stays quiet: hover brightens a clickable shape (keeping
+ * its lip), and a dragged shape (.dv-grabbed, set by the renderer) gets a soft
+ * shadow. One gotcha: `filter` holds ONE value, so any rule that sets a filter
+ * on a solid shape has to repeat the lip, or the lip vanishes.
  */
-const T = ':is(:where([data-dv-look="tactile"]) .dv-root, .dv-root[data-dv-look="tactile"]):not([data-dv-look="flat"])';
+const R = '.dv-root';
 const SOLID = ':is(.dv-rect, .dv-circle):not([class*="dv-role-"], .dv-tone-ghost)';
-const lip = (extra = '0px') => `drop-shadow(0 calc(var(--dv-depth) + ${extra}) 0 var(--dv-cl, var(--dv-lip)))`;
-const TACTILE = /* css */ `
-${T} { --dv-depth: 4px; }
-/* outline and lip are one colour: the tile reads as a single solid object */
-${T} ${SOLID} { stroke: var(--dv-cl, var(--dv-lip)); stroke-width: 2px; filter: ${lip()}; }
-${T} ${SOLID}.dv-tone-muted { --dv-cl: var(--dv-muted-lip); }
-${T} ${SOLID}.dv-interactive:not(.dv-draggable):hover { transform: translateY(-1px); filter: ${lip('1px')}; }
-${T} ${SOLID}.dv-interactive:not(.dv-draggable):hover + .dv-text { transform: translateY(-1px); }
-${T} ${SOLID}.dv-interactive:not(.dv-draggable):active { transform: translateY(var(--dv-depth)); filter: ${lip('-1 * var(--dv-depth)')}; transition-duration: .05s; }
-${T} ${SOLID}.dv-interactive:not(.dv-draggable):active + .dv-text { transform: translateY(var(--dv-depth)); transition-duration: .05s; }
-${T} ${SOLID}.dv-grabbed { transform: translateY(-4px); filter: ${lip('4px')} drop-shadow(0 10px 8px rgb(0 0 0 / .18)); }
-${T} ${SOLID}.dv-grabbed + .dv-text { transform: translateY(-4px); }
-/* cards, UML boxes and system components: a lip, but no press (they hold several labels) */
-${T} .dv-rect.dv-role-card { stroke: var(--dv-cl, var(--dv-lip)); stroke-width: 2px; filter: ${lip()}; }
-${T} .dv-path.dv-role-divider { stroke: var(--dv-lip); stroke-width: 2px; }
-${T} .dv-rect.dv-role-activation { stroke: var(--dv-lip); stroke-width: 2px; }
-${T} [class*="dv-role-sys-"]:is(.dv-rect, .dv-circle, .dv-path:not(.dv-open)) { stroke: var(--dv-kl, var(--dv-lip)); stroke-width: 2px; filter: drop-shadow(0 var(--dv-depth) 0 var(--dv-kl, var(--dv-lip))); }
-${T} .dv-path.dv-open[class*="dv-role-sys-"] { stroke: var(--dv-kl, var(--dv-lip)); stroke-width: 2px; }
-${T} :is(.dv-role-card, [class*="dv-role-sys-"]).dv-grabbed { filter: ${lip('2px')} drop-shadow(0 10px 8px rgb(0 0 0 / .18)); }
-/* handles become little buttons too */
-${T} .dv-circle.dv-role-handle { filter: drop-shadow(0 3px 0 color-mix(in srgb, var(--dv-c, var(--dv-point)) 55%, #000)); }
-${T} .dv-role-hit.dv-grabbed + .dv-role-handle { transform: translateY(-3px) scale(1.35); filter: drop-shadow(0 6px 0 color-mix(in srgb, var(--dv-c, var(--dv-point)) 55%, #000)) drop-shadow(0 10px 8px rgb(0 0 0 / .2)); }
+const lip = (c = 'var(--dv-cl, var(--dv-lip))') => `drop-shadow(0 var(--dv-depth) 0 ${c})`;
+const LIFTED = 'drop-shadow(0 8px 8px rgb(0 0 0 / .16))';
+const DEPTH = /* css */ `
+${R} ${SOLID} { stroke: var(--dv-cl, var(--dv-lip)); stroke-width: 2px; filter: ${lip()}; }
+${R} ${SOLID}.dv-tone-muted { --dv-cl: var(--dv-muted-lip); }
+${R} ${SOLID}.dv-interactive:hover { filter: ${lip()} brightness(.97); stroke-width: 2px; }
+:root[data-theme="dark"] ${R} ${SOLID}.dv-interactive:hover { filter: ${lip()} brightness(1.15); }
+${R} ${SOLID}.dv-grabbed { filter: ${lip()} ${LIFTED}; }
+/* cards (UML boxes, sequence heads) and system components */
+${R} .dv-rect.dv-role-card { stroke: var(--dv-cl, var(--dv-lip)); stroke-width: 2px; filter: ${lip()}; }
+${R} .dv-path.dv-role-divider { stroke: var(--dv-cl, var(--dv-lip)); stroke-width: 2px; }
+${R} .dv-rect.dv-role-activation { stroke: var(--dv-lip); stroke-width: 2px; }
+${R} [class*="dv-role-sys-"]:is(.dv-rect, .dv-circle, .dv-path:not(.dv-open)) { stroke: var(--dv-kl, var(--dv-lip)); stroke-width: 2px; filter: ${lip('var(--dv-kl, var(--dv-lip))')}; }
+${R} .dv-path.dv-open[class*="dv-role-sys-"] { stroke: var(--dv-kl, var(--dv-lip)); stroke-width: 2px; }
+${R} :is(.dv-role-card, [class*="dv-role-sys-"]).dv-interactive:hover { filter: ${lip('var(--dv-kl, var(--dv-cl, var(--dv-lip)))')} brightness(.97); }
+${R} :is(.dv-role-card, [class*="dv-role-sys-"]).dv-grabbed { filter: ${lip('var(--dv-kl, var(--dv-cl, var(--dv-lip)))')} ${LIFTED}; }
 `;
 
 export const DEFAULT_CSS = /* css */ `
@@ -106,7 +104,7 @@ export const DEFAULT_CSS = /* css */ `
   --dv-font: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --dv-mono: "Source Code Pro", ui-monospace, "SF Mono", Menlo, monospace;
   --dv-math-font: "STIX Two Text", "Latin Modern Roman", "Cambria Math", "Times New Roman", serif;
-  --dv-stroke-w: 1.5px;${LIGHT}
+  --dv-stroke-w: 1.5px; --dv-depth: 4px;${LIGHT}
   font-family: var(--dv-font);
 }
 .dv-root { overflow: visible; }
@@ -252,7 +250,7 @@ ${TONES.map(toneVars).join('\n')}
 .dv-draggable { cursor: grab; touch-action: none; }
 .dv-root.dv-dragging, .dv-root.dv-dragging .dv-draggable { cursor: grabbing; }
 @media (prefers-reduced-motion: reduce) { .dv-circle.dv-role-pulse { animation: none; opacity: .5; } }
-${TACTILE}
+${DEPTH}
 `;
 
 const STYLE_ID = 'dsviz-default-styles';

@@ -37,13 +37,12 @@ Motion, a real bundler) instead of hand-rolling substitutes.
     50% fill). Policy: plots/draggables fixed; step-throughs `fitViewBox(player.frames.map(draw))`; camera frozen while
     dragging. `mathtext.ts`: TeX-lite (`a^2`, `x_{i}`, `\cap`, `\text{}`) used for `role: 'math'` text and `<MathText>`.
   - Draggable nodes get `tabindex=0`; arrow keys emit the normal drag events from a virtual pointer (`e.keyboard`).
-  - Tactile look (Brilliant-style chunky tiles + 3D controls): opt-in via `data-dv-look="tactile"` on an ancestor or
-    `<Diagram look="tactile">`; pure CSS (`TACTILE` blocks in `styles.ts` and `controls-styles.ts`). Lip = hard
-    drop-shadow in `--dv-<tone>-lip`; renderer adds `dv-grabbed` while dragging. Layout convention it relies on: a
-    shape's label is emitted right after the shape. The site defaults to tactile (top-bar toggle).
-  - `styles.ts`: ONE theme: white canvas, 1.5px ink lines, flat yellow/blue/green/red/purple/orange fills,
-    #e5e5e5 grids, thick blue curves, italic serif maths labels. `--dv-*` variables on `.dv-root` / `.dvc`; dark via
-    `[data-theme="dark"]` or `.dark` (or the OS setting).
+  - `styles.ts`: ONE theme (merged from the old flat + tactile looks, per Jesse): white canvas, 1.5px ink lines and
+    arrows, #e5e5e5 grids, thick blue curves, maths in STIX. Solid shapes (cells, nodes, UML cards, sys components) are
+    COLOURED: flat palette fill, outline + 4px hard drop-shadow lip in a darker shade (`--dv-<tone>-lip`, `--dv-depth`;
+    the DEPTH block). Interaction feedback is quiet (hover brightens, keeps the lip; `dv-grabbed` adds a soft shadow;
+    no press/lift motion). Controls are flat and quiet, except the slider: 8px track with dot notches.
+    `--dv-*` variables on `.dv-root` / `.dvc`; dark via `[data-theme="dark"]` or `.dark` (or the OS setting).
     Roles (`grid`, `axis`, `curve`, `area`, `region`, `bar`, `guide`, `glow`, `handle`, `hit`, `math`…) decide looks.
   - Families: `ds/` (array, pointer, linkedList, binaryTree, graph, grid, stack, queue — also exported top-level),
     `plot/` (plane, axes, fn, point, segment, vector, tangent, area, riemann, integrate, label),

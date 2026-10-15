@@ -103,7 +103,7 @@ export function classDiagram(classes: readonly UmlClass[], relations: readonly R
     const k = `${id}:${c.id}`;
     const dim = o.dim?.has(c.id) ? 0.3 : 1;
     const data = { class: c.id };
-    // the box first, the name right after it (the tactile look moves them together)
+    // the box first, the name right after it (a label always follows its shape)
     boxes.push(rect({ id: `${k}:box`, x: c.x, y: c.y, w, h, rx: 6, role: 'card', tone: c.tone, opacity: dim, interactive: o.interactive, draggable: o.draggable, data }));
     let y = top + 8;
     if (c.stereotype) {

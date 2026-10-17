@@ -2,6 +2,19 @@
   "name": "dsviz",
   "version": "2.0.0",
   "description": "Interactive, animated SVG teaching diagrams",
+  "keywords": [
+    "svg",
+    "diagrams",
+    "animation",
+    "teaching",
+    "visualization",
+    "react",
+    "data-structures",
+    "uml",
+    "system-design"
+  ],
+  "author": "Jesse Williamson",
+  "homepage": "https://jessewilliamson.github.io/DiagramBuilder/",
   "type": "module",
   "sideEffects": false,
   "main": "./dist/index.js",
@@ -26,7 +39,8 @@
     "build": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json && node build.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build"
   },
   "peerDependencies": {
     "react": ">=18",
@@ -69,7 +83,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/JesseWilliamson/DiagramBuilder"
+    "url": "git+https://github.com/JesseWilliamson/DiagramBuilder.git"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }

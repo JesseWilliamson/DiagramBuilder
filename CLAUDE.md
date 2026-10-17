@@ -64,7 +64,9 @@ Motion, a real bundler) instead of hand-rolling substitutes.
   (`#/examples`: 35 examples grouped by family, each the live diagram beside its editable source), guide
   (`#/guide`), API (`#/api`). Every `site/demos/*.tsx` is a real module importing from `dsviz` / `dsviz/react`;
   `site/live/useLive.tsx` + sucrase `compile.ts` + CodeMirror make the source editable in the page.
-- Install in another project: `npm install github:JesseWilliamson/DiagramBuilder` (the `prepare` script builds `dist/`).
+- Install in another project: `npm install dsviz`. Published to npm by `.github/workflows/publish.yml` when a GitHub
+  release is published (tag `v<version>`, matching package.json; needs the `NPM_TOKEN` secret). The repository is
+  private, so a git dependency cannot be fetched by anyone else's CI: that is why it is published.
   `build.mjs` emits one ES module per source file (not a bundle) and rewrites relative imports to `.js`, so apps can
   tree-shake it: a bundle's namespace objects (`plot`, `sys`…) kept every function alive (a lesson drawing one array
   went from 79 KB to 34 KB).
@@ -85,9 +87,8 @@ library additions that course needed (zones, file kind, link waypoints, sequence
 lane/label/tone, non-square grid cells, toned captions, the unbundled build) are general; the layout ones have tests,
 and TrustZones and Polling on the examples page show them.
 Still open: replacing the two binary-search editorial diagrams there (the BinarySearch and WhyFast examples are the
-starting point);
-publishing to npm; three-set Venn; a Reingold–Tilford tree layout; text crossfade in the renderer (see the
-exercises in the guide).
+starting point); three-set Venn; a Reingold–Tilford tree layout; text crossfade in the renderer (see the exercises in
+the guide).
 
 ## The getbetter context (screenshots in `docs/getbetter-screens/`)
 

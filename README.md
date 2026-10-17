@@ -11,7 +11,7 @@ state ──▶ layout functions ──▶ Scene (plain data, stable ids) ──
 ## Use it in a project
 
 ```sh
-npm install github:JesseWilliamson/DiagramBuilder   # the prepare script builds dist/
+npm install dsviz
 ```
 
 ```tsx

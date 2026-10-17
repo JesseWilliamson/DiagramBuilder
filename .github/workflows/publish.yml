@@ -1,0 +1,41 @@
+name: Publish to npm
+
+# Publishing a GitHub release publishes the package. The release's tag must be
+# the version in package.json with a v in front (v2.0.0 for 2.0.0), so the
+# version on npm and the tag in git always name the same commit.
+#
+# Needs one repository secret, NPM_TOKEN: an npm granular access token with
+# read and write access to the dsviz package (or, before the first publish,
+# to all packages, since dsviz does not exist yet).
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - name: The tag names the version being published
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if [ "$TAG" != "v$version" ]; then
+            echo "::error::release tag $TAG does not match package.json version $version (expected v$version)"
+            exit 1
+          fi
+      - run: npm ci
+      # prepublishOnly typechecks, tests and builds before anything is uploaded.
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

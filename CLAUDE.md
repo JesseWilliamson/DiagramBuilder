@@ -44,7 +44,8 @@ Motion, a real bundler) instead of hand-rolling substitutes.
     `dv-grabbed` adds a soft shadow; no press/lift motion). Controls are flat and quiet, except the slider: 8px track with dot notches.
     `--dv-*` variables on `.dv-root` / `.dvc`; dark via `[data-theme="dark"]` or `.dark` (or the OS setting).
     Roles (`grid`, `axis`, `curve`, `area`, `region`, `bar`, `guide`, `glow`, `handle`, `hit`, `math`…) decide looks.
-  - Families: `ds/` (array, pointer, linkedList, binaryTree, graph, grid, stack, queue — also exported top-level),
+  - Families: `ds/` (array, pointer, hashMap (maps and sets, rows keyed by key), linkedList, binaryTree, graph, grid,
+    stack, queue — also exported top-level),
     `plot/` (plane, axes, fn, point, segment, vector, tangent, area, riemann, integrate, label),
     `prob/` (bars, sampleSpace, diePips, probTree, venn2 + vennRegions/vennAreas/vennRegionAt),
     `geom/` (polygon, segment, tickMarks, angleMark, circle, pointLabel + intersection/centre helpers),
@@ -61,7 +62,7 @@ Motion, a real bundler) instead of hand-rolling substitutes.
   neutral controls on Radix: `Slider`, `Segmented`, `Select`, `Switch`, `NumberStepper`, `Button`, `TextInput`,
   `Transport` (`<Transport player={player} />`), `CodeTrace`, `MathText`.
 - `site/` — docs site (Vite + React, hash routes): home (`#/`, intro + live featured examples + usage), examples
-  (`#/examples`: 35 examples grouped by family, each the live diagram beside its editable source), guide
+  (`#/examples`: 36 examples grouped by family, each the live diagram beside its editable source), guide
   (`#/guide`), API (`#/api`). Every `site/demos/*.tsx` is a real module importing from `dsviz` / `dsviz/react`;
   `site/live/useLive.tsx` + sucrase `compile.ts` + CodeMirror make the source editable in the page.
 - Install in another project: `npm install dsviz`. Published to npm by `.github/workflows/publish.yml` when a GitHub

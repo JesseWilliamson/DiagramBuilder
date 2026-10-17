@@ -193,6 +193,13 @@ ${TONES.map(toneVars).join('\n')}
 .dv-path.dv-role-end-open${anyTone} { stroke: var(--dv-c); }
 .dv-text.dv-role-end-label { fill: var(--dv-muted); font-family: var(--dv-mono); font-weight: 500; }
 
+/* hash maps and sets: a tinted key cell, a plain value cell, outlined like any solid shape */
+.dv-rect:is(.dv-role-map-key, .dv-role-map-value) { stroke: var(--dv-outline); stroke-width: 2px; }
+.dv-rect.dv-role-map-key { fill: var(--dv-muted-fill); }
+.dv-rect.dv-role-map-value { fill: var(--dv-surface); }
+.dv-rect:is(.dv-role-map-key, .dv-role-map-value)${anyTone} { fill: var(--dv-cf); stroke: var(--dv-co); }
+.dv-rect.dv-role-map-value${anyTone} { fill: color-mix(in srgb, var(--dv-cf) 55%, var(--dv-surface)); }
+
 /* UML */
 .dv-rect.dv-role-card { fill: var(--dv-surface); stroke: var(--dv-stroke); }
 .dv-rect.dv-role-card${anyTone} { fill: color-mix(in srgb, var(--dv-cf) 55%, var(--dv-surface)); stroke: var(--dv-cs); }

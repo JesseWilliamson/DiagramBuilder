@@ -25,11 +25,12 @@ export const groups: Group[] = [
   {
     id: 'ds',
     title: 'Data structures',
-    intro: 'Arrays, pointers, lists, trees, graphs and grids. Algorithms are generators; usePlayer turns their frames into a timeline.',
+    intro: 'Arrays, pointers, maps, lists, trees, graphs and grids. Algorithms are generators; usePlayer turns their frames into a timeline.',
     items: [
       { name: 'BinarySearch', title: 'Binary search', desc: 'Generator frames, a code trace, and pointers that slide.' },
       { name: 'WhyFast', title: 'Halving', desc: 'Why binary search takes log₂ n steps.' },
       { name: 'BubbleSort', title: 'Keys decide what moves', desc: 'With keys, a swap slides two tiles past each other. Without, the numbers change in place.' },
+      { name: 'HashMap', title: 'Hash map', desc: 'Two Sum with a map of values seen. Rows are keyed by the map key, so each entry drops in as its own row.' },
       { name: 'LinkedList', title: 'Reversing a linked list', desc: 'Each arrow is keyed by the node it leaves, so flipping a pointer swings it round.' },
       { name: 'Bst', title: 'Binary search tree', desc: 'Insert and search; new nodes grow out of their parent.' },
       { name: 'Graph', title: 'BFS and DFS', desc: 'Drag the nodes; click one to start from it.' },

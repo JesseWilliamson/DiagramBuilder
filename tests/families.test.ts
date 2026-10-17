@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { geom, grid, mem, plot, prob, sched } from '../src';
+import { geom, grid, hashMap, mem, plot, prob, sched } from '../src';
 import { V2 } from '../src/vec';
 
 const close = (a: number, b: number, eps = 1e-6) => expect(Math.abs(a - b)).toBeLessThan(eps);
@@ -211,5 +211,38 @@ describe('gantt labels', () => {
     const has = (now: number) => sched.gantt(seg, { lanes: ['server'], now }).nodes.some((n) => n.id === 'gantt:bar:v2:0:t');
     expect(has(10)).toBe(true);
     expect(has(1)).toBe(false);
+  });
+});
+
+describe('hashMap', () => {
+  it('draws a Map or pairs as key and value cells, keyed by the key', () => {
+    const m = hashMap(new Map([[7, 0], [2, 1]]));
+    expect(m.size).toBe(2);
+    expect(m.nodes.some((n) => n.id === 'map:row:7:k')).toBe(true);
+    expect(m.nodes.find((n) => n.id === 'map:row:2:vt')).toMatchObject({ text: '1' });
+    expect(m.keyAt(2)!.y).toBeGreaterThan(m.keyAt(7)!.y);
+    expect(m.valueAt(7)!.x).toBeGreaterThan(m.keyAt(7)!.x);
+    expect(m.keyAt(99)).toBeUndefined();
+  });
+
+  it('keeps a row on its key when entries before it change', () => {
+    const before = hashMap([['b', 1]] as const);
+    const after = hashMap([['a', 0], ['b', 2]] as const);
+    const id = (s: { nodes: { id: string }[] }) => s.nodes.map((n) => n.id);
+    expect(id(after)).toContain('map:row:b:k');
+    expect(id(before)).toContain('map:row:b:k');
+    expect(after.nodes.find((n) => n.id === 'map:row:b:vt')).toMatchObject({ text: '2' });
+  });
+
+  it('draws bare keys as a set, with no value column', () => {
+    const s = hashMap([3, 1, 4]);
+    expect(s.nodes.some((n) => n.id.endsWith(':v'))).toBe(false);
+    expect(s.valueAt(1)).toEqual(s.keyAt(1));
+  });
+
+  it('shows an empty map as one faint row, and set: true makes an empty set', () => {
+    expect(hashMap([]).nodes.some((n) => n.id === 'map:empty')).toBe(true);
+    const wide = (s: ReturnType<typeof hashMap>) => (s.nodes.find((n) => n.id === 'map:empty') as { w: number }).w;
+    expect(wide(hashMap([], { set: true }))).toBeLessThan(wide(hashMap([])));
   });
 });

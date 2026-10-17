@@ -94,4 +94,15 @@ export const groups: Group[] = [
       { name: 'ConsistentHashing', title: 'Consistent hashing', desc: 'Add or remove a server and count the keys that move, ring versus hash % N.' },
     ],
   },
+  {
+    id: 'spatial',
+    title: 'Spatial indexes and map tiles',
+    intro: 'spatial.buildQuadtree, queryRange and two views of the same tree; Web Mercator tile maths (project, tileAt, quadkey, tilesCovering) and tileGrid. A node\'s quadtree path is its scene id, and it is also a map tile\'s quadkey.',
+    items: [
+      { name: 'Quadtree', title: 'Building a quadtree', desc: 'Click to add points. Full cells split into four; the tree beside it is the same structure.' },
+      { name: 'QuadtreeQuery', title: 'Range search', desc: 'Drag the box. Boxes that miss it are skipped whole, so only a few points get checked.' },
+      { name: 'MapTiles', title: 'Which tiles does a map load?', desc: 'Pan and zoom a screen over the world. Only the tiles under it are fetched.' },
+      { name: 'TilePyramid', title: 'Tiles are a quadtree', desc: 'Click a tile to zoom in. The quadkey interleaves the bits of x and y.' },
+    ],
+  },
 ];

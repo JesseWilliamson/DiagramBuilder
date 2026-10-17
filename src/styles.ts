@@ -154,6 +154,7 @@ ${TONES.map(toneVars).join('\n')}
 .dv-text.dv-role-edge-label${anyTone} { fill: var(--dv-c); }
 .dv-role-null { fill: var(--dv-muted); }
 .dv-circle.dv-role-dot { fill: var(--dv-edge); stroke: none; }
+.dv-circle.dv-role-dot${anyTone} { fill: var(--dv-c); }
 
 /* plots */
 .dv-path.dv-role-grid { stroke: var(--dv-grid); fill: none; }
@@ -179,6 +180,15 @@ ${TONES.map(toneVars).join('\n')}
 .dv-rect.dv-role-universe${anyTone} { fill: var(--dv-cf); }
 .dv-rect.dv-role-frame { fill: var(--dv-muted-fill); stroke: none; }
 .dv-rect.dv-role-frame${anyTone} { fill: color-mix(in srgb, var(--dv-cf) 45%, var(--dv-surface)); }
+
+/* spatial subdivisions (quadtree cells, map tiles): pale cells with a thin border; tones tint them */
+.dv-rect.dv-role-tile { fill: var(--dv-surface); stroke: var(--dv-faint); stroke-width: 1px; }
+.dv-rect.dv-role-tile${anyTone} { fill: color-mix(in srgb, var(--dv-cf) 50%, var(--dv-surface)); stroke: var(--dv-co); }
+.dv-rect.dv-role-tile.dv-tone-muted { fill: var(--dv-muted-fill); stroke: var(--dv-faint); }
+.dv-path.dv-role-tile-outline { fill: none; stroke: var(--dv-fg); stroke-width: 2px; stroke-dasharray: 5 4; pointer-events: none; }
+.dv-path.dv-role-tile-outline${anyTone} { stroke: var(--dv-c); }
+.dv-rect.dv-role-viewport { fill: color-mix(in srgb, var(--dv-point) 12%, transparent); stroke: var(--dv-point); stroke-width: 2.5px; }
+.dv-rect.dv-role-screen { fill: none; stroke: var(--dv-fg); stroke-width: 3px; pointer-events: none; }
 
 /* connectors (UML relationships, architecture links): line + end markers */
 .dv-path.dv-role-connector { fill: none; stroke: var(--dv-edge); pointer-events: none; }

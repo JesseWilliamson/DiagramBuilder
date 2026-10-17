@@ -49,6 +49,13 @@ const rows: Array<[string, string] | string> = [
   'sys.*',
   ['architecture(components, links, opts)', "Components by kind: client · user · lb · gateway · service · cache · db · queue · cdn · storage (role sys-<kind>, coloured by the stylesheet). Returns frame(id) and along(from, to, t) for animating along links."],
   ['component(c) · packet({ id, x, y, tone, label })', 'One component on its own; a request dot that glides between renders when its id is kept.'],
+  'spatial.*',
+  ['buildQuadtree(points, bounds, { capacity, maxDepth })', "Point quadtree. Nodes are named by path ('' root, then 0 NW · 1 NE · 2 SW · 3 SE per level). quadNodes · leafAt · nodeAt · quadrantOf · quadrantBox."],
+  ['queryRange(root, box)', 'Range search: visited and pruned node paths, points checked, points found.'],
+  ['quadtreeCells(root, opts) · quadtreeTree(root, opts)', "The spatial view (one 'tile' cell per leaf, entering from its parent's box) and the hierarchy view, keyed by the same paths."],
+  ['project · unproject · tileAt · tileBox · tilesCovering', 'Web Mercator: lon/lat ↔ world coordinates in [0, 1]; the z/x/y tile at a point; the tiles under a box.'],
+  ['quadkey · fromQuadkey · parentTile · childTiles · tileUrl', 'Tile addresses. A quadkey is the tile\'s quadtree path (digit = x bit + 2·y bit).'],
+  ['tileGrid(tiles, { size, labels, tone }) · graticule(opts)', 'Tiles keyed by z/x/y that grow out of their parent; latitude/longitude lines on the Mercator square.'],
 ];
 
 export function Api() {

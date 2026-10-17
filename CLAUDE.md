@@ -51,15 +51,18 @@ Motion, a real bundler) instead of hand-rolling substitutes.
     `sched/` (simulate: fcfs/sjf/srtf/rr/priority; gantt), `mem/` (stackHeap, memory, hex).
     `uml/` (classDiagram + RELATION_STYLE, sequence + activations(), stateMachine), `sys/` (architecture with
     component kinds client/user/lb/gateway/service/cache/db/queue/cdn/storage → role `sys-<kind>`, packet, along()).
-    Both use core `connector.ts` (line + end markers 'arrow'|'open'|'triangle'|'diamond'|'diamond-filled', straight /
+    `spatial/` (buildQuadtree: nodes named by path '' / '0'..'3' per level = NW NE SW SE, queryRange, quadtreeCells +
+    quadtreeTree views keyed by path; Web Mercator tiles: project/unproject, tileAt, tileBox, tilesCovering, quadkey ↔
+    fromQuadkey, tileGrid, graticule. A quadtree path IS a tile quadkey; the tests check that).
+    uml/sys both use core `connector.ts` (line + end markers 'arrow'|'open'|'triangle'|'diamond'|'diamond-filled', straight /
     elbow / via routes, rectEdge).
-    Non-ds families are namespaces: `import { plot, prob, geom, sched, mem, uml, sys } from 'dsviz'`.
+    Non-ds families are namespaces: `import { plot, prob, geom, sched, mem, uml, sys, spatial } from 'dsviz'`.
 - `src/react/` — `<Diagram>` (natural size by default: 1 scene unit = 1 CSS px, shrinks on narrow screens; `scale`,
   `size="fill"`, fixed `viewBox`, `duration`, `ease`), `usePlayer` (`start: 'end'`), `useTicker`, `useBurst`, and small
   neutral controls on Radix: `Slider`, `Segmented`, `Select`, `Switch`, `NumberStepper`, `Button`, `TextInput`,
   `Transport` (`<Transport player={player} />`), `CodeTrace`, `MathText`.
 - `site/` — docs site (Vite + React, hash routes): home (`#/`, intro + live featured examples + usage), examples
-  (`#/examples`: 33 examples grouped by family, each the live diagram beside its editable source), guide
+  (`#/examples`: 37 examples grouped by family, each the live diagram beside its editable source), guide
   (`#/guide`), API (`#/api`). Every `site/demos/*.tsx` is a real module importing from `dsviz` / `dsviz/react`;
   `site/live/useLive.tsx` + sucrase `compile.ts` + CodeMirror make the source editable in the page.
 - Install in another project: `npm install github:JesseWilliamson/DiagramBuilder` (the `prepare` script builds `dist/`).

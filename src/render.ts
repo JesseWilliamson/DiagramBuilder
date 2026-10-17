@@ -65,7 +65,11 @@ export interface ViewEvent {
   type: ViewEventType;
   id: string;
   node: SceneNode;
-  /** Pointer position in scene (world) coordinates. */
+  /**
+   * Scene (world) coordinates. For a click: the pointer. For drag events: where
+   * the dragged shape's centre should go (the pointer minus the offset at which
+   * it was grabbed), kept inside the camera.
+   */
   x: number;
   y: number;
   original: Event;
@@ -281,14 +285,24 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
     return V2(p.x, p.y);
   }
 
-  function emit(type: ViewEventType, id: string, ev: PointerEvent | MouseEvent | KeyboardEvent, at?: Vec) {
+  function emit(type: ViewEventType, id: string, ev: PointerEvent | MouseEvent | KeyboardEvent, at?: Vec, keyboard = false) {
     const e = entries.get(id);
     const set = handlers.get(type);
     if (!e || !set) return;
     let w = at ?? toWorld((ev as MouseEvent).clientX, (ev as MouseEvent).clientY);
     if (type !== 'click') w = keepInView(w, e.node);
-    for (const h of set) h({ type, id, node: e.node, x: w.x, y: w.y, original: ev, keyboard: !!at });
+    for (const h of set) h({ type, id, node: e.node, x: w.x, y: w.y, original: ev, keyboard });
   }
+
+  // Drag events report where the dragged shape's CENTRE should go, not where the
+  // pointer is. Grab a 16px hit circle near its rim (or a class card by its
+  // corner) and the shape keeps that grip instead of jumping its centre under
+  // the cursor on the first move. The keyboard's virtual pointer starts on the
+  // centre, so both inputs mean the same thing.
+  const fromPointer = (ev: PointerEvent, off: Vec) => {
+    const w = toWorld(ev.clientX, ev.clientY);
+    return V2(w.x - off.x, w.y - off.y);
+  };
 
   // A drag can never take something off the canvas: clamp the reported point to
   // the camera box, inset by the dragged shape's half-size so all of it stays
@@ -309,7 +323,7 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
     if (e) (e.grabbed = on), paint(e);
   };
 
-  let drag: { id: string; pointer: number; sx: number; sy: number; moved: boolean } | null = null;
+  let drag: { id: string; pointer: number; sx: number; sy: number; moved: boolean; off: Vec } | null = null;
   let swallowClick = false;
 
   const onPointerDown = (ev: PointerEvent) => {
@@ -320,15 +334,16 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
     ev.preventDefault();
     svg.setPointerCapture(ev.pointerId);
     key = null;
-    drag = { id, pointer: ev.pointerId, sx: ev.clientX, sy: ev.clientY, moved: false };
+    const w = toWorld(ev.clientX, ev.clientY), c = centre(e.node);
+    drag = { id, pointer: ev.pointerId, sx: ev.clientX, sy: ev.clientY, moved: false, off: V2(w.x - c.x, w.y - c.y) };
     grab(id, true);
     svg.classList.add('dv-dragging');
-    emit('dragstart', id, ev);
+    emit('dragstart', id, ev, c);
   };
   const onPointerMove = (ev: PointerEvent) => {
     if (!drag || ev.pointerId !== drag.pointer) return;
     if (Math.hypot(ev.clientX - drag.sx, ev.clientY - drag.sy) > 3) drag.moved = true;
-    emit('drag', drag.id, ev);
+    emit('drag', drag.id, ev, fromPointer(ev, drag.off));
   };
   const onPointerUp = (ev: PointerEvent) => {
     if (!drag || ev.pointerId !== drag.pointer) return;
@@ -337,7 +352,7 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
     // The native click that follows is swallowed either way.
     const cancelled = ev.type === 'pointercancel';
     swallowClick = !cancelled;
-    emit('dragend', drag.id, ev);
+    emit('dragend', drag.id, ev, fromPointer(ev, drag.off));
     if (!drag.moved && !cancelled) emit('click', drag.id, ev);
     grab(drag.id, false);
     svg.classList.remove('dv-dragging');
@@ -374,14 +389,14 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
     if (!key || key.id !== id) key = { id, at: centre(e.node), down: false };
     // One step is a fixed fraction of the view, so it feels the same at any zoom.
     const step = (Math.max(vb.to[2], vb.to[3]) / 60) * (ev.shiftKey ? 5 : 1);
-    if (!key.down) emit('dragstart', id, ev, key.at), (key.down = true);
+    if (!key.down) emit('dragstart', id, ev, key.at, true), (key.down = true);
     key.at = V2(key.at.x + dir[0] * step, key.at.y + dir[1] * step);
-    emit('drag', id, ev, key.at);
+    emit('drag', id, ev, key.at, true);
   };
   const endKey = (ev: Event) => {
     if (!key?.down) return;
     key.down = false;
-    emit('dragend', key.id, ev as KeyboardEvent, key.at);
+    emit('dragend', key.id, ev as KeyboardEvent, key.at, true);
   };
   const onKeyUp = (ev: KeyboardEvent) => STEPS[ev.key] && endKey(ev);
   const onFocusOut = (ev: FocusEvent) => (endKey(ev), (key = null));

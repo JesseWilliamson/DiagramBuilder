@@ -88,8 +88,9 @@ second course, *Inside getbetter* (`content/course/getbetter/` there), has fifte
 library additions that course needed (zones, file kind, link waypoints, sequence fragments, gantt segment
 lane/label/tone, non-square grid cells, toned captions, the unbundled build) are general; the layout ones have tests,
 and TrustZones and Polling on the examples page show them.
-Still open: replacing the two binary-search editorial diagrams there (the BinarySearch and WhyFast examples are the
-starting point); three-set Venn; a Reingold–Tilford tree layout; text crossfade in the renderer (see the exercises in
+getbetter's problem editorials (`web/src/components/viz/` there, getbetter PR #44) draw a figure per code problem
+with dsviz, most on one shared step-through frame, including the two binary-search diagrams; `hashMap` was added for
+them. Still open: three-set Venn; a Reingold–Tilford tree layout; text crossfade in the renderer (see the exercises in
 the guide).
 
 ## The getbetter context (screenshots in `docs/getbetter-screens/`)

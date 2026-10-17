@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { bounds, combine, namespace, path, translate } from '../src/scene';
-import { pathData, resample, resampleProps } from '../src/path';
+import { dotData, pathData, resample, resampleProps } from '../src/path';
 
 describe('pathData', () => {
   it('draws straight segments, closing with Z', () => {
@@ -12,6 +12,12 @@ describe('pathData', () => {
     expect(d.startsWith('M0 0C')).toBe(true);
     expect(d.endsWith('10 10')).toBe(false);
     expect(d.endsWith('20 0')).toBe(true);
+  });
+});
+
+describe('dotData', () => {
+  it('draws one zero-length segment per point', () => {
+    expect(dotData([[0, 0], [10.123, 5]])).toBe('M0 0h0M10.12 5h0');
   });
 });
 

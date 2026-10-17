@@ -203,24 +203,24 @@ export function NumberStepper({ value, onChange, min = -Infinity, max = Infinity
 
 export interface TransportProps {
   /** What usePlayer() returns. */
-  player: Pick<PlayerState<unknown>, 'index' | 'count' | 'playing' | 'first' | 'prev' | 'toggle' | 'next' | 'seek'>;
+  player: Pick<PlayerState<unknown>, 'index' | 'count' | 'playing' | 'prev' | 'toggle' | 'next' | 'seek'>;
 }
 
 const Icon = ({ d }: { d: string }) => <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden><path d={d} fill="currentColor" /></svg>;
 
-/** first / prev / play / next, a scrubber with a tick per step, and "Step i / n". `<Transport player={usePlayer(...)} />` */
+/** prev / play / next, a scrubber with a tick per step, and "Step i / n". `<Transport player={usePlayer(...)} />` */
 export function Transport({ player: p }: TransportProps) {
   injectControlStyles();
   const last = Math.max(0, p.count - 1);
   const [ref, width] = useWidth<HTMLSpanElement>();
   return (
     <div className="dvc dvc-transport">
-      <button type="button" onClick={p.first} disabled={p.index === 0} aria-label="First step"><Icon d="M3 3h2v10H3zM13 3v10L6 8z" /></button>
-      <button type="button" onClick={p.prev} disabled={p.index === 0} aria-label="Previous step"><Icon d="M12 3v10L5 8z" /></button>
+      {/* chevrons, not bar-and-triangle: those mean "skip to the end", and these move one step */}
+      <button type="button" onClick={p.prev} disabled={p.index === 0} aria-label="Previous step"><Icon d="M10.5 2.5 12 4 8 8l4 4-1.5 1.5L5 8z" /></button>
       <button type="button" className="is-play" onClick={p.toggle} aria-label={p.playing ? 'Pause' : 'Play'}>
         <Icon d={p.playing ? 'M4 3h3v10H4zM9 3h3v10H9z' : 'M4 3l9 5-9 5z'} />
       </button>
-      <button type="button" onClick={p.next} disabled={p.index >= last} aria-label="Next step"><Icon d="M4 3v10l7-5zM11 3h2v10h-2z" /></button>
+      <button type="button" onClick={p.next} disabled={p.index >= last} aria-label="Next step"><Icon d="M5.5 2.5 4 4l4 4-4 4 1.5 1.5L11 8z" /></button>
       <RSlider.Root ref={ref} className="dvc-slider dvc-scrub" value={[p.index]} min={0} max={last} step={1} onValueChange={([v]) => p.seek(v)}>
         <RSlider.Track className="dvc-track">
           <RSlider.Range className="dvc-range" />

@@ -29,7 +29,7 @@ Motion, a real bundler) instead of hand-rolling substitutes.
 ## What exists now
 
 - `src/` — framework-free core, no runtime dependencies:
-  - `scene.ts` primitives `rect`, `circle`, `text`, `arrow`, `path`; `combine` (takes nested lists of parts),
+  - `scene.ts` primitives `rect`, `circle`, `text`, `arrow`, `path` (`dots: true` draws a dot per point, for vertices that must follow a morph); `combine` (takes nested lists of parts),
     `translate`, `namespace`, `bounds`. `path.ts`: path data, Catmull-Rom smoothing, arc-length `resample`.
   - `render.ts` `createView` (keyed reconciler + tween engine, `setViewBox`; each element carries its scene id as `data-id`), `describe.ts`, `static.ts` (`toSVG`),
     `player.ts`, `handle.ts` (draggable dot + big invisible hit target, optional pulse `hint`), `fx.ts` (`burst`).

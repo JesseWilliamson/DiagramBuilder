@@ -156,6 +156,8 @@ ${TONES.map(toneVars).join('\n')}
 .dv-text.dv-role-edge-label${anyTone} { fill: var(--dv-c); }
 .dv-role-null { fill: var(--dv-muted); }
 .dv-circle.dv-role-dot { fill: var(--dv-edge); stroke: none; }
+/* a path drawn as dots (one zero-length, round-capped segment per point) */
+.dv-path.dv-dots { fill: none; stroke: var(--dv-edge); stroke-linecap: round; pointer-events: none; }
 
 /* plots */
 .dv-path.dv-role-grid { stroke: var(--dv-grid); fill: none; }

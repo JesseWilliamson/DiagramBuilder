@@ -10,7 +10,7 @@
  */
 import { NumericProps, SceneNode } from './scene';
 import { Geometry, geometry } from './themes';
-import { pathData } from './path';
+import { dotData, pathData } from './path';
 import { mathTspans, parseMath } from './mathtext';
 import { V2, Vec, vadd, vnorm, vperp, vscale, vsub } from './vec';
 
@@ -56,6 +56,7 @@ export function classFor(n: SceneNode): string {
   const c = ['dv', `dv-${n.kind}`, `dv-tone-${n.tone ?? 'default'}`];
   if (n.role) c.push(`dv-role-${n.role}`);
   if (n.kind === 'path' && !n.closed) c.push('dv-open');
+  if (n.kind === 'path' && n.dots) c.push('dv-dots');
   if (n.dashed) c.push('dv-dashed');
   if (n.draggable) c.push('dv-draggable');
   if (n.interactive || n.draggable) c.push('dv-interactive');
@@ -104,11 +105,16 @@ export function describe(n: SceneNode, p: NumericProps, g: Geometry = geometry):
           ...(n.weight != null ? { 'font-weight': String(n.weight) } : {}),
         },
       };
-    case 'path':
+    case 'path': {
+      const pts = pointsOf(p, n.points.length);
       return {
         tag: 'path',
-        attrs: { ...attrs, d: pathData(pointsOf(p, n.points.length), !!n.closed, !!n.smooth), 'stroke-width': f(p.width) },
+        attrs: n.dots
+          ? // the stroke width IS the dot size, so it goes inline, where the stylesheet's stroke width cannot override it
+            { ...attrs, d: dotData(pts), style: `stroke-width:${f(p.width)}px` }
+          : { ...attrs, d: pathData(pts, !!n.closed, !!n.smooth), 'stroke-width': f(p.width) },
       };
+    }
     case 'arrow': {
       const w = p.width * g.strokeScale;
       return {

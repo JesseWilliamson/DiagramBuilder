@@ -1,7 +1,7 @@
 // The path primitive: one closed path, morphing between shapes with different point counts.
 // Before tweening, the old shape is resampled (by arc length) to the new point count.
 import { useState } from 'react';
-import { circle, combine, path, Vec } from 'dsviz';
+import { combine, path } from 'dsviz';
 import { Diagram, Segmented, Slider, Switch } from 'dsviz/react';
 
 type Shape = 'polygon' | 'star' | 'heart' | 'circle';
@@ -36,8 +36,9 @@ export default function Morph() {
 
   const scene = combine(
     path({ id: 'shape', points: pts, closed: true, smooth, tone: tones[shape], width: 2 }),
-    // the vertices themselves, keyed by index: watch them slide when the count changes
-    dots && pts.map(([x, y], i) => circle({ id: `pt${i}`, x, y, r: 2.5, role: 'dot' })),
+    // The vertices, as a second path drawn as dots. Same points, so the renderer
+    // resamples and tweens both paths the same way and the dots stay on the corners.
+    dots && path({ id: 'vertices', points: pts, closed: true, dots: true, width: 5 }),
   );
 
   return (

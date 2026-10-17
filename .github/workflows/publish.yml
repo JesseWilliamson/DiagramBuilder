@@ -4,9 +4,12 @@ name: Publish to npm
 # the version in package.json with a v in front (v2.0.0 for 2.0.0), so the
 # version on npm and the tag in git always name the same commit.
 #
-# Needs one repository secret, NPM_TOKEN: an npm granular access token with
-# read and write access to the dsviz package (or, before the first publish,
-# to all packages, since dsviz does not exist yet).
+# It authenticates with npm Trusted Publishing: npm is told (on the package's
+# settings page) to trust this workflow in this repository, and GitHub hands
+# each run a short-lived OIDC token that npm exchanges for permission to
+# publish. There is no npm token stored anywhere to leak. npm can only trust
+# a publisher for a package that exists, so the very first version was
+# published by hand.
 
 on:
   release:
@@ -14,6 +17,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write # the OIDC token npm trusts
 
 jobs:
   publish:
@@ -35,7 +39,7 @@ jobs:
             exit 1
           fi
       - run: npm ci
+      # Trusted Publishing needs npm 11.5.1 or later; Node 22 ships npm 10.
+      - run: npm install -g npm@11
       # prepublishOnly typechecks, tests and builds before anything is uploaded.
       - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

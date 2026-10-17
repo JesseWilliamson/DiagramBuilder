@@ -65,7 +65,8 @@ Motion, a real bundler) instead of hand-rolling substitutes.
   (`#/guide`), API (`#/api`). Every `site/demos/*.tsx` is a real module importing from `dsviz` / `dsviz/react`;
   `site/live/useLive.tsx` + sucrase `compile.ts` + CodeMirror make the source editable in the page.
 - Install in another project: `npm install dsviz`. Published to npm by `.github/workflows/publish.yml` when a GitHub
-  release is published (tag `v<version>`, matching package.json; needs the `NPM_TOKEN` secret). The repository is
+  release is published (tag `v<version>`, matching package.json), authenticated by npm Trusted Publishing (OIDC: no
+  npm token stored anywhere; the first version is published by hand, since npm only trusts publishers of existing packages). The repository is
   private, so a git dependency cannot be fetched by anyone else's CI: that is why it is published.
   `build.mjs` emits one ES module per source file (not a bundle) and rewrites relative imports to `.js`, so apps can
   tree-shake it: a bundle's namespace objects (`plot`, `sys`…) kept every function alive (a lesson drawing one array

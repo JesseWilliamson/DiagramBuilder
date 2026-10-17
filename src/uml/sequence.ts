@@ -16,6 +16,11 @@
  *
  * Step through by passing `upTo`: messages after it aren't drawn yet, so a
  * player can reveal the conversation one message at a time.
+ *
+ * Combined fragments box a run of messages with an operator in a tag at the
+ * top-left: `loop` (repeated), `alt` (one of several), `opt` (maybe not at
+ * all), or any word you like. A fragment grows with `upTo`, so a loop that is
+ * still going is drawn open-ended down to the current message.
  */
 import { connector } from '../connector';
 import { Scene, SceneNode, Tone, circle, estimateTextWidth, path, rect, text } from '../scene';
@@ -68,6 +73,18 @@ export function activations(messages: readonly Message[]): Activation[] {
   return out;
 }
 
+export interface Fragment {
+  /** The operator in the tag: 'loop', 'alt', 'opt', 'par'… */
+  kind: string;
+  /** The guard, drawn in brackets beside the tag: "until RUNNING". */
+  label?: string;
+  /** First and last message rows inside it (inclusive). */
+  from: number;
+  to: number;
+  /** The leftmost and rightmost participants it spans. Default: all of them. */
+  over?: readonly [string, string];
+}
+
 export interface SequenceOptions {
   id?: string;
   /** Show messages 0..upTo only (default: all). The message at upTo is highlighted. */
@@ -79,6 +96,8 @@ export interface SequenceOptions {
   /** Prefix each message with its number: "3. getUser(id)". */
   numbered?: boolean;
   tone?: Tone;
+  /** Boxes around runs of messages: loops, alternatives, options. */
+  fragments?: readonly Fragment[];
 }
 
 export interface SequenceDiagram extends Scene {
@@ -112,6 +131,34 @@ export function sequence(participants: readonly Participant[], messages: readonl
   for (const p of participants) {
     nodes.push(path({ id: `${id}:life:${p.id}`, points: [[X(p.id), lifeTop(p)], [X(p.id), bottom]], role: 'lifeline', dashed: true }));
   }
+  // fragments: the frame goes under the bars and messages, its tag and guard on
+  // top of them (they sit across a lifeline); a fragment inside another is inset
+  const frags = o.fragments ?? [];
+  const fragmentLabels: SceneNode[] = [];
+  frags.forEach((f, k) => {
+    if (f.from > upTo) return;
+    const depth = frags.filter((g) => g !== f && g.from <= f.from && f.to <= g.to).length;
+    const [a, b] = f.over ?? [participants[0]?.id ?? '', participants[participants.length - 1]?.id ?? ''];
+    const pad = gap * 0.42 - depth * 10;
+    const x0 = Math.min(X(a), X(b)) - pad, x1 = Math.max(X(a), X(b)) + pad;
+    // the tag strip sits above the first message's label, which is drawn 10px over its arrow
+    const y0 = rowY(f.from) - row / 2 - 14 + depth * 6, y1 = rowY(Math.min(f.to, upTo)) + row / 2 - depth * 6;
+    const fk = `${id}:frag:${k}`;
+    const tagW = estimateTextWidth(f.kind, 11) + 16;
+    nodes.push(rect({ id: fk, x: (x0 + x1) / 2, y: (y0 + y1) / 2, w: x1 - x0, h: y1 - y0, rx: 3, role: 'fragment', enter: { h: 0, y: y0 } }));
+    fragmentLabels.push(
+      path({ id: `${fk}:tag`, points: [[x0, y0], [x0 + tagW, y0], [x0 + tagW, y0 + 11], [x0 + tagW - 6, y0 + 17], [x0, y0 + 17]], closed: true, role: 'fragment-tag' }),
+      text({ id: `${fk}:kind`, x: x0 + 6, y: y0 + 9, text: f.kind, size: 11, anchor: 'start', role: 'fragment-kind' }),
+    );
+    if (f.label) {
+      // a backing box, so a lifeline or bar running under the guard does not cut through it
+      const guard = `[${f.label}]`, gw = estimateTextWidth(guard, 11) + 6;
+      fragmentLabels.push(
+        rect({ id: `${fk}:label:bg`, x: x0 + tagW + 5 + gw / 2, y: y0 + 9, w: gw, h: 14, rx: 2, role: 'fragment-guard-bg' }),
+        text({ id: `${fk}:label`, x: x0 + tagW + 8, y: y0 + 9, text: guard, size: 11, anchor: 'start', role: 'fragment-guard' }),
+      );
+    }
+  });
   // activation bars that have started by now; open ones stop at the current row
   acts.forEach((a, k) => {
     if (a.start > upTo) return;
@@ -146,6 +193,7 @@ export function sequence(participants: readonly Participant[], messages: readonl
     nodes.push(...connector({ id: k, from: { x: x0, y }, to: { x: x1, y }, ...style, tone }).nodes);
     nodes.push(text({ id: `${k}:label`, x: (x0 + x1) / 2, y: y - 10, text: label, size: 12, role: 'message', tone }));
   });
+  nodes.push(...fragmentLabels);
   // participant heads last, on top of the lifelines
   for (const p of participants) {
     const x = X(p.id), k = `${id}:head:${p.id}`;

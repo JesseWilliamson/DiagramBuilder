@@ -233,6 +233,8 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
           exiting: false,
           settled: false,
         };
+        // The scene id, so a test, a stylesheet or devtools can find one node.
+        e.el.setAttribute('data-id', node.id);
         entries.set(node.id, e);
       } else {
         // A path whose point count changed: resample what is on screen to the new

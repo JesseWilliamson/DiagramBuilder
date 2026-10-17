@@ -36,7 +36,7 @@ const rows: Array<[string, string] | string> = [
   ['circumcircle · incircle · centroid · orthocenter · signedArea · arcPoints', 'Triangle centres and friends.'],
   'sched.* · mem.*',
   ['simulate(procs, policy, quantum)', 'fcfs, sjf, srtf, rr, priority → segments, per-tick queue, per-process stats.'],
-  ['gantt(segments, opts)', 'Lanes, time axis, now cursor, arrival markers; bars keyed by process and segment.'],
+  ['gantt(segments, opts)', 'Lanes, time axis, now cursor, arrival markers; bars keyed by process and segment. A segment may set its own lane, label and tone, which makes it a general timeline.'],
   ['stackHeap(frames, heap, opts)', 'Frames and heap objects with reference arrows.'],
   ['memory(opts) · hex', 'A byte strip with typed groups and hex addresses.'],
   'Connectors (top level)',
@@ -44,11 +44,11 @@ const rows: Array<[string, string] | string> = [
   ['rectEdge(frame, toward) · route · pointAlong', 'Where a ray leaves a box; the polyline a connector follows; a point by length along it.'],
   'uml.*',
   ['classDiagram(classes, relations, opts)', 'Class boxes (name / attributes / methods, «stereotype», abstract in italics) and the six relationships: inherits, implements, composition, aggregation, association, dependency. Options: collapsed, dim, interactive, draggable, route. RELATION_STYLE maps kind → line and markers.'],
-  ['sequence(participants, messages, { upTo, numbered, gap, row })', 'Lifelines, call / return / async messages, self-calls; upTo reveals messages one at a time. activations(messages) derives the bars from the call stack.'],
+  ['sequence(participants, messages, { upTo, numbered, gap, row, fragments })', 'Lifelines, call / return / async messages, self-calls; upTo reveals messages one at a time. activations(messages) derives the bars from the call stack. fragments box a run of messages: { kind: \'loop\' | \'alt\' | \'opt\' | …, label, from, to, over }.'],
   ['stateMachine(states, transitions, { current, fired })', 'Rounded states, initial / final / choice pseudostates, labelled (and bendable) transitions, self-loops.'],
   'sys.*',
-  ['architecture(components, links, opts)', "Components by kind: client · user · lb · gateway · service · cache · db · queue · cdn · storage (role sys-<kind>, coloured by the stylesheet). Returns frame(id) and along(from, to, t) for animating along links."],
-  ['component(c) · packet({ id, x, y, tone, label })', 'One component on its own; a request dot that glides between renders when its id is kept.'],
+  ['architecture(components, links, opts)', "Components by kind: client · user · lb · gateway · service · cache · db · queue · cdn · storage · file (role sys-<kind>, coloured by the stylesheet). opts.zones draws dashed boundaries around groups ({ id, label, around, tone }), nested from the inside out. Returns frame(id) and along(from, to, t) for animating along links."],
+  ['component(c) · zone({ id, label, box }) · packet({ id, x, y, tone, label })', 'One component on its own; a boundary around any box; a request dot that glides between renders when its id is kept.'],
 ];
 
 export function Api() {

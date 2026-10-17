@@ -3,9 +3,24 @@
  * "CPU" lane). Bars are keyed by `id:segment-index`, so when you switch policy
  * the bars for P2 slide and stretch into their new places instead of being
  * redrawn from scratch.
+ *
+ * It is a timeline for anything else as well: a segment may name its own
+ * `lane` (several ids can share one, say every request a server handles), a
+ * `label` drawn on the bar, and a `tone` of its own (say, which version of
+ * something that request saw).
  */
-import { Scene, SceneNode, Tone, path, rect, text } from '../scene';
+import { Scene, SceneNode, Tone, estimateTextWidth, path, rect, text } from '../scene';
 import { Segment } from './simulate';
+
+/** A bar: a scheduler's Segment, or one with its own lane, label and tone. */
+export interface GanttSegment extends Segment {
+  /** The lane it is drawn in (lane mode). Default: the lane named by its id. */
+  lane?: string;
+  /** Text on the bar. Default: the id in single-lane mode, nothing in lane mode. */
+  label?: string;
+  /** Overrides `tones[id]`. */
+  tone?: Tone;
+}
 
 export interface GanttOptions {
   id?: string;
@@ -35,7 +50,7 @@ export interface GanttDiagram extends Scene {
   bottom: number;
 }
 
-export function gantt(segments: readonly Segment[], o: GanttOptions = {}): GanttDiagram {
+export function gantt(segments: readonly GanttSegment[], o: GanttOptions = {}): GanttDiagram {
   const id = o.id ?? 'gantt';
   const x0 = o.x ?? 0, y0 = o.y ?? 0;
   const unit = o.unit ?? 24;
@@ -61,15 +76,18 @@ export function gantt(segments: readonly Segment[], o: GanttOptions = {}): Gantt
     seen.set(s.id, k + 1);
     if (s.start >= now) continue;
     const e = Math.min(s.end, now);
-    const lane = single ? lanes[0] : s.id;
+    const lane = single ? lanes[0] : (s.lane ?? s.id);
     const w = (e - s.start) * unit;
+    const tone = s.tone ?? o.tones?.[s.id] ?? 'accent';
     nodes.push(
       rect({
         id: `${id}:bar:${s.id}:${k}`, x: xAt(s.start) + w / 2, y: laneY(lane), w: Math.max(0, w - 2), h: lh - 4, rx: 4,
-        tone: o.tones?.[s.id] ?? 'accent', enter: { w: 0, x: xAt(s.start) }, data: s,
+        tone, enter: { w: 0, x: xAt(s.start) }, data: s,
       }),
     );
-    if (single && w > 18) nodes.push(text({ id: `${id}:bar:${s.id}:${k}:t`, x: xAt(s.start) + w / 2, y: laneY(lane), text: s.id, size: 11, role: 'value', tone: o.tones?.[s.id] ?? 'accent' }));
+    const label = s.label ?? (single ? s.id : undefined);
+    // a label only where it fits: a bar cut short by `now` may be narrower than its text
+    if (label && w > estimateTextWidth(label, 11) + 8) nodes.push(text({ id: `${id}:bar:${s.id}:${k}:t`, x: xAt(s.start) + w / 2, y: laneY(lane), text: label, size: 11, role: 'value', tone }));
   }
   if (o.arrivals && !single) {
     for (const [pid, t] of Object.entries(o.arrivals)) {

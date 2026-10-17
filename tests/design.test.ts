@@ -70,3 +70,99 @@ describe('sys.architecture', () => {
     expect(a.along('s', 'c', 0)).toEqual({ x: 240, y: 0 });
   });
 });
+
+describe('sys zones', () => {
+  const parts: sys.Component[] = [
+    { id: 'web', kind: 'service', label: 'Web', x: 0, y: 0 },
+    { id: 'db', kind: 'db', label: 'DB', x: 200, y: 0 },
+    { id: 'vm', kind: 'service', label: 'VM', x: 400, y: 0 },
+  ];
+  const zones: sys.Zone[] = [
+    { id: 'cloud', label: 'Cloud', around: ['web', 'db', 'vm'] },
+    { id: 'box', label: 'Box', around: ['vm'] },
+  ];
+  const a = sys.architecture(parts, [], { zones });
+  const box = (k: string) => a.nodes.find((n) => n.id === `sys:zone:${k}`) as { x: number; y: number; w: number; h: number };
+  const edges = (r: { x: number; y: number; w: number; h: number }) => ({ l: r.x - r.w / 2, r: r.x + r.w / 2, t: r.y - r.h / 2, b: r.y + r.h / 2 });
+
+  it('surrounds every component it holds', () => {
+    const z = edges(box('cloud'));
+    for (const p of parts) {
+      const f = a.frame(p.id);
+      expect(z.l).toBeLessThan(f.x - f.w / 2);
+      expect(z.r).toBeGreaterThan(f.x + f.w / 2);
+      expect(z.t).toBeLessThan(f.y - f.h / 2);
+      expect(z.b).toBeGreaterThan(f.y + f.h / 2);
+    }
+  });
+
+  it('grows an outer zone around an inner one, label strip and all', () => {
+    const outer = edges(box('cloud')), inner = edges(box('box'));
+    expect(outer.r).toBeGreaterThan(inner.r);
+    expect(outer.t).toBeLessThan(inner.t);
+    expect(outer.b).toBeGreaterThan(inner.b);
+  });
+
+  it('draws zones first, outer before inner, so they sit under everything', () => {
+    const ids = a.nodes.map((n) => n.id);
+    expect(ids.indexOf('sys:zone:cloud')).toBe(0);
+    expect(ids.indexOf('sys:zone:box')).toBeGreaterThan(0);
+    expect(ids.indexOf('sys:zone:box')).toBeLessThan(ids.indexOf('sys:web'));
+  });
+});
+
+describe('sys file', () => {
+  it('is a page with a folded corner', () => {
+    const c = sys.component({ id: 'in', kind: 'file', label: 'input.json', x: 0, y: 0 });
+    const page = c.nodes.find((n) => n.id === 'sys:in');
+    expect(page?.kind).toBe('path');
+    expect(page?.role).toBe('sys-file');
+    expect(c.nodes.some((n) => n.id === 'sys:in:fold')).toBe(true);
+  });
+});
+
+describe('uml.sequence fragments', () => {
+  const people: uml.Participant[] = [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }, { id: 'c', label: 'C' }];
+  const msgs: uml.Message[] = [
+    { from: 'a', to: 'b', label: 'start' },
+    { from: 'b', to: 'c', label: 'poll' },
+    { from: 'c', to: 'b', label: 'pending', kind: 'return' },
+    { from: 'b', to: 'a', label: 'done', kind: 'return' },
+  ];
+  const fragments = [{ kind: 'loop', label: 'until ready', from: 1, to: 2, over: ['b', 'c'] as const }];
+  const frag = (upTo: number) => uml.sequence(people, msgs, { fragments, upTo }).nodes.find((n) => n.id === 'seq:frag:0') as { y: number; h: number; x: number; w: number } | undefined;
+
+  it('is not drawn before its first message', () => {
+    expect(frag(0)).toBeUndefined();
+  });
+
+  it('grows with the messages revealed, then stops at its last', () => {
+    expect(frag(2)!.h).toBeGreaterThan(frag(1)!.h);
+    expect(frag(3)!.h).toBe(frag(2)!.h);
+  });
+
+  it('spans only the participants it is over', () => {
+    const d = uml.sequence(people, msgs, { fragments });
+    const f = frag(3)!;
+    expect(f.x - f.w / 2).toBeGreaterThan(d.x('a'));
+    expect(f.x + f.w / 2).toBeGreaterThan(d.x('c'));
+  });
+});
+
+describe('sys links with waypoints', () => {
+  it('pass through the waypoints and meet both boxes at their edges', () => {
+    const parts: sys.Component[] = [
+      { id: 'a', kind: 'service', label: 'A', x: 0, y: 0 },
+      { id: 'b', kind: 'service', label: 'B', x: 300, y: 0 },
+    ];
+    const a = sys.architecture(parts, [{ from: 'a', to: 'b', via: [{ x: 0, y: 100 }, { x: 300, y: 100 }] }]);
+    const line = a.nodes.find((n) => n.id === 'sys:link:a-b:line') as { points: readonly (readonly [number, number])[] };
+    expect(line.points[0]).toEqual([0, 26]); // the bottom edge of a (52 tall)
+    expect(line.points[1]).toEqual([0, 100]);
+    expect(line.points[2]).toEqual([300, 100]);
+    // the end is trimmed back from b's bottom edge to make room for the arrowhead
+    expect(line.points[3][0]).toBe(300);
+    expect(line.points[3][1]).toBeGreaterThan(26);
+    expect(a.along('a', 'b', 0.5)).toEqual({ x: 150, y: 100 });
+  });
+});

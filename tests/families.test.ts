@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { geom, mem, plot, prob, sched } from '../src';
+import { geom, grid, mem, plot, prob, sched } from '../src';
 import { V2 } from '../src/vec';
 
 const close = (a: number, b: number, eps = 1e-6) => expect(Math.abs(a - b)).toBeLessThan(eps);
@@ -174,5 +174,42 @@ describe('clipToPlane', () => {
   });
   it('returns null for a segment that misses the box', () => {
     expect(plot.clipToPlane(p, { x: -5, y: -5 }, { x: -1, y: 20 })).toBeNull();
+  });
+});
+
+describe('gantt segments with their own lane, label and tone', () => {
+  it('puts several ids in one lane, labelled and toned per bar', () => {
+    const g = sched.gantt(
+      [
+        { id: 'r1', lane: 'server', start: 0, end: 2, label: 'v1', tone: 'accent' },
+        { id: 'r2', lane: 'server', start: 3, end: 5, label: 'v2', tone: 'success' },
+      ],
+      { lanes: ['server'] },
+    );
+    const bar = (k: string) => g.nodes.find((n) => n.id === `gantt:bar:${k}:0`) as { y: number; tone?: string };
+    expect(bar('r1').y).toBe(g.laneY('server'));
+    expect(bar('r2').y).toBe(g.laneY('server'));
+    expect(bar('r2').tone).toBe('success');
+    expect(g.nodes.find((n) => n.id === 'gantt:bar:r2:0:t')).toMatchObject({ text: 'v2' });
+  });
+});
+
+describe('grid cells that are not square', () => {
+  it('lays out by width and height, and anchors on the edges', () => {
+    const g = grid([['a', 'b'], ['c', 'd']], { cellWidth: 100, cellHeight: 30, gap: 10 });
+    expect(g.center(1, 1)).toEqual({ x: 160, y: 55 });
+    expect(g.right(0, 0)).toEqual({ x: 100, y: 15 });
+    expect(g.bottom(0, 0)).toEqual({ x: 50, y: 30 });
+    const value = g.nodes.find((n) => n.id === 'grid:val:0,0') as { size: number };
+    expect(value.size).toBe(Math.round(30 * 0.38));
+  });
+});
+
+describe('gantt labels', () => {
+  it('are left off a bar too narrow to hold them, such as one cut short by now', () => {
+    const seg = [{ id: 'v2', lane: 'server', start: 0, end: 10, label: 'version 9f2c' }];
+    const has = (now: number) => sched.gantt(seg, { lanes: ['server'], now }).nodes.some((n) => n.id === 'gantt:bar:v2:0:t');
+    expect(has(10)).toBe(true);
+    expect(has(1)).toBe(false);
   });
 });

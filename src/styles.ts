@@ -147,6 +147,8 @@ ${TONES.map(toneVars).join('\n')}
 .dv-text.dv-role-math, .dv-text.dv-role-tick-label { paint-order: stroke; stroke: var(--dv-halo); stroke-width: 4px; stroke-linejoin: round; }
 .dv-text.dv-role-index { fill: var(--dv-muted); font-weight: 500; }
 .dv-text.dv-role-caption { fill: var(--dv-muted); font-weight: 500; letter-spacing: .02em; }
+/* a caption on a coloured shape: grey would vanish into the fill, so use the ink, a little lighter */
+.dv-text.dv-role-caption${anyTone} { fill: var(--dv-fg); fill-opacity: .72; }
 .dv-text.dv-role-pointer-label${anyTone}, .dv-text.dv-role-label${anyTone} { fill: var(--dv-c); }
 .dv-role-tag { display: none; }
 .dv-rect.dv-role-window { fill: var(--dv-band); stroke: none; }
@@ -206,6 +208,11 @@ ${TONES.map(toneVars).join('\n')}
 .dv-circle.dv-role-pseudo { fill: var(--dv-fg); stroke: none; }
 .dv-circle.dv-role-pseudo${anyTone} { fill: var(--dv-c); }
 .dv-circle.dv-role-figure { fill: var(--dv-surface); stroke: var(--dv-fg); }
+.dv-rect.dv-role-fragment { fill: none; stroke: var(--dv-muted); stroke-width: 1.5px; pointer-events: none; }
+.dv-path.dv-role-fragment-tag { fill: var(--dv-muted-fill); stroke: var(--dv-muted); stroke-width: 1.5px; }
+.dv-text.dv-role-fragment-kind { font-family: var(--dv-mono); font-weight: 700; }
+.dv-text.dv-role-fragment-guard { font-family: var(--dv-mono); fill: var(--dv-muted); font-weight: 500; }
+.dv-rect.dv-role-fragment-guard-bg { fill: var(--dv-surface); stroke: none; pointer-events: none; }
 .dv-path.dv-role-figure-line { fill: none; stroke: var(--dv-fg); }
 
 /* system design: each kind sets its colour (--dv-k) and outline (--dv-ko); fills are a tint of it */
@@ -214,6 +221,12 @@ ${TONES.map(toneVars).join('\n')}
 .dv-role-sys-db { --dv-k: var(--dv-success-fill); --dv-ko: var(--dv-success-outline); }
 .dv-role-sys-queue { --dv-k: var(--dv-visited-fill); --dv-ko: var(--dv-visited-outline); }
 .dv-role-sys-cdn, .dv-role-sys-storage { --dv-k: var(--dv-active-fill); --dv-ko: var(--dv-active-outline); }
+.dv-role-sys-file { --dv-k: var(--dv-muted-fill); }
+/* zones: a dashed boundary with a faint tint, under everything it holds */
+.dv-rect.dv-role-zone { fill: color-mix(in srgb, var(--dv-muted-fill) 55%, transparent); stroke: var(--dv-muted); stroke-width: 1.5px; pointer-events: none; }
+.dv-rect.dv-role-zone${anyTone} { fill: color-mix(in srgb, var(--dv-cf) 14%, transparent); stroke: var(--dv-c); }
+.dv-text.dv-role-zone-label { fill: var(--dv-muted); font-weight: 600; letter-spacing: .03em; }
+.dv-text.dv-role-zone-label${anyTone} { fill: var(--dv-c); }
 [class*="dv-role-sys-"]:is(.dv-rect, .dv-circle, .dv-path:not(.dv-open)) { fill: color-mix(in srgb, var(--dv-k, var(--dv-surface)) 45%, var(--dv-surface)); stroke: var(--dv-stroke); }
 [class*="dv-role-sys-"]:is(.dv-rect, .dv-circle, .dv-path:not(.dv-open))${anyTone} { fill: var(--dv-cf); --dv-ko: var(--dv-co); }
 .dv-path.dv-open[class*="dv-role-sys-"] { fill: none; stroke: var(--dv-stroke); }
@@ -238,7 +251,7 @@ ${TONES.map(toneVars).join('\n')}
 /* interactive: clickable shapes get a pointer and a gentle hover; nothing else changes */
 .dv-interactive { cursor: pointer; }
 :is(.dv-rect, .dv-circle).dv-interactive:not(.dv-role-hit, .dv-role-universe):hover { filter: brightness(.96); stroke-width: 2px; }
-:root[data-theme="dark"] :is(.dv-rect, .dv-circle).dv-interactive:not(.dv-role-hit, .dv-role-universe):hover { filter: brightness(1.15); }
+:is(:root[data-theme="dark"], .dark) :is(.dv-rect, .dv-circle).dv-interactive:not(.dv-role-hit, .dv-role-universe):hover { filter: brightness(1.15); }
 .dv-path.dv-role-region.dv-interactive { cursor: pointer; }
 .dv-path.dv-role-region.dv-interactive:hover { fill: color-mix(in srgb, var(--dv-cf, var(--dv-active-fill)) 60%, transparent); }
 .dv-draggable { cursor: grab; touch-action: none; }

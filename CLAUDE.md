@@ -31,7 +31,7 @@ Motion, a real bundler) instead of hand-rolling substitutes.
 - `src/` — framework-free core, no runtime dependencies:
   - `scene.ts` primitives `rect`, `circle`, `text`, `arrow`, `path`; `combine` (takes nested lists of parts),
     `translate`, `namespace`, `bounds`. `path.ts`: path data, Catmull-Rom smoothing, arc-length `resample`.
-  - `render.ts` `createView` (keyed reconciler + tween engine, `setViewBox`), `describe.ts`, `static.ts` (`toSVG`),
+  - `render.ts` `createView` (keyed reconciler + tween engine, `setViewBox`; each element carries its scene id as `data-id`), `describe.ts`, `static.ts` (`toSVG`),
     `player.ts`, `handle.ts` (draggable dot + big invisible hit target, optional pulse `hint`), `fx.ts` (`burst`).
   - `camera.ts`: `fitViewBox(parts)` and `nextCamera` (the `'grow'` auto camera: grow on overflow, shrink only below
     50% fill). Policy: plots/draggables fixed; step-throughs `fitViewBox(player.frames.map(draw))`; camera frozen while
@@ -48,9 +48,11 @@ Motion, a real bundler) instead of hand-rolling substitutes.
     `plot/` (plane, axes, fn, point, segment, vector, tangent, area, riemann, integrate, label),
     `prob/` (bars, sampleSpace, diePips, probTree, venn2 + vennRegions/vennAreas/vennRegionAt),
     `geom/` (polygon, segment, tickMarks, angleMark, circle, pointLabel + intersection/centre helpers),
-    `sched/` (simulate: fcfs/sjf/srtf/rr/priority; gantt), `mem/` (stackHeap, memory, hex).
-    `uml/` (classDiagram + RELATION_STYLE, sequence + activations(), stateMachine), `sys/` (architecture with
-    component kinds client/user/lb/gateway/service/cache/db/queue/cdn/storage → role `sys-<kind>`, packet, along()).
+    `sched/` (simulate: fcfs/sjf/srtf/rr/priority; gantt, whose segments may set their own lane/label/tone, so it is
+    a general timeline), `mem/` (stackHeap, memory, hex). `grid` takes `cellWidth`/`cellHeight` for tables of words.
+    `uml/` (classDiagram + RELATION_STYLE, sequence + activations() + `fragments` (loop/alt/opt boxes), stateMachine),
+    `sys/` (architecture with component kinds client/user/lb/gateway/service/cache/db/queue/cdn/storage/file → role
+    `sys-<kind>`, `zones` (dashed boundaries around groups, nested inside-out), links with `via` waypoints, packet, along()).
     Both use core `connector.ts` (line + end markers 'arrow'|'open'|'triangle'|'diamond'|'diamond-filled', straight /
     elbow / via routes, rectEdge).
     Non-ds families are namespaces: `import { plot, prob, geom, sched, mem, uml, sys } from 'dsviz'`.
@@ -59,10 +61,13 @@ Motion, a real bundler) instead of hand-rolling substitutes.
   neutral controls on Radix: `Slider`, `Segmented`, `Select`, `Switch`, `NumberStepper`, `Button`, `TextInput`,
   `Transport` (`<Transport player={player} />`), `CodeTrace`, `MathText`.
 - `site/` — docs site (Vite + React, hash routes): home (`#/`, intro + live featured examples + usage), examples
-  (`#/examples`: 33 examples grouped by family, each the live diagram beside its editable source), guide
+  (`#/examples`: 35 examples grouped by family, each the live diagram beside its editable source), guide
   (`#/guide`), API (`#/api`). Every `site/demos/*.tsx` is a real module importing from `dsviz` / `dsviz/react`;
   `site/live/useLive.tsx` + sucrase `compile.ts` + CodeMirror make the source editable in the page.
 - Install in another project: `npm install github:JesseWilliamson/DiagramBuilder` (the `prepare` script builds `dist/`).
+  `build.mjs` emits one ES module per source file (not a bundle) and rewrites relative imports to `.js`, so apps can
+  tree-shake it: a bundle's namespace objects (`plot`, `sys`…) kept every function alive (a lesson drawing one array
+  went from 79 KB to 34 KB).
 - `tests/` — vitest for path maths and every family's maths (`npm test`).
 - Scripts: `npm run dev` (site), `npm run build` (library → `dist/`), `npm run build:site` (→ `site-dist/`),
   `npm run typecheck`. `.github/workflows/pages.yml` deploys the site to GitHub Pages on push to main.
@@ -72,9 +77,15 @@ Key design rule worth preserving: **layouts never know about styling**. They emi
 
 ## Done vs. still to do
 
-Done: everything in "Decisions made in the last round" below, plus the examples site.
-Still open: wiring into the getbetter repo and swapping controls for its shadcn components; replacing the two
-binary-search editorial diagrams there (the BinarySearch and WhyFast examples are the starting point);
+Done: everything in "Decisions made in the last round" below, plus the examples site. Wired into getbetter: its
+second course, *Inside getbetter* (`content/course/getbetter/` there), has fifteen figures drawn with dsviz in
+`web/src/components/course/figures/`, sitting in getbetter's own frame and plain-button controls
+(`web/src/components/course/DiagramFrame.tsx`, which also maps `--dv-surface`/fonts onto the app's tokens). The
+library additions that course needed (zones, file kind, link waypoints, sequence fragments, gantt segment
+lane/label/tone, non-square grid cells, toned captions, the unbundled build) are general; the layout ones have tests,
+and TrustZones and Polling on the examples page show them.
+Still open: replacing the two binary-search editorial diagrams there (the BinarySearch and WhyFast examples are the
+starting point);
 publishing to npm; three-set Venn; a Reingold–Tilford tree layout; text crossfade in the renderer (see the
 exercises in the guide).
 

@@ -35,8 +35,7 @@ export default function Riemann() {
         viewBox={p.viewBox()}
         onDrag={(e) => {
           setTouched(true);
-          const x = Math.round(Math.max(0, Math.min(6, p.toWorld(e.x, e.y).x)) * 10) / 10;
-          (e.id === 'a' ? setA : setB)(x);
+          (e.id === 'a' ? setA : setB)(Math.max(0, Math.min(6, p.toWorld(e.x, e.y).x)));
         }}
       />
       <div className="row">

@@ -44,7 +44,8 @@ Motion, a real bundler) instead of hand-rolling substitutes.
     `dv-grabbed` adds a soft shadow; no press/lift motion). Controls are flat and quiet, except the slider: 8px track with dot notches.
     `--dv-*` variables on `.dv-root` / `.dvc`; dark via `[data-theme="dark"]` or `.dark` (or the OS setting).
     Roles (`grid`, `axis`, `curve`, `area`, `region`, `bar`, `guide`, `glow`, `handle`, `hit`, `math`…) decide looks.
-  - Families: `ds/` (array, pointer, linkedList, binaryTree, graph, grid, stack, queue — also exported top-level),
+  - Families: `ds/` (array, pointer, hashMap (maps and sets, rows keyed by key), linkedList, binaryTree, graph, grid,
+    stack, queue — also exported top-level),
     `plot/` (plane, axes, fn, point, segment, vector, tangent, area, riemann, integrate, label),
     `prob/` (bars, sampleSpace, diePips, probTree, venn2 + vennRegions/vennAreas/vennRegionAt),
     `geom/` (polygon, segment, tickMarks, angleMark, circle, pointLabel + intersection/centre helpers),
@@ -61,7 +62,7 @@ Motion, a real bundler) instead of hand-rolling substitutes.
   neutral controls on Radix: `Slider`, `Segmented`, `Select`, `Switch`, `NumberStepper`, `Button`, `TextInput`,
   `Transport` (`<Transport player={player} />`), `CodeTrace`, `MathText`.
 - `site/` — docs site (Vite + React, hash routes): home (`#/`, intro + live featured examples + usage), examples
-  (`#/examples`: 35 examples grouped by family, each the live diagram beside its editable source), guide
+  (`#/examples`: 36 examples grouped by family, each the live diagram beside its editable source), guide
   (`#/guide`), API (`#/api`). Every `site/demos/*.tsx` is a real module importing from `dsviz` / `dsviz/react`;
   `site/live/useLive.tsx` + sucrase `compile.ts` + CodeMirror make the source editable in the page.
 - Install in another project: `npm install dsviz`. Published to npm by `.github/workflows/publish.yml` when a GitHub
@@ -87,8 +88,9 @@ second course, *Inside getbetter* (`content/course/getbetter/` there), has fifte
 library additions that course needed (zones, file kind, link waypoints, sequence fragments, gantt segment
 lane/label/tone, non-square grid cells, toned captions, the unbundled build) are general; the layout ones have tests,
 and TrustZones and Polling on the examples page show them.
-Still open: replacing the two binary-search editorial diagrams there (the BinarySearch and WhyFast examples are the
-starting point); three-set Venn; a Reingold–Tilford tree layout; text crossfade in the renderer (see the exercises in
+getbetter's problem editorials (`web/src/components/viz/` there, getbetter PR #44) draw a figure per code problem
+with dsviz, most on one shared step-through frame, including the two binary-search diagrams; `hashMap` was added for
+them. Still open: three-set Venn; a Reingold–Tilford tree layout; text crossfade in the renderer (see the exercises in
 the guide).
 
 ## The getbetter context (screenshots in `docs/getbetter-screens/`)

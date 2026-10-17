@@ -6,3 +6,4 @@ export * from './tree';
 export * from './graph';
 export * from './grid';
 export * from './stackQueue';
+export * from './hashMap';

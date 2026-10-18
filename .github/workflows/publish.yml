@@ -24,11 +24,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # No registry-url: it makes setup-node write an .npmrc with a placeholder
+      # token, and when the trusted login is refused npm falls back to that
+      # token and reports a bare "404 Not Found", hiding the real reason. No
+      # dependency cache either: npm advises against caching in release builds.
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-          registry-url: https://registry.npmjs.org
       - name: The tag names the version being published
         env:
           TAG: ${{ github.event.release.tag_name }}
@@ -42,4 +44,6 @@ jobs:
       # Trusted Publishing needs npm 11.5.1 or later; Node 22 ships npm 10.
       - run: npm install -g npm@11
       # prepublishOnly typechecks, tests and builds before anything is uploaded.
-      - run: npm publish
+      # --loglevel verbose prints npm's "oidc" lines, which say why npm turned
+      # the trusted login down if it ever does.
+      - run: npm publish --loglevel verbose

@@ -37,6 +37,14 @@ export function pathData(pts: ReadonlyArray<Pt>, closed: boolean, smooth: boolea
   return closed ? d + 'Z' : d;
 }
 
+/**
+ * `d` attribute for a dot at each point: a zero-length segment per point,
+ * which a round line cap draws as a dot as wide as the stroke.
+ */
+export function dotData(pts: ReadonlyArray<Pt>): string {
+  return pts.map(([x, y]) => `M${r(x)} ${r(y)}h0`).join('');
+}
+
 /** `count` points spaced evenly by arc length along the polyline through `pts`. */
 export function resample(pts: ReadonlyArray<Pt>, count: number, closed = false): Array<[number, number]> {
   if (!pts.length || count <= 0) return [];

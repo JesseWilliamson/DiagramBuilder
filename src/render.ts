@@ -101,6 +101,8 @@ interface Entry {
   dur: number;
   exiting: boolean;
   settled: boolean;
+  /** Attribute names the last paint set, so the next one can remove any it no longer describes. */
+  attrs?: string[];
   /** Being dragged right now: gets the `dv-grabbed` class (the stylesheet gives it a lifted shadow). */
   grabbed?: boolean;
 }
@@ -158,6 +160,10 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
     for (const k in d.attrs) {
       if (e.el.getAttribute(k) !== d.attrs[k]) e.el.setAttribute(k, d.attrs[k]);
     }
+    // An optional attribute that is no longer described (a path that stops being
+    // dots, a node that stops being draggable) must go, or the old value lingers.
+    for (const k of e.attrs ?? []) if (!(k in d.attrs)) e.el.removeAttribute(k);
+    e.attrs = Object.keys(d.attrs);
     if (d.text !== undefined && e.el.textContent !== d.text) e.el.textContent = d.text;
     if (d.html !== undefined && (e.el as SVGElement & { _html?: string })._html !== d.html) {
       (e.el as SVGElement & { _html?: string })._html = d.html; // compare against what we set, not the browser's serialisation

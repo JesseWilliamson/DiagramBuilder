@@ -108,12 +108,18 @@ export interface ArrowNode extends BaseNode {
  * Tweening is point-wise. When the point count changes between renders the
  * renderer first resamples the old shape to the new count (see path.ts), so a
  * curve with 40 points can morph into one with 80 without jumping.
+ *
+ *  - dots: draw a dot at each point instead of a line through them, `width`
+ *    across. To mark a shape's vertices, add a second path with the same points
+ *    and `dots: true`: it goes through the same resampling, so the dots stay on
+ *    the corners while the shape morphs (separate circles would not).
  */
 export interface PathNode extends BaseNode {
   kind: 'path';
   points: ReadonlyArray<readonly [number, number]>;
   closed?: boolean;
   smooth?: boolean;
+  dots?: boolean;
   width?: number;
 }
 

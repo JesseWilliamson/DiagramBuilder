@@ -10,6 +10,12 @@ name: Publish to npm
 # publish. There is no npm token stored anywhere to leak. npm can only trust
 # a publisher for a package that exists, so the very first version was
 # published by hand.
+#
+# Auth is OIDC only: setup-node gets no registry-url, so there is no .npmrc
+# and no token to fall back to. If the trusted login fails, the publish fails
+# with npm's own reason instead of a misleading 404. For it to succeed, the
+# package's npm settings page must list a trusted publisher for this
+# repository and this workflow file (publish.yml).
 
 on:
   release:
@@ -23,12 +29,12 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       # No registry-url: it makes setup-node write an .npmrc with a placeholder
       # token, and when the trusted login is refused npm falls back to that
       # token and reports a bare "404 Not Found", hiding the real reason. No
       # dependency cache either: npm advises against caching in release builds.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
       - name: The tag names the version being published

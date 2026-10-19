@@ -194,7 +194,19 @@ ${TONES.map(toneVars).join('\n')}
 .dv-path.dv-role-end-hollow${anyTone} { fill: var(--dv-surface); stroke: var(--dv-c); }
 .dv-path.dv-role-end-open { fill: none; stroke: var(--dv-edge); pointer-events: none; }
 .dv-path.dv-role-end-open${anyTone} { stroke: var(--dv-c); }
+.dv-path:is(.dv-role-connector, .dv-role-end-open, .dv-role-end-hollow).dv-tone-muted { stroke: var(--dv-faint); }
+.dv-path.dv-role-end-solid.dv-tone-muted { fill: var(--dv-faint); stroke: var(--dv-faint); }
 .dv-text.dv-role-end-label { fill: var(--dv-muted); font-family: var(--dv-mono); font-weight: 500; }
+
+/* graph node kinds (role node-<kind>): what a node IS decides its colour, e.g. a change and its blast radius.
+   Any other kind is unstyled until the host adds a rule; a tone still wins over a kind. */
+.dv-role-node-changed { --dv-k: var(--dv-active-fill); --dv-ko: var(--dv-active-outline); }
+.dv-role-node-upstream { --dv-k: var(--dv-accent-fill); --dv-ko: var(--dv-accent-outline); }
+.dv-role-node-downstream { --dv-k: var(--dv-visited-fill); --dv-ko: var(--dv-visited-outline); }
+.dv-role-node-test { --dv-k: var(--dv-success-fill); --dv-ko: var(--dv-success-outline); }
+[class*="dv-role-node-"]:is(.dv-rect, .dv-circle) { fill: var(--dv-k, var(--dv-surface)); stroke: var(--dv-ko, var(--dv-outline)); stroke-width: 2px; }
+[class*="dv-role-node-"]:is(.dv-rect, .dv-circle)${anyTone} { fill: var(--dv-cf); stroke: var(--dv-co); }
+[class*="dv-role-node-"]:is(.dv-rect, .dv-circle).dv-tone-muted { fill: var(--dv-muted-fill); stroke: var(--dv-muted-outline); }
 
 /* hash maps and sets: a tinted key cell, a plain value cell, outlined like any solid shape */
 .dv-rect:is(.dv-role-map-key, .dv-role-map-value) { stroke: var(--dv-outline); stroke-width: 2px; }

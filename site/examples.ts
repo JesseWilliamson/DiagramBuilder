@@ -35,7 +35,7 @@ export const groups: Group[] = [
       { name: 'Bst', title: 'Binary search tree', desc: 'Insert and search; new nodes grow out of their parent.' },
       { name: 'TidyTree', title: 'Tidy trees', desc: 'Reingold–Tilford for n-ary trees: subtrees pushed together until their outlines almost touch.' },
       { name: 'Graph', title: 'BFS and DFS', desc: 'Drag the nodes; click one to start from it.' },
-      { name: 'Layered', title: 'Layered layout', desc: 'A pipeline with no coordinates: layers follow the edges, long edges bend around boxes. Click a task.' },
+      { name: 'Layered', title: 'Layered layout and node kinds', desc: 'A pipeline with no coordinates: layers follow the edges, long edges bend around boxes. Click a task to see its blast radius, coloured by node kind.' },
       { name: 'GraphColoring', title: 'Graph colouring', desc: 'Click to cycle colours; clashing edges turn red.' },
       { name: 'Lcs', title: 'Dynamic programming table', desc: 'Longest common subsequence, with dependency arrows and a traceback.' },
     ],

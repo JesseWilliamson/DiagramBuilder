@@ -87,6 +87,7 @@ p.toWorld(e.x, e.y);                                        // drag position →
   --dv-curve: #0b84f3;         /* plot curves */
   --dv-font: "Inter", sans-serif;
 }`}</Code>
+          <p>Some layouts take a <code>kind</code> instead of a colour: a graph node with <code>kind: 'changed'</code> gets <code>role: 'node-changed'</code>. The stylesheet colours <code>changed</code>, <code>upstream</code>, <code>downstream</code> and <code>test</code>; any other kind is yours to style with <code>.dv-role-node-&lt;kind&gt;</code>. A tone on the same node still wins.</p>
           <p>Dark mode switches on <code>[data-theme="dark"]</code> or <code>.dark</code> on any ancestor, or follows the OS when neither is set.</p>
           <h3>Coloured outlines</h3>
           <p>Solid shapes (array cells, tree and graph nodes, UML boxes, system components) are outlined in a darker shade of their own colour rather than black, so a coloured tile reads as one object. Lines, arrows, curves and plots stay crisp ink, which keeps the connections visually separate from the things they connect. Change the colours with <code>--dv-outline</code> (untoned shapes) and <code>--dv-&lt;tone&gt;-outline</code>.</p>

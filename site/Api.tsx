@@ -21,7 +21,7 @@ const rows: Array<[string, string] | string> = [
   ['linkedList(nodes, opts) · listFromValues', 'Boxes from { key, value, next }; anchors top/bottom/center(key), slot(i).'],
   ['binaryTree(root, opts) · treeFromLevelOrder', "In-order layout of { key, left, right } (layout: 'tidy' for Reingold–Tilford); pos/top/bottom(key)."],
   ['tree(root, { layout, shape, gap, dy, tones })', "n-ary trees of { key, label, children }: tidy (Reingold–Tilford, default) or 'leaves' (one column per leaf). shape: 'rect' sizes boxes to their labels."],
-  ['graph(nodes, edges, opts) · circularPositions', "Circles and edges; directed, weighted, curved antiparallel pairs. Nodes without x/y go on a circle, or in layers with layout: 'layered' (direction, rankGap, nodeGap, route: 'straight' | 'elbow')."],
+  ['graph(nodes, edges, opts) · circularPositions · graphNodeSize', "Circles (or shape: 'rect', sized to the label) and edges; directed, weighted, curved antiparallel pairs. A node's kind becomes role node-<kind>: changed, upstream, downstream and test are styled. Nodes without x/y go on a circle, or in layers with layout: 'layered' (direction, rankGap, nodeGap, route: 'straight' | 'elbow')."],
   ['grid(rows, opts) · stack · queue', 'Tables with row/column headers (cellWidth / cellHeight for words); arrays with push/pop motion.'],
   ['hashMap(entries, opts)', 'A Map or [key, value] pairs as a key / value table in insertion order; bare keys draw a set. Rows are keyed by key, so inserts drop in and updates change in place. title, tones by key, keyAt / valueAt / left / right anchors.'],
   'plot.*',

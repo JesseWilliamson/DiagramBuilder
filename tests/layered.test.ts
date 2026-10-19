@@ -134,3 +134,26 @@ describe('families use the layered layout for unplaced nodes', () => {
     expect(d.box('Circle').y).toBe(d.box('Square').y);
   });
 });
+
+describe('graph shapes and kinds', () => {
+  it("shape: 'rect' sizes each node to its label and stops edges at the box", () => {
+    const g = graph([{ id: 'a', label: 'parseConfig', x: 0, y: 0 }, { id: 'b', label: 'b', x: 300, y: 0 }], [{ from: 'a', to: 'b' }], { shape: 'rect' });
+    const a = g.nodes.find((n) => n.id === 'graph:node:a');
+    const b = g.nodes.find((n) => n.id === 'graph:node:b');
+    expect(a?.kind).toBe('rect');
+    expect(a?.kind === 'rect' && b?.kind === 'rect' && a.w > b.w).toBe(true);
+    const edge = g.nodes.find((n) => n.id === 'graph:edge:a-b');
+    // the line starts at a's right edge, not 22px (a circle's radius) from its centre
+    expect(edge?.kind === 'arrow' && a?.kind === 'rect' && edge.x1).toBeCloseTo(a?.kind === 'rect' ? a.w / 2 : 0);
+  });
+  it('a node kind becomes its role, so the stylesheet decides the colour', () => {
+    const g = graph([{ id: 'f', kind: 'changed' }, { id: 't', kind: 'test' }, { id: 'x' }], []);
+    expect(g.nodes.find((n) => n.id === 'graph:node:f')?.role).toBe('node-changed');
+    expect(g.nodes.find((n) => n.id === 'graph:node:t')?.role).toBe('node-test');
+    expect(g.nodes.find((n) => n.id === 'graph:node:x')?.role).toBeUndefined();
+  });
+  it('the stylesheet colours the four built-in kinds', async () => {
+    const { DEFAULT_CSS } = await import('../src/styles');
+    for (const k of ['changed', 'upstream', 'downstream', 'test']) expect(DEFAULT_CSS).toContain(`.dv-role-node-${k}`);
+  });
+});

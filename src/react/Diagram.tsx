@@ -35,6 +35,14 @@ export interface DiagramProps {
   className?: string;
   /** Accessible description of what the diagram shows. */
   label?: string;
+  /**
+   * Add dsviz's stylesheet to <head> (default true). Pass false when the app
+   * ships the CSS itself (e.g. DEFAULT_CSS in its own bundle, or a strict
+   * Content-Security-Policy that forbids injected <style> tags).
+   */
+  injectStyles?: boolean;
+  /** Crossfade text whose words change (default true). */
+  crossfade?: boolean;
 }
 
 /**
@@ -47,7 +55,7 @@ export interface DiagramProps {
  *  - Event handlers are read through a ref, so passing a fresh inline `onDrag`
  *    every render doesn't tear down and rebuild the view's listeners.
  */
-export function Diagram({ scene, size = 'natural', scale, height = 240, viewBox = 'auto', camera, padding, duration, ease, onClick, onDragStart, onDrag, onDragEnd, className, label }: DiagramProps) {
+export function Diagram({ scene, size = 'natural', scale, height = 240, viewBox = 'auto', camera, padding, duration, ease, onClick, onDragStart, onDrag, onDragEnd, className, label, injectStyles = true, crossfade }: DiagramProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const viewRef = useRef<View | null>(null);
   const dragging = useRef<null | 'pointer' | 'key'>(null);
@@ -58,7 +66,7 @@ export function Diagram({ scene, size = 'natural', scale, height = 240, viewBox 
 
   // Create / destroy the view. `viewBox`, `padding`, `duration` are creation options.
   useEffect(() => {
-    const view = createView(svgRef.current!, { viewBox, camera, padding, duration, ease, size, scale });
+    const view = createView(svgRef.current!, { viewBox, camera, padding, duration, ease, size, scale, injectStyles, crossfade });
     viewRef.current = view;
     const offs = [
       view.on('click', (e) => handlers.current.onClick?.(e)),
@@ -73,7 +81,7 @@ export function Diagram({ scene, size = 'natural', scale, height = 240, viewBox 
       viewRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [padding, duration, ease, size, scale, camera]);
+  }, [padding, duration, ease, size, scale, camera, injectStyles, crossfade]);
 
   // Camera changes don't need a new view.
   useEffect(() => {

@@ -97,6 +97,7 @@ p.toWorld(e.x, e.y);                                        // drag position →
         <Section id="motion" title="Animation">
           <p>Tweens start from what's on screen right now, not from the last target, so interrupting an animation (clicking Next twice quickly) never snaps. <code>&lt;Diagram duration ease&gt;</code> sets the feel; while a drag is in progress renders are instant so the shape stays under the pointer.</p>
           <p>Nodes can say where they come from and go to: <code>enter: {'{ y: parentY }'}</code> makes a tree node grow out of its parent, <code>exit: {'{ x: -40 }'}</code> slides a dequeued cell out to the left. Paths with different point counts are resampled by arc length before tweening, so a curve can morph into another.</p>
+          <p>Text can't be interpolated ("lo = 3" is not half way to "lo = 5"), so a text node that keeps its id but changes its words <em>crossfades</em>: a ghost of the old words fades out where they were while the new ones fade in. Turn it off with <code>crossfade: false</code> on the view or the <code>&lt;Diagram&gt;</code>.</p>
           <p>If the viewer prefers reduced motion, every render is instant.</p>
         </Section>
 
@@ -182,7 +183,9 @@ const view = createView(document.querySelector('svg'));
 view.render(array([1, 2, 3]));            // animate in the DOM
 view.on('click', (e) => console.log(e.node.data));
 
-const svgString = toSVG(array([1, 2, 3])); // static SVG for SSR, tests, thumbnails`}</Code>
+const svgString = toSVG(array([1, 2, 3])); // static SVG for SSR, tests, thumbnails
+toSVG(scene, { theme: 'dark' });           // pinned palette + background, for a file on its own`}</Code>
+          <p>The stylesheet is added to <code>&lt;head&gt;</code> the first time a view is created. If your app ships <code>DEFAULT_CSS</code> itself (or a Content-Security-Policy forbids injected styles), pass <code>injectStyles: false</code> to <code>createView</code> or <code>&lt;Diagram injectStyles={'{false}'}&gt;</code>.</p>
         </Section>
 
         <Section id="exercises" title="Exercises">
@@ -191,7 +194,7 @@ const svgString = toSVG(array([1, 2, 3])); // static SVG for SSR, tests, thumbna
             <li><b>A <code>heap()</code> layout.</b> Build the implicit tree (children of i are 2i+1 and 2i+2), reuse <code>binaryTree()</code>, and draw the array underneath with matching keys.</li>
             <li><b>Three-set Venn.</b> Generalise <code>vennRegions</code>: each of the 7 regions is bounded by arcs between pairwise intersection points.</li>
             <li><b>Reingold–Tilford.</b> <code>layout/tidy.ts</code> now does it (<code>tree()</code>, and <code>binaryTree</code> with <code>layout: 'tidy'</code>). Delete it and rebuild it from <code>tests/tidy.test.ts</code>; then try Walker's fix, which spreads small subtrees evenly between big ones.</li>
-            <li><b>Text crossfade.</b> When a text node's string changes it swaps instantly. Make <code>render.ts</code> fade the old string out and the new one in.</li>
+            <li><b>Text crossfade.</b> Done in <code>render.ts</code> with a fading ghost copy. Try the other approach: keep two text elements per id and swap which one is live. What does each do when a label changes twice inside one animation?</li>
           </ol>
         </Section>
       </div>

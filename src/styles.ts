@@ -304,6 +304,12 @@ ${TONES.map(toneVars).join('\n')}
 ${OUTLINES}
 `;
 
+/**
+ * The variables of each theme as one CSS declaration list, for pinning a theme
+ * where no ancestor can say `.dark` (a standalone SVG file: see toSVG).
+ */
+export const THEME_VARS: Record<'light' | 'dark', string> = { light: LIGHT.trim(), dark: DARK.trim() };
+
 const STYLE_ID = 'dsviz-default-styles';
 
 /** Add the default stylesheet to <head> once. Safe to call repeatedly. */

@@ -3,7 +3,7 @@ import * as RSlider from '@radix-ui/react-slider';
 import * as RSwitch from '@radix-ui/react-switch';
 import * as RToggle from '@radix-ui/react-toggle-group';
 import { ReactNode, useEffect, useId, useRef, useState } from 'react';
-import { injectControlStyles } from './controls-styles';
+import { useControlStyles } from './controls-styles';
 import type { PlayerState } from './hooks';
 
 /*
@@ -94,7 +94,7 @@ export interface SliderProps {
 }
 
 export function Slider({ value, onChange, min, max, step = 1, label, format, ticks, className }: SliderProps) {
-  injectControlStyles();
+  useControlStyles();
   const id = useId();
   const [ref, width] = useWidth<HTMLSpanElement>();
   return (
@@ -119,7 +119,7 @@ export interface SegmentedProps<T extends string> {
 
 /** Use instead of a dropdown when there are 2–4 options: every choice stays visible, one click. */
 export function Segmented<T extends string>({ value, onChange, options, label }: SegmentedProps<T>) {
-  injectControlStyles();
+  useControlStyles();
   return (
     <Field label={label}>
       <RToggle.Root type="single" className="dvc-seg" value={value} onValueChange={(v) => v && onChange(v as T)} aria-label={label}>
@@ -140,7 +140,7 @@ export interface SelectProps<T extends string> {
 }
 
 export function Select<T extends string>({ value, onChange, options, label }: SelectProps<T>) {
-  injectControlStyles();
+  useControlStyles();
   const norm = options.map((o) => (typeof o === 'string' ? { value: o, label: o } : o));
   return (
     <Field label={label}>
@@ -166,7 +166,7 @@ export function Select<T extends string>({ value, onChange, options, label }: Se
 }
 
 export function Switch({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label?: string }) {
-  injectControlStyles();
+  useControlStyles();
   const id = useId();
   return (
     <Field label={label} id={id}>
@@ -188,7 +188,7 @@ export interface NumberStepperProps {
 
 /** − n + : for small integers where dragging a slider would be fiddly (a search target). */
 export function NumberStepper({ value, onChange, min = -Infinity, max = Infinity, step = 1, label }: NumberStepperProps) {
-  injectControlStyles();
+  useControlStyles();
   const set = (v: number) => onChange(Math.min(max, Math.max(min, v)));
   return (
     <Field label={label}>
@@ -210,7 +210,7 @@ const Icon = ({ d }: { d: string }) => <svg viewBox="0 0 16 16" width="16" heigh
 
 /** prev / play / next, a scrubber with a tick per step, and "Step i / n". `<Transport player={usePlayer(...)} />` */
 export function Transport({ player: p }: TransportProps) {
-  injectControlStyles();
+  useControlStyles();
   const last = Math.max(0, p.count - 1);
   const [ref, width] = useWidth<HTMLSpanElement>();
   return (
@@ -238,7 +238,7 @@ export function Transport({ player: p }: TransportProps) {
  * from a generator that yields `{ ..., line }`. Indentation is preserved.
  */
 export function CodeTrace({ lines, active }: { lines: readonly string[]; active?: number | readonly number[] | null }) {
-  injectControlStyles();
+  useControlStyles();
   const on = new Set(active == null ? [] : typeof active === 'number' ? [active] : active);
   return (
     <pre className="dvc dvc-code" aria-label="Algorithm steps">
@@ -259,7 +259,7 @@ export interface ButtonProps {
 }
 
 export function Button({ children, onClick, variant = 'ghost', disabled, title }: ButtonProps) {
-  injectControlStyles();
+  useControlStyles();
   return (
     <button type="button" className={cx('dvc dvc-btn', variant === 'primary' && 'is-primary')} onClick={onClick} disabled={disabled} title={title}>
       {children}
@@ -277,7 +277,7 @@ export interface TextInputProps {
 }
 
 export function TextInput({ value, onCommit, label, width = '10ch', placeholder }: TextInputProps) {
-  injectControlStyles();
+  useControlStyles();
   const id = useId();
   return (
     <Field label={label} id={id}>

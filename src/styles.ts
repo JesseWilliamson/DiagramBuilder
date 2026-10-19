@@ -271,6 +271,12 @@ ${TONES.map(toneVars).join('\n')}
 .dv-text.dv-role-git-ref-label { font-family: var(--dv-mono); font-weight: 600; }
 .dv-text.dv-role-git-label { font-weight: 500; }
 
+/* code blocks: a soft panel, monospace lines, highlight bands in a tone's fill */
+.dv-rect.dv-role-code-bg { fill: var(--dv-muted-fill); stroke: none; }
+.dv-rect.dv-role-code-highlight { fill: color-mix(in srgb, var(--dv-cf, var(--dv-active-fill)) 45%, transparent); stroke: none; }
+.dv-text:is(.dv-role-code-line, .dv-role-code-number) { font-family: var(--dv-mono); font-weight: 400; }
+.dv-text.dv-role-code-number { fill: var(--dv-muted); }
+
 /* draggable handles: a big invisible hit target, then the visible dot */
 :is(.dv-circle, .dv-rect).dv-role-hit { fill: transparent; stroke: none; pointer-events: all; }
 .dv-circle.dv-role-handle { pointer-events: none; transform-box: fill-box; transform-origin: center; stroke: var(--dv-surface); stroke-width: 2.5px; transition: transform .15s ease, fill .25s ease; filter: drop-shadow(0 1px 2px rgb(0 0 0 / .3)); }

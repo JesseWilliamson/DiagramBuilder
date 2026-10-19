@@ -28,6 +28,7 @@ export const groups: Group[] = [
     intro: 'Arrays, pointers, maps, lists, trees, graphs and grids. Algorithms are generators; usePlayer turns their frames into a timeline.',
     items: [
       { name: 'BinarySearch', title: 'Binary search', desc: 'Generator frames, a code trace, and pointers that slide.' },
+      { name: 'CodeBlock', title: 'Code in the diagram', desc: 'code.block: numbered lines and a highlight band that slides as you step, joined to the array by an arrow.' },
       { name: 'WhyFast', title: 'Halving', desc: 'Why binary search takes log₂ n steps.' },
       { name: 'BubbleSort', title: 'Keys decide what moves', desc: 'With keys, a swap slides two tiles past each other. Without, the numbers change in place.' },
       { name: 'HashMap', title: 'Hash map', desc: 'Two Sum with a map of values seen. Rows are keyed by the map key, so each entry drops in as its own row.' },

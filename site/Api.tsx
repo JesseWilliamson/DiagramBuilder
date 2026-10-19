@@ -47,6 +47,8 @@ const rows: Array<[string, string] | string> = [
   'git.*',
   ['graph(commits, refs, { highlight, rowH, laneW, r, tones })', "Commit graph from { hash, parents, label, tone } newest first: lanes by first-parent inheritance (tips take the first free lane, merges open or join lanes), curved edges, ref pills by kind (branch · remote · tag · head), highlight dims the rest. Returns pos, lane, row, lanes, labelX."],
   ['gitLanes(commits)', 'The lane walk on its own: lane and row per commit, and the lane each parent edge travels down.'],
+  'code.*',
+  ['block(source, { highlight, numbers, start, size, tone, dimOthers })', 'A monospace code block in the scene: numbered lines keyed by number, highlight bands ([[from, to]], 1-based) keyed by position so they slide. Anchors line(n), right(n), box.'],
   'layout.*',
   ['layered(nodes, edges, { direction, rankGap, nodeGap, sweeps })', "Sugiyama-lite DAG layout: cycles broken by DFS, longest-path layers, barycentre ordering, pool-adjacent-violators placement. Returns pos, rank, layers, path(from, to), route(from, to, 'straight' | 'elbow'), box, crossings. Used by graph, sys.architecture and uml.classDiagram for nodes without x/y."],
   ['tidy(root, children, { width, gap, slot })', 'Reingold–Tilford placement for any tree shape: subtrees pushed together by their contours, parents centred. null children are empty slots.'],

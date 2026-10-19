@@ -56,7 +56,16 @@ Motion, a real bundler) instead of hand-rolling substitutes.
     `sys-<kind>`, `zones` (dashed boundaries around groups, nested inside-out), links with `via` waypoints, packet, along()).
     Both use core `connector.ts` (line + end markers 'arrow'|'open'|'triangle'|'diamond'|'diamond-filled', straight /
     elbow / via routes, rectEdge).
-    Non-ds families are namespaces: `import { plot, prob, geom, sched, mem, uml, sys } from 'dsviz'`.
+    `git/` (`git.graph`: commit graphs, lanes by first-parent inheritance like GitGoose's layout; `gitLanes`),
+    `code/` (`code.block`: numbered, highlighted code inside a scene),
+    `layout/` (`layered`: Sugiyama-lite DAG layout used by `graph({ layout: 'layered' })`, sys, class and state
+    diagrams for nodes without x/y; `tidy`: Reingold–Tilford, used by `tree()` and `binaryTree({ layout: 'tidy' })`).
+    `graph` nodes take `shape: 'rect'` and `kind` → role `node-<kind>` (changed/upstream/downstream/test styled).
+    `uml.sequence` has notes, alt `sections`, per-message tone, `activations: false`.
+    Non-ds families are namespaces: `import { plot, prob, geom, sched, mem, uml, sys, git, code, layout } from 'dsviz'`.
+  - `spec.ts`: `DiagramSpec` (JSON, discriminated on `type`), `validateSpec` (path-precise errors, strict about unknown
+    fields), `fromSpec`, `describeSpec` (alt text). This is what GitGoose's models emit and GitGoose verifies.
+  - Renderer crossfades text whose words change (a ghost of the old text fades out). `toSVG({ theme })`.
 - `src/react/` — `<Diagram>` (natural size by default: 1 scene unit = 1 CSS px, shrinks on narrow screens; `scale`,
   `size="fill"`, fixed `viewBox`, `duration`, `ease`), `usePlayer` (`start: 'end'`), `useTicker`, `useBurst`, and small
   neutral controls on Radix: `Slider`, `Segmented`, `Select`, `Switch`, `NumberStepper`, `Button`, `TextInput`,
@@ -72,7 +81,11 @@ Motion, a real bundler) instead of hand-rolling substitutes.
   `build.mjs` emits one ES module per source file (not a bundle) and rewrites relative imports to `.js`, so apps can
   tree-shake it: a bundle's namespace objects (`plot`, `sys`…) kept every function alive (a lesson drawing one array
   went from 79 KB to 34 KB).
-- `tests/` — vitest for path maths and every family's maths (`npm test`).
+- `tests/` — vitest for path maths and every family's maths (`npm test`); `render.test.ts` runs in happy-dom
+  (dev dependency) for the renderer and React controls.
+- `.claude/skills/dsviz/` — the Claude skill for USING dsviz (SKILL.md + references/api.md, spec.md, recipes.md).
+  Shipped in the npm package; `npm run sync:skill -- <repo>` / `npx dsviz-sync-skill <repo>` copies it elsewhere
+  (GitGoose syncs it; never edit a copy). Keep references/api.md in step with the exports.
 - Scripts: `npm run dev` (site), `npm run build` (library → `dist/`), `npm run build:site` (→ `site-dist/`),
   `npm run typecheck`. `.github/workflows/pages.yml` deploys the site to GitHub Pages on push to main.
 
@@ -90,8 +103,9 @@ lane/label/tone, non-square grid cells, toned captions, the unbundled build) are
 and TrustZones and Polling on the examples page show them.
 getbetter's problem editorials (`web/src/components/viz/` there, getbetter PR #44) draw a figure per code problem
 with dsviz, most on one shared step-through frame, including the two binary-search diagrams; `hashMap` was added for
-them. Still open: three-set Venn; a Reingold–Tilford tree layout; text crossfade in the renderer (see the exercises in
-the guide).
+them. 2.2.0 (GitGoose plan 4, phase 6a) added the JSON spec, layered and tidy layouts, git graphs, sequence notes and alt
+sections, code blocks, text crossfade and the skill. Still open: three-set Venn; Walker's spacing fix for tidy trees
+(see the exercises in the guide).
 
 ## The getbetter context (screenshots in `docs/getbetter-screens/`)
 

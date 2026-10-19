@@ -158,7 +158,7 @@ uml.classDiagram(
 uml.sequence(people, messages, { upTo: player.frame });   // reveal one message per step
 const a = sys.architecture(components, links);
 combine(a, sys.packet({ id: 'req', ...a.along('lb', 'app', 1) }));  // same id → it glides`}</Code>
-          <p>You place things (x, y); the layouts size boxes from their text and route the lines. Sequence diagrams compute their activation bars from the calls and returns, the same stack a running program keeps. Component colours come from the stylesheet by kind (<code>.dv-role-sys-db</code>), so a host app can restyle every database in one rule.</p>
+          <p>You place things (x, y), or leave x and y out: <code>graph(…, {"{ layout: 'layered' }"})</code>, <code>sys.architecture</code> and <code>uml.classDiagram</code> then use <code>layout.layered</code>, which puts each node one layer past everything that points at it, orders each layer to avoid crossings and bends long edges around the boxes in between. The layouts size boxes from their text and route the lines. Sequence diagrams compute their activation bars from the calls and returns, the same stack a running program keeps. Component colours come from the stylesheet by kind (<code>.dv-role-sys-db</code>), so a host app can restyle every database in one rule.</p>
         </Section>
 
         <Section id="vanilla" title="Without React">

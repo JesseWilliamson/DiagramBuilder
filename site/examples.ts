@@ -86,7 +86,7 @@ export const groups: Group[] = [
   {
     id: 'design',
     title: 'Software design',
-    intro: 'UML (uml.classDiagram, uml.sequence, uml.stateMachine) and system design (sys.architecture, sys.packet). Lines and their end markers come from connector().',
+    intro: 'UML (uml.classDiagram, uml.sequence, uml.stateMachine), system design (sys.architecture, sys.packet) and git history (git.graph). Lines and their end markers come from connector().',
     items: [
       { name: 'UmlArrows', title: 'UML relationships', desc: 'The six arrows, each beside the code that creates it.' },
       { name: 'ClassDiagram', title: 'Class diagram', desc: 'Drag the classes; click one to see only its relationships.' },
@@ -96,6 +96,7 @@ export const groups: Group[] = [
       { name: 'LoadBalancer', title: 'Load balancing', desc: 'Round robin, least connections and random, with a slow server. Click a server to take it down.' },
       { name: 'ConsistentHashing', title: 'Consistent hashing', desc: 'Add or remove a server and count the keys that move, ring versus hash % N.' },
       { name: 'TrustZones', title: 'Trust boundaries', desc: 'Zones around machines and a sandbox. Step a job across and see which files may cross.' },
+      { name: 'GitGraph', title: 'Merge versus rebase', desc: 'git.graph: lanes by first parent, curved edges, branch pills. Commits are keyed by hash, so the switch animates.' },
       { name: 'Polling', title: 'Polling in a loop', desc: 'A sequence diagram with a loop fragment that grows as the polls come back.' },
     ],
   },

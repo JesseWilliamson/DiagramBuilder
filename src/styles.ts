@@ -255,6 +255,18 @@ ${TONES.map(toneVars).join('\n')}
 .dv-circle.dv-role-packet { fill: var(--dv-c, var(--dv-point)); stroke: var(--dv-surface); stroke-width: 2px; filter: drop-shadow(0 1px 2px rgb(0 0 0 / .3)); pointer-events: none; }
 .dv-text.dv-role-packet-label { font-family: var(--dv-mono); font-size: 10.5px; fill: var(--dv-c, var(--dv-fg)); paint-order: stroke; stroke: var(--dv-halo); stroke-width: 3px; }
 
+/* git graphs: lines and dots in their lane's colour, merges hollow, refs as pills */
+.dv-path.dv-role-git-edge { fill: none; stroke: var(--dv-c, var(--dv-edge)); stroke-width: 2.5px; pointer-events: none; }
+.dv-circle:is(.dv-role-git-commit, .dv-role-git-merge) { fill: var(--dv-c, var(--dv-edge)); stroke: var(--dv-surface); stroke-width: 2px; }
+.dv-circle.dv-role-git-merge { fill: var(--dv-surface); stroke: var(--dv-c, var(--dv-edge)); stroke-width: 2.5px; }
+.dv-circle.dv-role-git-halo { fill: color-mix(in srgb, var(--dv-c, var(--dv-edge)) 18%, transparent); stroke: var(--dv-c, var(--dv-edge)); stroke-width: 1.5px; pointer-events: none; }
+.dv-rect[class*="dv-role-git-ref-"] { fill: color-mix(in srgb, var(--dv-cf, var(--dv-muted-fill)) 50%, var(--dv-surface)); stroke: var(--dv-c, var(--dv-faint)); stroke-width: 1.5px; }
+.dv-rect.dv-role-git-ref-remote { stroke-dasharray: 3 2; }
+.dv-rect.dv-role-git-ref-head { fill: var(--dv-c, var(--dv-edge)); }
+.dv-rect.dv-role-git-ref-head + .dv-text { fill: var(--dv-surface); }
+.dv-text.dv-role-git-ref-label { font-family: var(--dv-mono); font-weight: 600; }
+.dv-text.dv-role-git-label { font-weight: 500; }
+
 /* draggable handles: a big invisible hit target, then the visible dot */
 :is(.dv-circle, .dv-rect).dv-role-hit { fill: transparent; stroke: none; pointer-events: all; }
 .dv-circle.dv-role-handle { pointer-events: none; transform-box: fill-box; transform-origin: center; stroke: var(--dv-surface); stroke-width: 2.5px; transition: transform .15s ease, fill .25s ease; filter: drop-shadow(0 1px 2px rgb(0 0 0 / .3)); }

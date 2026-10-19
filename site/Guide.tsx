@@ -23,6 +23,7 @@ const toc = [
   ['math', 'Maths labels'],
   ['sizing', 'Sizing'],
   ['design', 'Software design'],
+  ['git', 'Git history'],
   ['vanilla', 'Without React'],
   ['exercises', 'Exercises'],
 ];
@@ -160,6 +161,16 @@ uml.sequence(people, messages, { upTo: player.frame });   // reveal one message 
 const a = sys.architecture(components, links);
 combine(a, sys.packet({ id: 'req', ...a.along('lb', 'app', 1) }));  // same id → it glides`}</Code>
           <p>You place things (x, y), or leave x and y out: <code>graph(…, {"{ layout: 'layered' }"})</code>, <code>sys.architecture</code> and <code>uml.classDiagram</code> then use <code>layout.layered</code>, which puts each node one layer past everything that points at it, orders each layer to avoid crossings and bends long edges around the boxes in between. The layouts size boxes from their text and route the lines. Sequence diagrams compute their activation bars from the calls and returns, the same stack a running program keeps. Component colours come from the stylesheet by kind (<code>.dv-role-sys-db</code>), so a host app can restyle every database in one rule.</p>
+        </Section>
+
+        <Section id="git" title="Git history">
+          <p><code>git.graph(commits, refs)</code> draws a commit graph from <code>{'{ hash, parents, label }'}</code>, newest first, the order <code>git log</code> prints. Lanes follow the first-parent rule: a commit's first parent inherits its column, so a branch runs straight down and a branch on top of another continues its line; a merge's other parents open or join lanes. Commits are keyed by hash, so a before / after pair animates: a merge adds one dot, a rebase replaces dots.</p>
+          <Code>{`
+git.graph(
+  [{ hash: 'm', parents: ['c', 'f'], label: 'Merge feature' }, { hash: 'c', parents: ['b'] }, { hash: 'f', parents: ['b'] }, { hash: 'b', parents: [] }],
+  [{ name: 'main', hash: 'm', kind: 'branch' }],
+  { highlight: ['m'] },
+);`}</Code>
         </Section>
 
         <Section id="vanilla" title="Without React">

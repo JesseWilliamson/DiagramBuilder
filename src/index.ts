@@ -7,7 +7,7 @@
  * exported at the top level. The other families are namespaces, because
  * several of them have a `segment` or `circle` and the namespace says which:
  *
- *   import { plot, prob, geom, sched, mem, uml, sys, layout } from 'dsviz';
+ *   import { plot, prob, geom, sched, mem, uml, sys, git, layout } from 'dsviz';
  *   plot.fn(p, Math.sin)   geom.angleMark(A, B, C, …)   sched.simulate(procs, 'rr')
  */
 export * from './vec';
@@ -35,4 +35,5 @@ export * as sched from './sched';
 export * as mem from './mem';
 export * as uml from './uml';
 export * as sys from './sys';
+export * as git from './git';
 export * as layout from './layout';

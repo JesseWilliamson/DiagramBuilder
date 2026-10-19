@@ -33,6 +33,7 @@ export const groups: Group[] = [
       { name: 'HashMap', title: 'Hash map', desc: 'Two Sum with a map of values seen. Rows are keyed by the map key, so each entry drops in as its own row.' },
       { name: 'LinkedList', title: 'Reversing a linked list', desc: 'Each arrow is keyed by the node it leaves, so flipping a pointer swings it round.' },
       { name: 'Bst', title: 'Binary search tree', desc: 'Insert and search; new nodes grow out of their parent.' },
+      { name: 'TidyTree', title: 'Tidy trees', desc: 'Reingold–Tilford for n-ary trees: subtrees pushed together until their outlines almost touch.' },
       { name: 'Graph', title: 'BFS and DFS', desc: 'Drag the nodes; click one to start from it.' },
       { name: 'Layered', title: 'Layered layout', desc: 'A pipeline with no coordinates: layers follow the edges, long edges bend around boxes. Click a task.' },
       { name: 'GraphColoring', title: 'Graph colouring', desc: 'Click to cycle colours; clashing edges turn red.' },

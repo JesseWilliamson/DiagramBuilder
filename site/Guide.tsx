@@ -74,7 +74,7 @@ arr.window(lo, hi);                                         // a band behind cel
 const p = plot.plane({ x: [-4, 4], y: [-3, 3], width: 440, height: 300 });
 plot.fn(p, Math.sin);                                       // world units, y up
 p.toWorld(e.x, e.y);                                        // drag position → maths coordinates`}</Code>
-          <p>The families: top-level data structures (<code>array, pointer, linkedList, binaryTree, graph, grid, stack, queue</code>) and the namespaces <code>plot</code>, <code>prob</code>, <code>geom</code>, <code>sched</code> and <code>mem</code>. See the <a href="#/api">API</a> for the full list.</p>
+          <p>The families: top-level data structures (<code>array, pointer, linkedList, binaryTree, tree, graph, grid, stack, queue</code>) and the namespaces <code>plot</code>, <code>prob</code>, <code>geom</code>, <code>sched</code> and <code>mem</code>. See the <a href="#/api">API</a> for the full list.</p>
           <p>Ids inside a layout come from your data. <code>array</code> keys cells by index unless you pass <code>keys</code>; give each element a stable key and a swap becomes two tiles sliding past each other instead of two numbers changing in place.</p>
         </Section>
 
@@ -177,7 +177,7 @@ const svgString = toSVG(array([1, 2, 3])); // static SVG for SSR, tests, thumbna
             <li><b>Add a <code>warning</code> tone.</b> Pure CSS: find how tones become <code>--dv-c / --dv-cf / --dv-cs</code> in <code>styles.ts</code>.</li>
             <li><b>A <code>heap()</code> layout.</b> Build the implicit tree (children of i are 2i+1 and 2i+2), reuse <code>binaryTree()</code>, and draw the array underneath with matching keys.</li>
             <li><b>Three-set Venn.</b> Generalise <code>vennRegions</code>: each of the 7 regions is bounded by arcs between pairwise intersection points.</li>
-            <li><b>Reingold–Tilford.</b> Replace the in-order tree layout with a tidier one, keeping the <code>TreeDiagram</code> return type.</li>
+            <li><b>Reingold–Tilford.</b> <code>layout/tidy.ts</code> now does it (<code>tree()</code>, and <code>binaryTree</code> with <code>layout: 'tidy'</code>). Delete it and rebuild it from <code>tests/tidy.test.ts</code>; then try Walker's fix, which spreads small subtrees evenly between big ones.</li>
             <li><b>Text crossfade.</b> When a text node's string changes it swaps instantly. Make <code>render.ts</code> fade the old string out and the new one in.</li>
           </ol>
         </Section>

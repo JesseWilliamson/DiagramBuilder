@@ -165,6 +165,13 @@ describe('fromSpec', () => {
   it('a custom id prefix', () => {
     expect(fromSpec(valid.array, { id: 'before' }).nodes[0].id.startsWith('before')).toBe(true);
   });
+  it('sequence lifelines move apart to fit the longest message label', () => {
+    const short = fromSpec(valid.sequence);
+    const long = fromSpec({ ...valid.sequence, fragments: undefined, notes: undefined, messages: [{ from: 'api', to: 'db', label: 'recordFailedAttemptAndNotifySecurityTeam(email)' }] });
+    const x = (sc: typeof short, k: string) => (sc.nodes.find((n) => n.id === `sequence:head:${k}:box`) as { x: number }).x;
+    expect(x(short, 'db') - x(short, 'api')).toBe(150);
+    expect(x(long, 'db') - x(long, 'api')).toBeGreaterThan(47 * 12 * 0.6);
+  });
   it('opposite transitions are bowed apart so they do not overlap', () => {
     const s = fromSpec(valid.state);
     const there = s.nodes.find((n) => n.id === 'state:t:1:line'), back = s.nodes.find((n) => n.id === 'state:t:2:line');

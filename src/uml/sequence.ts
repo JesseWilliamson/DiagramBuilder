@@ -179,7 +179,9 @@ export function sequence(participants: readonly Participant[], messages: readonl
   const noteTop = new Map<number, number>();
   let y = top;
   for (let i = 0; i <= messages.length; i++) {
-    for (const n of notes) if (n.at === i) (noteTop.set(n.k, y), (y += noteH(n) + 14));
+    // a fragment opening at message i draws its top edge (and tag) 14px into the row above: leave room
+    const opens = (o.fragments ?? []).some((f) => f.from === i);
+    for (const n of notes) if (n.at === i) (noteTop.set(n.k, y), (y += noteH(n) + 14 + (opens ? 14 : 0)));
     if (i < messages.length) (msgTop.push(y), (y += row));
   }
   const rowY = (i: number) => (i < 0 ? top - row / 2 : i < msgTop.length ? msgTop[i] : y) + row / 2;

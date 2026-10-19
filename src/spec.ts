@@ -24,7 +24,7 @@
  * layered layout (graph, architecture, class, state) or by the family's own
  * layout (sequence, git, array, table, code).
  */
-import { combine, Scene, Tone } from './scene';
+import { combine, estimateTextWidth, Scene, Tone } from './scene';
 import { array, graph as dsGraph, grid, pointer } from './ds';
 import { gitLanes, graph as gitGraph } from './git';
 import { block } from './code';
@@ -492,12 +492,17 @@ export function fromSpec(spec: DiagramSpec | unknown, o: FromSpecOptions = {}): 
   const s = r.spec!;
   const id = o.id ?? s.type;
   switch (s.type) {
-    case 'sequence':
+    case 'sequence': {
+      // A spec's author can't measure text, so the lifelines move apart until the longest
+      // message label (with its number) fits between two of them.
+      const longest = Math.max(0, ...s.messages.map((m, i) => estimateTextWidth(`${s.numbered ? `${i + 1}. ` : ''}${m.label}`, 12)));
+      const gap = Math.max(150, Math.ceil(longest + 40));
       return sequence(
         s.participants.map((p) => ({ id: p.id, label: p.label ?? p.id, kind: p.kind })),
         s.messages.map((m) => ({ ...m, tone: t(m.tone) })),
-        { id, numbered: s.numbered, activations: s.activations, highlight: false, fragments: s.fragments, notes: s.notes?.map((n) => ({ ...n, tone: t(n.tone) })) },
+        { id, gap, numbered: s.numbered, activations: s.activations, highlight: false, fragments: s.fragments, notes: s.notes?.map((n) => ({ ...n, tone: t(n.tone) })) },
       );
+    }
     case 'class':
       return classDiagram(s.classes.map((c) => ({ ...c, name: c.name ?? c.id, tone: t(c.tone) })), s.relations ?? [], { id });
     case 'state': {

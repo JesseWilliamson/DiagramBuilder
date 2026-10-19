@@ -245,3 +245,16 @@ describe('uml.activations across alt branches', () => {
     expect(uml.activations(msgs, [alt])).toEqual([{ participant: 'pay', depth: 0, start: 0, end: 2 }]);
   });
 });
+
+describe('uml.sequence: a note before a fragment', () => {
+  it('sits wholly above the fragment box, not across its top edge', () => {
+    const s = uml.sequence(
+      [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }],
+      [{ from: 'a', to: 'b', label: 'x' }, { from: 'a', to: 'b', label: 'y' }],
+      { notes: [{ over: 'a', text: 'before the loop', at: 1 }], fragments: [{ kind: 'loop', from: 1, to: 1 }] },
+    );
+    const note = bounds(s.nodes.find((n) => n.id === 'seq:note:0')!);
+    const box = bounds(s.nodes.find((n) => n.id === 'seq:frag:0')!);
+    expect(note.y + note.h).toBeLessThanOrEqual(box.y);
+  });
+});

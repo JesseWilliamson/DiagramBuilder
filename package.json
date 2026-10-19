@@ -19,6 +19,9 @@
   "sideEffects": false,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "dsviz-sync-skill": "scripts/sync-skill.mjs"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -31,7 +34,9 @@
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    ".claude/skills/dsviz",
+    "scripts/sync-skill.mjs"
   ],
   "scripts": {
     "dev": "vite",
@@ -40,7 +45,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "prepare": "npm run build",
-    "prepublishOnly": "npm run typecheck && npm test && npm run build"
+    "prepublishOnly": "npm run typecheck && npm test && npm run build",
+    "sync:skill": "node scripts/sync-skill.mjs"
   },
   "peerDependencies": {
     "react": ">=18",

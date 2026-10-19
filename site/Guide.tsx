@@ -24,6 +24,7 @@ const toc = [
   ['sizing', 'Sizing'],
   ['design', 'Software design'],
   ['git', 'Git history'],
+  ['spec', 'Diagrams as JSON'],
   ['vanilla', 'Without React'],
   ['exercises', 'Exercises'],
 ];
@@ -173,6 +174,15 @@ git.graph(
   [{ name: 'main', hash: 'm', kind: 'branch' }],
   { highlight: ['m'] },
 );`}</Code>
+        </Section>
+
+        <Section id="spec" title="Diagrams as JSON">
+          <p>When the diagram comes from another program, or from a language model, write it as a <code>DiagramSpec</code>: plain JSON discriminated on <code>type</code> (<code>sequence, class, state, architecture, graph, git, array, table, code</code>). <code>validateSpec</code> checks every field and every reference and never throws; <code>fromSpec</code> draws a valid spec (and throws on an invalid one); <code>describeSpec</code> writes the alt text.</p>
+          <Code>{`
+const r = validateSpec(JSON.parse(modelOutput));
+if (!r.ok) return showDropped(r.errors);   // [{ path: 'messages[3].to', message: 'unknown participant "dbb" (did you mean "db"?)' }]
+<Diagram scene={fromSpec(r.spec)} label={describeSpec(r.spec)} />`}</Code>
+          <p>Coordinates are optional: graphs, architecture, class and state diagrams without x/y go through the layered layout. The validator is strict on purpose: an unknown field is an error (with a "did you mean"), because a misspelt <code>lable</code> silently ignored is a diagram with a label missing.</p>
         </Section>
 
         <Section id="vanilla" title="Without React">

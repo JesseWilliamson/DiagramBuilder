@@ -89,3 +89,12 @@ describe('toSVG themes', () => {
     expect(s).not.toContain('dv-background');
   });
 });
+
+describe('the stylesheet survives being embedded in SVG', () => {
+  it('has no "<" (inside an <svg>, a <style> is parsed as markup), and toSVG wraps it in CDATA anyway', async () => {
+    const { DEFAULT_CSS } = await import('../src/styles');
+    expect(DEFAULT_CSS.includes('<')).toBe(false);
+    // (happy-dom's XML parser can't read CDATA, so this checks the wrapper, not a parse)
+    expect(toSVG({ nodes: [text({ id: 't', x: 0, y: 0, text: 'a < b' })] })).toMatch(/<style><!\[CDATA\[[^]*\]\]><\/style>/);
+  });
+});

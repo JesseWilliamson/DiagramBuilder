@@ -198,7 +198,7 @@ ${TONES.map(toneVars).join('\n')}
 .dv-path.dv-role-end-solid.dv-tone-muted { fill: var(--dv-faint); stroke: var(--dv-faint); }
 .dv-text.dv-role-end-label { fill: var(--dv-muted); font-family: var(--dv-mono); font-weight: 500; }
 
-/* graph node kinds (role node-<kind>): what a node IS decides its colour, e.g. a change and its blast radius.
+/* graph node kinds (role node-KIND): what a node IS decides its colour, e.g. a change and its blast radius.
    Any other kind is unstyled until the host adds a rule; a tone still wins over a kind. */
 .dv-role-node-changed { --dv-k: var(--dv-active-fill); --dv-ko: var(--dv-active-outline); }
 .dv-role-node-upstream { --dv-k: var(--dv-accent-fill); --dv-ko: var(--dv-accent-outline); }

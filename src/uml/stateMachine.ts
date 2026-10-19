@@ -2,10 +2,13 @@
  * UML state machines: rounded states, transitions labelled
  * `event [guard] / action`, a filled dot for the start and a ringed dot for the end.
  *
- * You place the states (x, y = centre). Pass `current` to highlight where the
- * machine is now and `fired` to highlight the transition just taken.
+ * You place the states (x, y = centre), or leave x/y out and the layered
+ * layout (layout/layered.ts) places them along the transitions. Pass `current`
+ * to highlight where the machine is now and `fired` to highlight the
+ * transition just taken.
  */
 import { Frame, connector, pointAlong, rectEdge } from '../connector';
+import { layered } from '../layout/layered';
 import { Scene, SceneNode, Tone, circle, estimateTextWidth, path, rect, text } from '../scene';
 import { V2, Vec, vadd, vnorm, vperp, vscale, vsub } from '../vec';
 
@@ -13,8 +16,9 @@ export interface UmlState {
   id: string;
   /** Default: the id. Ignored for initial/final/choice. */
   label?: string;
-  x: number;
-  y: number;
+  /** Centre. Leave both out to have the layered layout place it. */
+  x?: number;
+  y?: number;
   /** 'state' (default), 'initial' (filled dot), 'final' (ringed dot) or 'choice' (diamond). */
   kind?: 'state' | 'initial' | 'final' | 'choice';
   tone?: Tone;
@@ -36,6 +40,10 @@ export interface StateMachineOptions {
   fired?: number;
   /** States emit clicks with `{ state: id }`. */
   interactive?: boolean;
+  /** For states without x/y: the flow's direction ('down' default) and the gaps. */
+  direction?: 'down' | 'right';
+  rankGap?: number;
+  nodeGap?: number;
 }
 
 export interface StateMachine extends Scene {
@@ -45,20 +53,29 @@ export interface StateMachine extends Scene {
 const H = 38;
 
 export function stateFrame(s: UmlState): Frame {
+  const x = s.x ?? 0, y = s.y ?? 0;
   switch (s.kind) {
     case 'initial':
-      return { x: s.x, y: s.y, w: 16, h: 16 };
+      return { x, y, w: 16, h: 16 };
     case 'final':
-      return { x: s.x, y: s.y, w: 22, h: 22 };
+      return { x, y, w: 22, h: 22 };
     case 'choice':
-      return { x: s.x, y: s.y, w: 26, h: 26 };
+      return { x, y, w: 26, h: 26 };
     default:
-      return { x: s.x, y: s.y, w: Math.max(84, estimateTextWidth(s.label ?? s.id, 13) + 28), h: H };
+      return { x, y, w: Math.max(84, estimateTextWidth(s.label ?? s.id, 13) + 28), h: H };
   }
 }
 
-export function stateMachine(states: readonly UmlState[], transitions: readonly Transition[], o: StateMachineOptions = {}): StateMachine {
+export function stateMachine(input: readonly UmlState[], transitions: readonly Transition[], o: StateMachineOptions = {}): StateMachine {
   const id = o.id ?? 'fsm';
+  const free = input.filter((s) => s.x == null || s.y == null);
+  let states = input;
+  if (free.length) {
+    // room between layers for a transition's label
+    const L = layered(free.map((s) => ({ id: s.id, ...stateFrame(s) })), transitions, { direction: o.direction, rankGap: o.rankGap ?? 64, nodeGap: o.nodeGap ?? 56 });
+    const auto = new Set(free.map((s) => s.id));
+    states = input.map((s) => (auto.has(s.id) ? { ...s, ...L.pos(s.id) } : s));
+  }
   const frames = new Map(states.map((s) => [s.id, stateFrame(s)]));
   const kinds = new Map(states.map((s) => [s.id, s.kind ?? 'state']));
   const F = (k: string) => frames.get(k) ?? { x: 0, y: 0, w: 0, h: 0 };
@@ -98,34 +115,40 @@ export function stateMachine(states: readonly UmlState[], transitions: readonly 
     lines.push(...c.nodes.filter((n) => !n.id.endsWith(':label')));
     if (t.label) {
       const m = pointAlong(c.points, 0.5);
-      lines.push(text({ id: `${k}:label`, x: m.x, y: m.y, text: t.label, size: 12, role: 'edge-label', tone }));
+      // A bent line's label sits on the outside of its bulge, beside the curve,
+      // so the two labels of an A ⇄ B pair don't land on top of each other.
+      const out = Math.abs(bend) > 0.5 ? vnorm(vsub(ctrl, mid)) : null;
+      const side = out && Math.abs(out.x) > 0.3 ? (out.x > 0 ? 'start' : 'end') : undefined;
+      const at = side && out ? vadd(m, vscale(out, 6)) : m;
+      lines.push(text({ id: `${k}:label`, x: at.x, y: at.y, text: t.label, size: 12, role: 'edge-label', tone, anchor: side }));
     }
   });
 
   const shapes: SceneNode[] = [];
   for (const s of states) {
     const f = F(s.id), k = `${id}:s:${s.id}`;
+    const { x, y } = f;
     const on = o.current === s.id;
     const tone = on ? 'active' : s.tone;
     const data = { state: s.id };
     switch (s.kind) {
       case 'initial':
-        shapes.push(circle({ id: k, x: s.x, y: s.y, r: 8, role: 'pseudo', tone: on ? 'active' : undefined, data }));
+        shapes.push(circle({ id: k, x: x, y: y, r: 8, role: 'pseudo', tone: on ? 'active' : undefined, data }));
         break;
       case 'final':
         shapes.push(
-          circle({ id: k, x: s.x, y: s.y, r: 11, role: 'outline', tone, data }),
-          circle({ id: `${k}:dot`, x: s.x, y: s.y, r: 6.5, role: 'pseudo', tone: on ? 'active' : undefined }),
+          circle({ id: k, x: x, y: y, r: 11, role: 'outline', tone, data }),
+          circle({ id: `${k}:dot`, x: x, y: y, r: 6.5, role: 'pseudo', tone: on ? 'active' : undefined }),
         );
         break;
       case 'choice':
-        shapes.push(path({ id: k, points: [[s.x, s.y - 13], [s.x + 13, s.y], [s.x, s.y + 13], [s.x - 13, s.y]], closed: true, tone, data }));
+        shapes.push(path({ id: k, points: [[x, y - 13], [x + 13, y], [x, y + 13], [x - 13, y]], closed: true, tone, data }));
         break;
       default:
         // the box first, the name right after it (a label always follows its shape)
         shapes.push(
-          rect({ id: k, x: s.x, y: s.y, w: f.w, h: f.h, rx: f.h / 2, tone, interactive: o.interactive, data }),
-          text({ id: `${k}:label`, x: s.x, y: s.y, text: s.label ?? s.id, size: 13, role: 'value', tone }),
+          rect({ id: k, x: x, y: y, w: f.w, h: f.h, rx: f.h / 2, tone, interactive: o.interactive, data }),
+          text({ id: `${k}:label`, x: x, y: y, text: s.label ?? s.id, size: 13, role: 'value', tone }),
         );
     }
   }

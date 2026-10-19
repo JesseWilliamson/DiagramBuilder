@@ -19,6 +19,7 @@ export const groups: Group[] = [
     items: [
       { name: 'Scenes', title: 'Scenes and ids', desc: 'Shapes keyed by id. Shuffle moves them, Add fades one in, Remove fades one out. Colour is a CSS transition.' },
       { name: 'Morph', title: 'Morphing paths', desc: 'Paths with different point counts are resampled by arc length, then tweened point to point.' },
+      { name: 'Spec', title: 'Diagrams as JSON', desc: 'A DiagramSpec is checked by validateSpec (every reference, every field), drawn by fromSpec and described by describeSpec. Edit it, or break it.' },
       { name: 'GuessNumber', title: 'Dragging and clicking', desc: 'A draggable handle and a clickable track, driving plain React state.' },
     ],
   },

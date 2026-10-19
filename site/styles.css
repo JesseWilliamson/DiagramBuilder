@@ -118,3 +118,6 @@ ol.exercises { padding-left: 20px; display: grid; gap: 8px; }
   .ex-body { grid-template-columns: minmax(0, 1fr); }
   .featured { grid-template-columns: minmax(0, 1fr); }
 }
+.spec-json { width: 100%; box-sizing: border-box; font: 12px/1.5 var(--mono, ui-monospace, monospace); padding: 8px 10px; border: 1px solid #d9d9d9; border-radius: 8px; resize: vertical; background: inherit; color: inherit; }
+.spec-errors { margin: 0; padding-left: 18px; font-size: 13px; color: #c43939; }
+.spec-errors code { color: inherit; font-weight: 600; }

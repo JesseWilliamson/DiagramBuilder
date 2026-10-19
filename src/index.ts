@@ -25,6 +25,7 @@ export * from './camera';
 export * from './connector';
 export * from './static';
 export * from './player';
+export * from './spec';
 export * from './ds';
 
 export * as ds from './ds';

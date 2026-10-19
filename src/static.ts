@@ -39,7 +39,7 @@ export function toSVG(scene: Scene, o: ToSvgOptions = {}): string {
       return d.html !== undefined ? `<${d.tag} ${attrs}>${d.html}</${d.tag}>` : d.text !== undefined ? `<${d.tag} ${attrs}>${esc(d.text)}</${d.tag}>` : `<${d.tag} ${attrs}/>`;
     })
     .join('\n  ');
-  const style = (o.embedStyles === false ? '' : `<style>${DEFAULT_CSS}</style>\n  `);
+  const style = o.embedStyles === false ? '' : `<style><![CDATA[${DEFAULT_CSS}]]></style>\n  `; // CDATA: a "<" in the CSS must not read as markup
   const width = o.width ? ` width="${o.width}"` : '';
   const vars = o.theme ? ` style="${esc(THEME_VARS[o.theme].replace(/\s+/g, ' '))}"` : '';
   const bg = (o.background ?? !!o.theme)

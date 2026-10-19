@@ -91,6 +91,7 @@ export const groups: Group[] = [
       { name: 'UmlArrows', title: 'UML relationships', desc: 'The six arrows, each beside the code that creates it.' },
       { name: 'ClassDiagram', title: 'Class diagram', desc: 'Drag the classes; click one to see only its relationships.' },
       { name: 'Sequence', title: 'Sequence diagram', desc: 'A login, step by step. Activation bars follow the call stack.' },
+      { name: 'Checkout', title: 'Alternatives and notes', desc: 'An alt fragment with an [else] branch, per-message tones for the failure path, a note in its own row, and activation bars you can turn off.' },
       { name: 'StateMachine', title: 'State machine', desc: 'An order lifecycle. Only legal events are enabled.' },
       { name: 'RequestFlow', title: 'A request through a web stack', desc: 'Hop by hop with latency: cache hit versus miss.' },
       { name: 'LoadBalancer', title: 'Load balancing', desc: 'Round robin, least connections and random, with a slow server. Click a server to take it down.' },

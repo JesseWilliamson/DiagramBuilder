@@ -236,6 +236,10 @@ ${TONES.map(toneVars).join('\n')}
 .dv-text.dv-role-fragment-guard { font-family: var(--dv-mono); fill: var(--dv-muted); font-weight: 500; }
 .dv-rect.dv-role-fragment-guard-bg { fill: var(--dv-surface); stroke: none; pointer-events: none; }
 .dv-path.dv-role-figure-line { fill: none; stroke: var(--dv-fg); }
+.dv-path.dv-role-fragment-divider { fill: none; stroke: var(--dv-muted); stroke-width: 1.5px; stroke-dasharray: 5 4; pointer-events: none; }
+/* notes: a pale card with a folded corner; a tone tints it */
+.dv-path.dv-role-note { fill: var(--dv-cf, var(--dv-band)); stroke: var(--dv-co, var(--dv-active-outline)); stroke-width: 1.5px; }
+.dv-text.dv-role-note-text { font-weight: 500; }
 
 /* system design: each kind sets its colour (--dv-k) and outline (--dv-ko); fills are a tint of it */
 .dv-role-sys-lb, .dv-role-sys-gateway { --dv-k: var(--dv-accent-fill); --dv-ko: var(--dv-accent-outline); }

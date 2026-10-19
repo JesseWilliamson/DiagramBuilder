@@ -20,7 +20,12 @@
  * Combined fragments box a run of messages with an operator in a tag at the
  * top-left: `loop` (repeated), `alt` (one of several), `opt` (maybe not at
  * all), or any word you like. A fragment grows with `upTo`, so a loop that is
- * still going is drawn open-ended down to the current message.
+ * still going is drawn open-ended down to the current message. An `alt` with
+ * `sections` gets a dashed divider and a guard per branch ("[else]").
+ *
+ * Notes are yellow cards over one lifeline or across several. Each takes a row
+ * of its own, so rows are "slots": a slot is a message or a note, and the
+ * y of everything comes from adding up the slots above it.
  */
 import { connector } from '../connector';
 import { Scene, SceneNode, Tone, circle, estimateTextWidth, path, rect, text } from '../scene';
@@ -37,6 +42,18 @@ export interface Message {
   to: string;
   label: string;
   kind?: 'call' | 'return' | 'async';
+  /** Colour this message (an error path, the interesting call). The step highlight still wins. */
+  tone?: Tone;
+}
+
+/** A note card. It sits in its own row, just before message `at` (messages.length = after the last). */
+export interface Note {
+  /** One participant, or the first and last of a run of them. */
+  over: string | readonly [string, string];
+  /** May contain line breaks. */
+  text: string;
+  at: number;
+  tone?: Tone;
 }
 
 export interface Activation {
@@ -51,12 +68,30 @@ export interface Activation {
 /**
  * Activation bars from the message list. Calls push, returns pop; anything
  * still open at the end runs to the last row.
+ *
+ * Branches of an alt are alternatives, not a sequence: only one of them
+ * happens. So each later branch starts from the stacks as they were when the
+ * first branch began (pass the fragments to get that), and a bar closed in
+ * one branch can close again in the next.
  */
-export function activations(messages: readonly Message[]): Activation[] {
+export function activations(messages: readonly Message[], fragments: readonly Fragment[] = []): Activation[] {
   const out: Activation[] = [];
-  const stacks = new Map<string, Activation[]>();
+  let stacks = new Map<string, Activation[]>();
   const stack = (p: string) => stacks.get(p) ?? (stacks.set(p, []), stacks.get(p)!);
+  const copy = (m: Map<string, Activation[]>) => new Map([...m].map(([k, v]) => [k, [...v]]));
+  // row → the snapshot to restore there; first-section row → where to save one
+  const saveAt = new Map<number, Fragment[]>();
+  const restoreAt = new Map<number, Fragment>();
+  for (const f of fragments) {
+    if (!f.sections || f.sections.length < 2) continue;
+    (saveAt.get(f.sections[0].from) ?? saveAt.set(f.sections[0].from, []).get(f.sections[0].from)!).push(f);
+    for (const s of f.sections.slice(1)) restoreAt.set(s.from, f);
+  }
+  const saved = new Map<Fragment, Map<string, Activation[]>>();
   messages.forEach((m, i) => {
+    const r = restoreAt.get(i);
+    if (r && saved.has(r)) stacks = copy(saved.get(r)!);
+    for (const f of saveAt.get(i) ?? []) saved.set(f, copy(stacks));
     const kind = m.kind ?? 'call';
     if (kind === 'call') {
       const s = stack(m.to);
@@ -66,7 +101,7 @@ export function activations(messages: readonly Message[]): Activation[] {
       s.push(a);
     } else if (kind === 'return') {
       const a = stack(m.from).pop();
-      if (a) a.end = i;
+      if (a) a.end = Math.max(a.end, i);
     }
   });
   for (const s of stacks.values()) for (const a of s) a.end = Math.max(a.end, messages.length - 1);
@@ -83,6 +118,18 @@ export interface Fragment {
   to: number;
   /** The leftmost and rightmost participants it spans. Default: all of them. */
   over?: readonly [string, string];
+  /**
+   * Branches of an `alt` (or `par`): each from its first message to its last.
+   * The first one's label is the fragment's guard (unless `label` is set);
+   * every later one starts with a dashed divider and its own guard, e.g. [else].
+   */
+  sections?: readonly FragmentSection[];
+}
+
+export interface FragmentSection {
+  label: string;
+  from: number;
+  to: number;
 }
 
 export interface SequenceOptions {
@@ -98,6 +145,12 @@ export interface SequenceOptions {
   tone?: Tone;
   /** Boxes around runs of messages: loops, alternatives, options. */
   fragments?: readonly Fragment[];
+  /** Note cards, each in its own row. */
+  notes?: readonly Note[];
+  /** Draw activation bars (derived from calls and returns). Default true. */
+  activations?: boolean;
+  /** Tone the message at `upTo` (the current step). Default true; turn off for a static diagram. */
+  highlight?: boolean;
 }
 
 export interface SequenceDiagram extends Scene {
@@ -107,7 +160,7 @@ export interface SequenceDiagram extends Scene {
   rowY(i: number): number;
 }
 
-const HEAD = 34, BAR = 10;
+const HEAD = 34, BAR = 10, NOTE_LINE = 15;
 
 export function sequence(participants: readonly Participant[], messages: readonly Message[], o: SequenceOptions = {}): SequenceDiagram {
   const id = o.id ?? 'seq';
@@ -119,13 +172,22 @@ export function sequence(participants: readonly Participant[], messages: readonl
   const hasActor = participants.some((p) => p.kind === 'actor');
   const top = (hasActor ? 44 : HEAD / 2) + 18;
   const lifeTop = (p: Participant) => (p.kind === 'actor' ? 44 : HEAD / 2);
-  const rowY = (i: number) => top + i * row + row / 2;
-  const bottom = rowY(messages.length - 1) + row / 2 + 8;
-  const acts = activations(messages);
+  // Slots, top to bottom: the notes before message i, then message i.
+  const notes = (o.notes ?? []).map((n, k) => ({ ...n, k, at: Math.max(0, Math.min(messages.length, n.at)), lines: n.text.split('\n') }));
+  const noteH = (n: { lines: string[] }) => n.lines.length * NOTE_LINE + 12;
+  const msgTop: number[] = [];
+  const noteTop = new Map<number, number>();
+  let y = top;
+  for (let i = 0; i <= messages.length; i++) {
+    for (const n of notes) if (n.at === i) (noteTop.set(n.k, y), (y += noteH(n) + 14));
+    if (i < messages.length) (msgTop.push(y), (y += row));
+  }
+  const rowY = (i: number) => (i < 0 ? top - row / 2 : i < msgTop.length ? msgTop[i] : y) + row / 2;
+  const bottom = y + 8;
+  const acts = o.activations === false ? [] : activations(messages, o.fragments);
   // depth of the innermost bar on lifeline p during row i (-1 = none)
   const depthAt = (p: string, i: number) => Math.max(-1, ...acts.filter((a) => a.participant === p && a.start <= i && i <= a.end).map((a) => a.depth));
   const barX = (p: string, depth: number) => X(p) + depth * (BAR * 0.6);
-
   const nodes: SceneNode[] = [];
   // lifelines first, the full height, so the camera never has to move as messages appear
   for (const p of participants) {
@@ -150,14 +212,23 @@ export function sequence(participants: readonly Participant[], messages: readonl
       path({ id: `${fk}:tag`, points: [[x0, y0], [x0 + tagW, y0], [x0 + tagW, y0 + 11], [x0 + tagW - 6, y0 + 17], [x0, y0 + 17]], closed: true, role: 'fragment-tag' }),
       text({ id: `${fk}:kind`, x: x0 + 6, y: y0 + 9, text: f.kind, size: 11, anchor: 'start', role: 'fragment-kind' }),
     );
-    if (f.label) {
-      // a backing box, so a lifeline or bar running under the guard does not cut through it
-      const guard = `[${f.label}]`, gw = estimateTextWidth(guard, 11) + 6;
+    // a guard gets a backing box, so a lifeline or bar running under it does not cut through it
+    const guard = (k: string, label: string, x: number, gy: number) => {
+      const g = `[${label}]`, gw = estimateTextWidth(g, 11) + 6;
       fragmentLabels.push(
-        rect({ id: `${fk}:label:bg`, x: x0 + tagW + 5 + gw / 2, y: y0 + 9, w: gw, h: 14, rx: 2, role: 'fragment-guard-bg' }),
-        text({ id: `${fk}:label`, x: x0 + tagW + 8, y: y0 + 9, text: guard, size: 11, anchor: 'start', role: 'fragment-guard' }),
+        rect({ id: `${k}:bg`, x: x + gw / 2 - 3, y: gy, w: gw, h: 14, rx: 2, role: 'fragment-guard-bg' }),
+        text({ id: k, x, y: gy, text: g, size: 11, anchor: 'start', role: 'fragment-guard' }),
       );
-    }
+    };
+    const first = f.label ?? f.sections?.[0]?.label;
+    if (first) guard(`${fk}:label`, first, x0 + tagW + 8, y0 + 9);
+    // later branches of an alt: a dashed divider across the box, the guard just under it
+    f.sections?.slice(1).forEach((sec, j) => {
+      if (sec.from > upTo || sec.from <= f.from) return;
+      const dy = rowY(sec.from) - row / 2 - 4;
+      nodes.push(path({ id: `${fk}:div:${j}`, points: [[x0, dy], [x1, dy]], role: 'fragment-divider', dashed: true }));
+      guard(`${fk}:sec:${j}`, sec.label, x0 + 8, dy + 10);
+    });
   });
   // activation bars that have started by now; open ones stop at the current row
   acts.forEach((a, k) => {
@@ -171,7 +242,7 @@ export function sequence(participants: readonly Participant[], messages: readonl
     if (i > upTo) return;
     const kind = m.kind ?? 'call';
     const y = rowY(i);
-    const tone = i === upTo ? (o.tone ?? 'active') : undefined;
+    const tone = i === upTo && o.highlight !== false ? (o.tone ?? 'active') : m.tone;
     const label = o.numbered ? `${i + 1}. ${m.label}` : m.label;
     const k = `${id}:msg:${i}`;
     const style = kind === 'call' ? { end: 'arrow' as const } : { end: 'open' as const, dashed: kind === 'return' };
@@ -193,6 +264,21 @@ export function sequence(participants: readonly Participant[], messages: readonl
     nodes.push(...connector({ id: k, from: { x: x0, y }, to: { x: x1, y }, ...style, tone }).nodes);
     nodes.push(text({ id: `${k}:label`, x: (x0 + x1) / 2, y: y - 10, text: label, size: 12, role: 'message', tone }));
   });
+  // notes over the messages (a note spanning lifelines sits on top of them)
+  for (const n of notes) {
+    if (n.at > upTo && upTo < messages.length - 1) continue;
+    const [a, b] = typeof n.over === 'string' ? [n.over, n.over] : n.over;
+    const textW = Math.max(...n.lines.map((l) => estimateTextWidth(l, 12))) + 20;
+    const l0 = Math.min(X(a), X(b)), l1 = Math.max(X(a), X(b));
+    const w = Math.max(textW, l1 - l0 + (l1 > l0 ? 60 : 0), 70);
+    const cx = (l0 + l1) / 2, h = noteH(n), t = noteTop.get(n.k)! + 7;
+    const L = cx - w / 2, R = cx + w / 2, B = t + h, d = 9;
+    const nk = `${id}:note:${n.k}`;
+    nodes.push(path({ id: nk, points: [[L, t], [R - d, t], [R, t + d], [R, B], [L, B]], closed: true, role: 'note', tone: n.tone, enter: {} }));
+    n.lines.forEach((line, j) =>
+      nodes.push(text({ id: `${nk}:line:${j}`, x: L + 10, y: t + 6 + NOTE_LINE / 2 + j * NOTE_LINE, text: line, size: 12, anchor: 'start', role: 'note-text', tone: n.tone })),
+    );
+  }
   nodes.push(...fragmentLabels);
   // participant heads last, on top of the lifelines
   for (const p of participants) {

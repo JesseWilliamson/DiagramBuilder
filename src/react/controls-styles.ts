@@ -1,3 +1,4 @@
+import { useInsertionEffect } from 'react';
 import { injectStyles } from '../styles';
 
 /**
@@ -98,14 +99,31 @@ export const CONTROLS_CSS = /* css */ `
 `;
 
 const ID = 'dsviz-control-styles';
+/** The <style> element we added (or found), so later calls are one property read. */
+let added: HTMLStyleElement | null = null;
 
-/** Idempotent; cheap enough to call from every control's render. */
+/**
+ * Add the controls' stylesheet (and the core one) to <head>, once. After the
+ * first call it costs one check, so every control can call it on mount without
+ * looking through the document; if something removed the element (a test, a
+ * hot reload) it is added again.
+ */
 export function injectControlStyles(): void {
-  if (typeof document === 'undefined') return;
+  if (typeof document === 'undefined' || added?.isConnected) return;
   injectStyles(); // the --dv-* variables the controls read live in the core stylesheet
-  if (document.getElementById(ID)) return;
-  const el = document.createElement('style');
-  el.id = ID;
-  el.textContent = CONTROLS_CSS;
-  document.head.appendChild(el);
+  added = document.getElementById(ID) as HTMLStyleElement | null;
+  if (added) return;
+  added = document.createElement('style');
+  added.id = ID;
+  added.textContent = CONTROLS_CSS;
+  document.head.appendChild(added);
+}
+
+/**
+ * Controls call this instead of injecting during render: an insertion effect
+ * runs once per mount, before the browser paints, so there is no flash of
+ * unstyled controls and nothing happens on re-renders.
+ */
+export function useControlStyles(): void {
+  useInsertionEffect(injectControlStyles, []);
 }

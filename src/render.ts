@@ -13,6 +13,11 @@
  *
  * Colours are NOT tweened here: tones are CSS classes, and CSS transitions
  * handle colour. JS only animates geometry.
+ *
+ * Text is the one thing that can't be interpolated: "lo = 3" can't be half way
+ * to "lo = 5". So when a text node keeps its id but changes its words, the old
+ * element is cloned into a GHOST that fades out where it is, while the real
+ * element fades in with the new words (and tweens its position as usual).
  */
 import { resampleProps } from './path';
 import { ViewBox, nextCamera } from './camera';
@@ -50,6 +55,8 @@ export interface ViewOptions {
   camera?: 'grow' | 'fit';
   /** Inject the default stylesheet into <head>. Default true. */
   injectStyles?: boolean;
+  /** Crossfade a text node whose words change (old fades out, new fades in). Default true. */
+  crossfade?: boolean;
 }
 
 export interface RenderOptions {
@@ -128,6 +135,8 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
   const duration = () => opts.duration ?? feel.duration;
 
   const entries = new Map<string, Entry>();
+  /** Old copies of retexted labels, fading out in the exit layer. */
+  let ghosts: { el: Element; from: number; start: number; dur: number }[] = [];
   let current: Scene = { nodes: [] };
   let raf = 0;
 
@@ -185,6 +194,13 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
         entries.delete(id);
       } else e.settled = true;
     }
+    ghosts = ghosts.filter((g) => {
+      const t = Math.min(1, Math.max(0, (now - g.start) / g.dur));
+      g.el.setAttribute('opacity', String(Math.round(g.from * (1 - t) * 1000) / 1000));
+      if (t < 1) return (busy = true);
+      g.el.remove();
+      return false;
+    });
     if (!Array.isArray(opts.viewBox)) {
       // The camera never bounces, whatever the theme's easing.
       const t = vb.dur <= 0 ? 1 : Math.min(1, (now - vb.start) / vb.dur);
@@ -252,8 +268,20 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
         if (node.kind === 'path' && e.node.kind === 'path' && e.node.points.length !== node.points.length) {
           e.cur = { ...e.cur, ...resampleProps(e.cur, e.node.points.length, node.points.length, !!node.closed) };
         }
+        // Same text node, new words: leave a fading copy of the old words behind
+        // and bring the new ones in from transparent.
+        const retext = node.kind === 'text' && e.node.kind === 'text' && !e.exiting && dur > 0 && opts.crossfade !== false &&
+          (e.node.text !== node.text || e.node.role !== node.role);
+        if (retext) {
+          const g = e.el.cloneNode(true) as Element;
+          g.removeAttribute('data-id'); // events and lookups find the live one only
+          g.classList.add('dv-ghost');
+          exitLayer.appendChild(g);
+          ghosts.push({ el: g, from: e.cur.opacity ?? 1, start: now, dur });
+        }
         e.exiting = false; // it may have been mid-exit and come back
         e.from = { ...to, ...e.cur }; // start from what's on screen right now
+        if (retext) e.from.opacity = 0;
         e.to = to;
         e.node = node;
         e.start = now;
@@ -460,6 +488,7 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
       exitLayer.remove();
       liveLayer.remove();
       entries.clear();
+      ghosts = [];
       handlers.clear();
     },
   };

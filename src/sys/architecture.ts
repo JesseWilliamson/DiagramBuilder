@@ -10,8 +10,12 @@
  * Animation idea: a packet is just a small circle with a stable id. Put it at
  * one end of a link, render, put it at the other end, render again; the tween
  * engine slides it along. `along(from, to, t)` gives you the points.
+ *
+ * Components without x/y are placed by the layered layout (layout/layered.ts),
+ * following the links: give every component a position, or none.
  */
 import { Frame, connector, pointAlong, rectEdge } from '../connector';
+import { layered } from '../layout/layered';
 import { Box, Scene, SceneNode, Tone, circle, estimateTextWidth, path, rect, text } from '../scene';
 import { Vec } from '../vec';
 
@@ -23,8 +27,9 @@ export interface Component {
   label: string;
   /** Small caption under the label, e.g. 'Postgres' or 'x3'. */
   sub?: string;
-  x: number;
-  y: number;
+  /** Centre. Leave both out to have the layered layout place it. */
+  x?: number;
+  y?: number;
   w?: number;
   h?: number;
   tone?: Tone;
@@ -70,6 +75,11 @@ export interface ArchitectureOptions {
   /** Components can be dragged; data is `{ component: id }`. */
   draggable?: boolean;
   route?: 'straight' | 'elbow';
+  /** For components without x/y: the flow's direction, 'right' (default) or 'down'. */
+  direction?: 'down' | 'right';
+  /** For components without x/y: space between layers and between neighbours. Defaults 72 and 36. */
+  rankGap?: number;
+  nodeGap?: number;
 }
 
 export interface Architecture extends Scene {
@@ -88,7 +98,7 @@ const SIZE: Record<ComponentKind, [number, number]> = {
 
 export const componentFrame = (c: Component): Frame => {
   const [w, h] = SIZE[c.kind];
-  return { x: c.x, y: c.y, w: c.w ?? w, h: c.h ?? h };
+  return { x: c.x ?? 0, y: c.y ?? 0, w: c.w ?? w, h: c.h ?? h };
 };
 
 type P = readonly [number, number];
@@ -193,8 +203,22 @@ const union = (boxes: Box[]): Box => {
   return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
 };
 
-export function architecture(components: readonly Component[], links: readonly Link[] = [], o: ArchitectureOptions = {}): Architecture {
+export function architecture(input: readonly Component[], links: readonly Link[] = [], o: ArchitectureOptions = {}): Architecture {
   const id = o.id ?? 'sys';
+  // Unplaced components go where the layered layout puts them; their links follow its routes.
+  const free = input.filter((c) => c.x == null || c.y == null);
+  const auto = new Set(free.map((c) => c.id));
+  const L = free.length
+    ? layered(
+        free.map((c) => {
+          const f = componentFrame(c);
+          return { id: c.id, w: f.w, h: f.h + (c.kind === 'user' ? 22 : 0) };
+        }),
+        links,
+        { direction: o.direction ?? 'right', rankGap: o.rankGap ?? 72, nodeGap: o.nodeGap ?? 36 },
+      )
+    : null;
+  const components = input.map((c) => (L && auto.has(c.id) ? { ...c, ...L.pos(c.id) } : c));
   const frames = new Map(components.map((c) => [c.id, componentFrame(c)]));
   const F = (k: string) => frames.get(k) ?? { x: 0, y: 0, w: 0, h: 0 };
   const routes = new Map<string, Vec[]>();
@@ -203,9 +227,10 @@ export function architecture(components: readonly Component[], links: readonly L
     if (!frames.has(l.from) || !frames.has(l.to)) continue;
     // With waypoints the connector draws exactly the points it is given, so
     // the ends are moved out to where the line leaves and enters the boxes.
-    const via = l.via?.length ? l.via : undefined;
-    const from = via ? rectEdge(F(l.from), via[0]) : F(l.from);
-    const to = via ? rectEdge(F(l.to), via[via.length - 1]) : F(l.to);
+    const laid = !l.via?.length && L && auto.has(l.from) && auto.has(l.to) ? L.route(l.from, l.to, o.route) : [];
+    const via = l.via?.length ? l.via : laid.length > 2 ? laid.slice(1, -1) : undefined;
+    const from = laid.length ? laid[0] : via ? rectEdge(F(l.from), via[0]) : F(l.from);
+    const to = laid.length ? laid[laid.length - 1] : via ? rectEdge(F(l.to), via[via.length - 1]) : F(l.to);
     const c = connector({
       id: `${id}:link:${l.from}-${l.to}`, from, to, via, route: o.route,
       start: l.both ? 'arrow' : 'none', end: l.plain ? 'none' : 'arrow', dashed: l.dashed, tone: l.tone, label: l.label,

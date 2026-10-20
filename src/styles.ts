@@ -194,7 +194,19 @@ ${TONES.map(toneVars).join('\n')}
 .dv-path.dv-role-end-hollow${anyTone} { fill: var(--dv-surface); stroke: var(--dv-c); }
 .dv-path.dv-role-end-open { fill: none; stroke: var(--dv-edge); pointer-events: none; }
 .dv-path.dv-role-end-open${anyTone} { stroke: var(--dv-c); }
+.dv-path:is(.dv-role-connector, .dv-role-end-open, .dv-role-end-hollow).dv-tone-muted { stroke: var(--dv-faint); }
+.dv-path.dv-role-end-solid.dv-tone-muted { fill: var(--dv-faint); stroke: var(--dv-faint); }
 .dv-text.dv-role-end-label { fill: var(--dv-muted); font-family: var(--dv-mono); font-weight: 500; }
+
+/* graph node kinds (role node-KIND): what a node IS decides its colour, e.g. a change and its blast radius.
+   Any other kind is unstyled until the host adds a rule; a tone still wins over a kind. */
+.dv-role-node-changed { --dv-k: var(--dv-active-fill); --dv-ko: var(--dv-active-outline); }
+.dv-role-node-upstream { --dv-k: var(--dv-accent-fill); --dv-ko: var(--dv-accent-outline); }
+.dv-role-node-downstream { --dv-k: var(--dv-visited-fill); --dv-ko: var(--dv-visited-outline); }
+.dv-role-node-test { --dv-k: var(--dv-success-fill); --dv-ko: var(--dv-success-outline); }
+[class*="dv-role-node-"]:is(.dv-rect, .dv-circle) { fill: var(--dv-k, var(--dv-surface)); stroke: var(--dv-ko, var(--dv-outline)); stroke-width: 2px; }
+[class*="dv-role-node-"]:is(.dv-rect, .dv-circle)${anyTone} { fill: var(--dv-cf); stroke: var(--dv-co); }
+[class*="dv-role-node-"]:is(.dv-rect, .dv-circle).dv-tone-muted { fill: var(--dv-muted-fill); stroke: var(--dv-muted-outline); }
 
 /* hash maps and sets: a tinted key cell, a plain value cell, outlined like any solid shape */
 .dv-rect:is(.dv-role-map-key, .dv-role-map-value) { stroke: var(--dv-outline); stroke-width: 2px; }
@@ -224,6 +236,10 @@ ${TONES.map(toneVars).join('\n')}
 .dv-text.dv-role-fragment-guard { font-family: var(--dv-mono); fill: var(--dv-muted); font-weight: 500; }
 .dv-rect.dv-role-fragment-guard-bg { fill: var(--dv-surface); stroke: none; pointer-events: none; }
 .dv-path.dv-role-figure-line { fill: none; stroke: var(--dv-fg); }
+.dv-path.dv-role-fragment-divider { fill: none; stroke: var(--dv-muted); stroke-width: 1.5px; stroke-dasharray: 5 4; pointer-events: none; }
+/* notes: a pale card with a folded corner; a tone tints it */
+.dv-path.dv-role-note { fill: var(--dv-cf, var(--dv-band)); stroke: var(--dv-co, var(--dv-active-outline)); stroke-width: 1.5px; }
+.dv-text.dv-role-note-text { font-weight: 500; }
 
 /* system design: each kind sets its colour (--dv-k) and outline (--dv-ko); fills are a tint of it */
 .dv-role-sys-lb, .dv-role-sys-gateway { --dv-k: var(--dv-accent-fill); --dv-ko: var(--dv-accent-outline); }
@@ -242,6 +258,24 @@ ${TONES.map(toneVars).join('\n')}
 .dv-path.dv-open[class*="dv-role-sys-"] { fill: none; stroke: var(--dv-stroke); }
 .dv-circle.dv-role-packet { fill: var(--dv-c, var(--dv-point)); stroke: var(--dv-surface); stroke-width: 2px; filter: drop-shadow(0 1px 2px rgb(0 0 0 / .3)); pointer-events: none; }
 .dv-text.dv-role-packet-label { font-family: var(--dv-mono); font-size: 10.5px; fill: var(--dv-c, var(--dv-fg)); paint-order: stroke; stroke: var(--dv-halo); stroke-width: 3px; }
+
+/* git graphs: lines and dots in their lane's colour, merges hollow, refs as pills */
+.dv-path.dv-role-git-edge { fill: none; stroke: var(--dv-c, var(--dv-edge)); stroke-width: 2.5px; pointer-events: none; }
+.dv-circle:is(.dv-role-git-commit, .dv-role-git-merge) { fill: var(--dv-c, var(--dv-edge)); stroke: var(--dv-surface); stroke-width: 2px; }
+.dv-circle.dv-role-git-merge { fill: var(--dv-surface); stroke: var(--dv-c, var(--dv-edge)); stroke-width: 2.5px; }
+.dv-circle.dv-role-git-halo { fill: color-mix(in srgb, var(--dv-c, var(--dv-edge)) 18%, transparent); stroke: var(--dv-c, var(--dv-edge)); stroke-width: 1.5px; pointer-events: none; }
+.dv-rect[class*="dv-role-git-ref-"] { fill: color-mix(in srgb, var(--dv-cf, var(--dv-muted-fill)) 50%, var(--dv-surface)); stroke: var(--dv-c, var(--dv-faint)); stroke-width: 1.5px; }
+.dv-rect.dv-role-git-ref-remote { stroke-dasharray: 3 2; }
+.dv-rect.dv-role-git-ref-head { fill: var(--dv-c, var(--dv-edge)); }
+.dv-rect.dv-role-git-ref-head + .dv-text { fill: var(--dv-surface); }
+.dv-text.dv-role-git-ref-label { font-family: var(--dv-mono); font-weight: 600; }
+.dv-text.dv-role-git-label { font-weight: 500; }
+
+/* code blocks: a soft panel, monospace lines, highlight bands in a tone's fill */
+.dv-rect.dv-role-code-bg { fill: var(--dv-muted-fill); stroke: none; }
+.dv-rect.dv-role-code-highlight { fill: color-mix(in srgb, var(--dv-cf, var(--dv-active-fill)) 45%, transparent); stroke: none; }
+.dv-text:is(.dv-role-code-line, .dv-role-code-number) { font-family: var(--dv-mono); font-weight: 400; }
+.dv-text.dv-role-code-number { fill: var(--dv-muted); }
 
 /* draggable handles: a big invisible hit target, then the visible dot */
 :is(.dv-circle, .dv-rect).dv-role-hit { fill: transparent; stroke: none; pointer-events: all; }
@@ -269,6 +303,12 @@ ${TONES.map(toneVars).join('\n')}
 @media (prefers-reduced-motion: reduce) { .dv-circle.dv-role-pulse { animation: none; opacity: .5; } }
 ${OUTLINES}
 `;
+
+/**
+ * The variables of each theme as one CSS declaration list, for pinning a theme
+ * where no ancestor can say `.dark` (a standalone SVG file: see toSVG).
+ */
+export const THEME_VARS: Record<'light' | 'dark', string> = { light: LIGHT.trim(), dark: DARK.trim() };
 
 const STYLE_ID = 'dsviz-default-styles';
 

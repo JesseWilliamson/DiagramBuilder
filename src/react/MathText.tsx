@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { parseMath } from '../mathtext';
-import { injectControlStyles } from './controls-styles';
+import { useControlStyles } from './controls-styles';
 
 /**
  * The same TeX-lite typesetting as a diagram's maths labels, for the HTML
@@ -9,7 +9,7 @@ import { injectControlStyles } from './controls-styles';
  *   <MathText tex="a^2 + b^2 = c^2" />
  */
 export function MathText({ tex }: { tex: string }) {
-  injectControlStyles();
+  useControlStyles();
   return (
     <span className="dvc-math">
       {parseMath(tex).map((s, i) => {

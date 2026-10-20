@@ -10,16 +10,20 @@
  *   association     solid    open arrow at `to`        from knows about to
  *   dependency      dashed   open arrow at `to`        from uses to (e.g. a parameter)
  *
- * You place the classes (x, y = centre). Box sizes come from the text.
+ * You place the classes (x, y = centre), or leave x/y out and the layered
+ * layout (layout/layered.ts) places them: parents above children, owners above
+ * their parts. Box sizes come from the text.
  */
 import { ConnectorEnd, Frame, connector } from '../connector';
+import { layered } from '../layout/layered';
 import { Scene, SceneNode, Tone, estimateTextWidth, path, rect, text } from '../scene';
 
 export interface UmlClass {
   id: string;
   name: string;
-  x: number;
-  y: number;
+  /** Centre. Leave both out to have the layered layout place it. */
+  x?: number;
+  y?: number;
   /** Shown above the name in guillemets: 'interface' → «interface». */
   stereotype?: string;
   /** Abstract classes are named in italics. */
@@ -56,7 +60,17 @@ export interface ClassDiagramOptions {
   route?: 'elbow' | 'straight';
   /** Classes to fade (e.g. everything not related to a selected class). */
   dim?: ReadonlySet<string>;
+  /** For classes without x/y: space between layers and between neighbours. Defaults 64 and 40. */
+  rankGap?: number;
+  nodeGap?: number;
 }
+
+/**
+ * Which way a relation points in the layout. UML draws a parent above its
+ * subclasses, but the arrow goes from the subclass up to the parent, so
+ * inheritance and realisation are flipped; everything else flows from → to.
+ */
+const flowsUp = (k: RelationKind) => k === 'inherits' || k === 'implements';
 
 export interface ClassDiagram extends Scene {
   /** The box drawn for a class (centre + size). */
@@ -89,29 +103,41 @@ export function classSize(c: UmlClass, collapsed = false): { w: number; h: numbe
   return { w, h: head + body, head };
 }
 
-export function classDiagram(classes: readonly UmlClass[], relations: readonly Relation[] = [], o: ClassDiagramOptions = {}): ClassDiagram {
+export function classDiagram(input: readonly UmlClass[], relations: readonly Relation[] = [], o: ClassDiagramOptions = {}): ClassDiagram {
   const id = o.id ?? 'uml';
+  const free = input.filter((c) => c.x == null || c.y == null);
+  let classes = input;
+  if (free.length) {
+    const L = layered(
+      free.map((c) => ({ id: c.id, ...classSize(c, o.collapsed) })),
+      relations.map((r) => (flowsUp(r.kind) ? { from: r.to, to: r.from } : r)),
+      { rankGap: o.rankGap ?? 64, nodeGap: o.nodeGap ?? 40 },
+    );
+    const auto = new Set(free.map((c) => c.id));
+    classes = input.map((c) => (auto.has(c.id) ? { ...c, ...L.pos(c.id) } : c));
+  }
   const frames = new Map<string, Frame>();
   const nodes: SceneNode[] = [];
   const boxes: SceneNode[] = [];
 
   for (const c of classes) {
     const { w, h, head } = classSize(c, o.collapsed);
-    const f: Frame = { x: c.x, y: c.y, w, h };
+    const cx = c.x ?? 0, cy = c.y ?? 0;
+    const f: Frame = { x: cx, y: cy, w, h };
     frames.set(c.id, f);
-    const top = c.y - h / 2, left = c.x - w / 2;
+    const top = cy - h / 2, left = cx - w / 2;
     const k = `${id}:${c.id}`;
     const dim = o.dim?.has(c.id) ? 0.3 : 1;
     const data = { class: c.id };
     // the box first, the name right after it (a label always follows its shape)
-    boxes.push(rect({ id: `${k}:box`, x: c.x, y: c.y, w, h, rx: 6, role: 'card', tone: c.tone, opacity: dim, interactive: o.interactive, draggable: o.draggable, data }));
+    boxes.push(rect({ id: `${k}:box`, x: cx, y: cy, w, h, rx: 6, role: 'card', tone: c.tone, opacity: dim, interactive: o.interactive, draggable: o.draggable, data }));
     let y = top + 8;
     if (c.stereotype) {
       y += STEREO / 2;
-      boxes.push(text({ id: `${k}:stereo`, x: c.x, y, text: `«${c.stereotype}»`, size: STEREO, role: 'stereotype', opacity: dim }));
+      boxes.push(text({ id: `${k}:stereo`, x: cx, y, text: `«${c.stereotype}»`, size: STEREO, role: 'stereotype', opacity: dim }));
       y += STEREO / 2 + 4;
     }
-    boxes.push(text({ id: `${k}:name`, x: c.x, y: y + NAME / 2 + 1, text: c.name, size: NAME, role: c.abstract ? 'class-name-abstract' : 'class-name', opacity: dim }));
+    boxes.push(text({ id: `${k}:name`, x: cx, y: y + NAME / 2 + 1, text: c.name, size: NAME, role: c.abstract ? 'class-name-abstract' : 'class-name', opacity: dim }));
     if (o.collapsed) continue;
     const rows = (list: readonly string[] | undefined, startY: number, kind: string) =>
       (list ?? []).forEach((m, i) =>

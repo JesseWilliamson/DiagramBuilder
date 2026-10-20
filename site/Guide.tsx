@@ -23,6 +23,8 @@ const toc = [
   ['math', 'Maths labels'],
   ['sizing', 'Sizing'],
   ['design', 'Software design'],
+  ['git', 'Git history'],
+  ['spec', 'Diagrams as JSON'],
   ['vanilla', 'Without React'],
   ['exercises', 'Exercises'],
 ];
@@ -74,7 +76,7 @@ arr.window(lo, hi);                                         // a band behind cel
 const p = plot.plane({ x: [-4, 4], y: [-3, 3], width: 440, height: 300 });
 plot.fn(p, Math.sin);                                       // world units, y up
 p.toWorld(e.x, e.y);                                        // drag position → maths coordinates`}</Code>
-          <p>The families: top-level data structures (<code>array, pointer, linkedList, binaryTree, graph, grid, stack, queue</code>) and the namespaces <code>plot</code>, <code>prob</code>, <code>geom</code>, <code>sched</code> and <code>mem</code>. See the <a href="#/api">API</a> for the full list.</p>
+          <p>The families: top-level data structures (<code>array, pointer, linkedList, binaryTree, tree, graph, grid, stack, queue</code>) and the namespaces <code>plot</code>, <code>prob</code>, <code>geom</code>, <code>sched</code> and <code>mem</code>. See the <a href="#/api">API</a> for the full list.</p>
           <p>Ids inside a layout come from your data. <code>array</code> keys cells by index unless you pass <code>keys</code>; give each element a stable key and a swap becomes two tiles sliding past each other instead of two numbers changing in place.</p>
         </Section>
 
@@ -87,6 +89,7 @@ p.toWorld(e.x, e.y);                                        // drag position →
   --dv-curve: #0b84f3;         /* plot curves */
   --dv-font: "Inter", sans-serif;
 }`}</Code>
+          <p>Some layouts take a <code>kind</code> instead of a colour: a graph node with <code>kind: 'changed'</code> gets <code>role: 'node-changed'</code>. The stylesheet colours <code>changed</code>, <code>upstream</code>, <code>downstream</code> and <code>test</code>; any other kind is yours to style with <code>.dv-role-node-&lt;kind&gt;</code>. A tone on the same node still wins.</p>
           <p>Dark mode switches on <code>[data-theme="dark"]</code> or <code>.dark</code> on any ancestor, or follows the OS when neither is set.</p>
           <h3>Coloured outlines</h3>
           <p>Solid shapes (array cells, tree and graph nodes, UML boxes, system components) are outlined in a darker shade of their own colour rather than black, so a coloured tile reads as one object. Lines, arrows, curves and plots stay crisp ink, which keeps the connections visually separate from the things they connect. Change the colours with <code>--dv-outline</code> (untoned shapes) and <code>--dv-&lt;tone&gt;-outline</code>.</p>
@@ -95,6 +98,7 @@ p.toWorld(e.x, e.y);                                        // drag position →
         <Section id="motion" title="Animation">
           <p>Tweens start from what's on screen right now, not from the last target, so interrupting an animation (clicking Next twice quickly) never snaps. <code>&lt;Diagram duration ease&gt;</code> sets the feel; while a drag is in progress renders are instant so the shape stays under the pointer.</p>
           <p>Nodes can say where they come from and go to: <code>enter: {'{ y: parentY }'}</code> makes a tree node grow out of its parent, <code>exit: {'{ x: -40 }'}</code> slides a dequeued cell out to the left. Paths with different point counts are resampled by arc length before tweening, so a curve can morph into another.</p>
+          <p>Text can't be interpolated ("lo = 3" is not half way to "lo = 5"), so a text node that keeps its id but changes its words <em>crossfades</em>: a ghost of the old words fades out where they were while the new ones fade in. Turn it off with <code>crossfade: false</code> on the view or the <code>&lt;Diagram&gt;</code>.</p>
           <p>If the viewer prefers reduced motion, every render is instant.</p>
         </Section>
 
@@ -119,6 +123,7 @@ function* search(a, target) {
 const player = usePlayer(() => search(nums, target), [nums, target]);
 <Transport player={player} />
 <CodeTrace lines={code} active={player.frame.line} />`}</Code>
+          <p><code>CodeTrace</code> is an HTML panel beside the diagram. To put code <em>inside</em> the figure (so an arrow can point from a line to a cell, or the whole thing exports as one SVG), use <code>code.block(source, {"{ highlight: [[3, 4]] }"})</code>: its highlight bands are keyed by position, so stepping slides them.</p>
         </Section>
 
         <Section id="camera" title="The camera">
@@ -158,7 +163,26 @@ uml.classDiagram(
 uml.sequence(people, messages, { upTo: player.frame });   // reveal one message per step
 const a = sys.architecture(components, links);
 combine(a, sys.packet({ id: 'req', ...a.along('lb', 'app', 1) }));  // same id → it glides`}</Code>
-          <p>You place things (x, y); the layouts size boxes from their text and route the lines. Sequence diagrams compute their activation bars from the calls and returns, the same stack a running program keeps. Component colours come from the stylesheet by kind (<code>.dv-role-sys-db</code>), so a host app can restyle every database in one rule.</p>
+          <p>You place things (x, y), or leave x and y out: <code>graph(…, {"{ layout: 'layered' }"})</code>, <code>sys.architecture</code> and <code>uml.classDiagram</code> then use <code>layout.layered</code>, which puts each node one layer past everything that points at it, orders each layer to avoid crossings and bends long edges around the boxes in between. The layouts size boxes from their text and route the lines. Sequence diagrams compute their activation bars from the calls and returns, the same stack a running program keeps (<code>activations: false</code> hides them). <code>fragments</code> box loops and alternatives (an <code>alt</code> with <code>sections</code> gets an <code>[else]</code> divider), <code>notes</code> take a row of their own, and each message can carry a <code>tone</code>. Component colours come from the stylesheet by kind (<code>.dv-role-sys-db</code>), so a host app can restyle every database in one rule.</p>
+        </Section>
+
+        <Section id="git" title="Git history">
+          <p><code>git.graph(commits, refs)</code> draws a commit graph from <code>{'{ hash, parents, label }'}</code>, newest first, the order <code>git log</code> prints. Lanes follow the first-parent rule: a commit's first parent inherits its column, so a branch runs straight down and a branch on top of another continues its line; a merge's other parents open or join lanes. Commits are keyed by hash, so a before / after pair animates: a merge adds one dot, a rebase replaces dots.</p>
+          <Code>{`
+git.graph(
+  [{ hash: 'm', parents: ['c', 'f'], label: 'Merge feature' }, { hash: 'c', parents: ['b'] }, { hash: 'f', parents: ['b'] }, { hash: 'b', parents: [] }],
+  [{ name: 'main', hash: 'm', kind: 'branch' }],
+  { highlight: ['m'] },
+);`}</Code>
+        </Section>
+
+        <Section id="spec" title="Diagrams as JSON">
+          <p>When the diagram comes from another program, or from a language model, write it as a <code>DiagramSpec</code>: plain JSON discriminated on <code>type</code> (<code>sequence, class, state, architecture, graph, git, array, table, code</code>). <code>validateSpec</code> checks every field and every reference and never throws; <code>fromSpec</code> draws a valid spec (and throws on an invalid one); <code>describeSpec</code> writes the alt text.</p>
+          <Code>{`
+const r = validateSpec(JSON.parse(modelOutput));
+if (!r.ok) return showDropped(r.errors);   // [{ path: 'messages[3].to', message: 'unknown participant "dbb" (did you mean "db"?)' }]
+<Diagram scene={fromSpec(r.spec)} label={describeSpec(r.spec)} />`}</Code>
+          <p>Coordinates are optional: graphs, architecture, class and state diagrams without x/y go through the layered layout. The validator is strict on purpose: an unknown field is an error (with a "did you mean"), because a misspelt <code>lable</code> silently ignored is a diagram with a label missing.</p>
         </Section>
 
         <Section id="vanilla" title="Without React">
@@ -169,7 +193,9 @@ const view = createView(document.querySelector('svg'));
 view.render(array([1, 2, 3]));            // animate in the DOM
 view.on('click', (e) => console.log(e.node.data));
 
-const svgString = toSVG(array([1, 2, 3])); // static SVG for SSR, tests, thumbnails`}</Code>
+const svgString = toSVG(array([1, 2, 3])); // static SVG for SSR, tests, thumbnails
+toSVG(scene, { theme: 'dark' });           // pinned palette + background, for a file on its own`}</Code>
+          <p>The stylesheet is added to <code>&lt;head&gt;</code> the first time a view is created. If your app ships <code>DEFAULT_CSS</code> itself (or a Content-Security-Policy forbids injected styles), pass <code>injectStyles: false</code> to <code>createView</code> or <code>&lt;Diagram injectStyles={'{false}'}&gt;</code>.</p>
         </Section>
 
         <Section id="exercises" title="Exercises">
@@ -177,8 +203,8 @@ const svgString = toSVG(array([1, 2, 3])); // static SVG for SSR, tests, thumbna
             <li><b>Add a <code>warning</code> tone.</b> Pure CSS: find how tones become <code>--dv-c / --dv-cf / --dv-cs</code> in <code>styles.ts</code>.</li>
             <li><b>A <code>heap()</code> layout.</b> Build the implicit tree (children of i are 2i+1 and 2i+2), reuse <code>binaryTree()</code>, and draw the array underneath with matching keys.</li>
             <li><b>Three-set Venn.</b> Generalise <code>vennRegions</code>: each of the 7 regions is bounded by arcs between pairwise intersection points.</li>
-            <li><b>Reingold–Tilford.</b> Replace the in-order tree layout with a tidier one, keeping the <code>TreeDiagram</code> return type.</li>
-            <li><b>Text crossfade.</b> When a text node's string changes it swaps instantly. Make <code>render.ts</code> fade the old string out and the new one in.</li>
+            <li><b>Reingold–Tilford.</b> <code>layout/tidy.ts</code> now does it (<code>tree()</code>, and <code>binaryTree</code> with <code>layout: 'tidy'</code>). Delete it and rebuild it from <code>tests/tidy.test.ts</code>; then try Walker's fix, which spreads small subtrees evenly between big ones.</li>
+            <li><b>Text crossfade.</b> Done in <code>render.ts</code> with a fading ghost copy. Try the other approach: keep two text elements per id and swap which one is live. What does each do when a label changes twice inside one animation?</li>
           </ol>
         </Section>
       </div>

@@ -122,7 +122,7 @@ function* search(a, target) {
 const player = usePlayer(() => search(nums, target), [nums, target]);
 <Transport player={player} />
 <CodeTrace lines={code} active={player.frame.line} />`}</Code>
-          <p><code>CodeTrace</code> is an HTML panel beside the diagram. To put code <em>inside</em> the figure (so an arrow can point from a line to a cell, or the whole thing exports as one SVG), use <code>code.block(source, {"{ highlight: [[3, 4]] }"})</code>: its highlight bands are keyed by position, so stepping slides them.</p>
+          <p><code>CodeTrace</code> is an HTML panel beside the diagram that highlights the current line of a step-through.</p>
         </Section>
 
         <Section id="camera" title="The camera">

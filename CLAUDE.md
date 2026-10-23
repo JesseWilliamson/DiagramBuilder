@@ -45,11 +45,11 @@ interaction. No 3D buttons, no lesson UI: this is a diagram library plus a docs/
    - `@dsviz/geom` polygon, segment, tickMarks, angleMark, circle, pointLabel (+ intersection/centre helpers)
    - `@dsviz/os` simulate (fcfs/sjf/srtf/rr/priority), gantt; stackHeap, memory, hex
    - `@dsviz/arch` architecture (component kinds, zones, links with waypoints), packet, along
-   - `@dsviz/uml` classDiagram, objectDiagram, packageDiagram, sequence, communication, stateMachine,
+   - `@dsviz/uml` classDiagram, sequence, stateMachine,
      activity (swimlanes, fork/join), useCase, component (lollipop/socket), deployment, er (crow's foot).
      All take ids, tones, `interactive`, `draggable`, `x`/`y` optional (layered layout places the rest), and
-     return `box(id): Frame`. objectDiagram reuses classDiagram's ids so the two views morph;
-     communication shares `Message` with sequence so one list feeds both.
+     return `box(id): Frame`. Object, package and communication diagrams were built and then removed
+     (Oct 2026: rarely drawn in practice); `git log` has them if ever wanted.
    - `@dsviz/git` graph (lanes by first parent), gitLanes
    - `@dsviz/react` `<Diagram>` (natural size, `viewBox`, `duration`; camera frozen and tween off while
      dragging), `usePlayer`, `useTicker`, `useBurst`, controls on Radix (`Slider`, `Segmented`,

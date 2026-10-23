@@ -185,26 +185,22 @@ combine(a, packet({ id: 'req', ...a.along('lb', 'app', 1) }));  // same id → i
           <p><code>@dsviz/uml</code> has eleven diagram functions. Every one takes your data plus options, returns a scene, and returns <code>box(id)</code> or <code>frame(id)</code> so you can attach things to its boxes. Boxes without x and y are placed by <code>layered</code>. Ids come from your data, so a box that keeps its id moves instead of redrawing.</p>
           <ul>
             <li><code>sequence</code>: lifelines and call / return / async messages; activation bars from the call stack; <code>fragments</code> (loop, alt, opt), <code>notes</code>; <code>upTo</code> reveals one message per step.</li>
-            <li><code>communication</code>: the same participants and messages as a graph, one link per pair, messages numbered 1, 1.1, 1.2 from their <code>parent</code>.</li>
             <li><code>classDiagram</code>: classes with attributes and methods; inherits, implements, composition, aggregation, association, dependency.</li>
-            <li><code>objectDiagram</code>: instances <code>name : Class</code> with slot values; give an object its class's id and the two views morph.</li>
             <li><code>stateMachine</code>: states, initial / final / choice pseudostates, labelled transitions; <code>current</code> highlights the live state.</li>
             <li><code>useCase</code>: actors, ovals, a system boundary, and include / extend / generalization.</li>
             <li><code>activity</code>: actions, decisions and merges, fork and join bars, swimlanes; <code>current</code> and <code>taken</code> highlight a walk through the flow.</li>
             <li><code>component</code>: components with provided (lollipop) and required (socket) interfaces, ports and nesting.</li>
             <li><code>deployment</code>: nodes with a top and right face, artifacts inside them, communication and deploy links.</li>
-            <li><code>packageDiagram</code>: tabbed packages nested to any depth; import, access, merge and dependency arrows.</li>
             <li><code>er</code>: entity-relationship diagrams in crow's-foot notation, with primary and foreign keys and weak entities.</li>
           </ul>
           <Code>{`
-import { classDiagram, objectDiagram, communication, sequence } from '@dsviz/uml';
+import { classDiagram, sequence } from '@dsviz/uml';
 
 classDiagram(
   [{ id: 'Square', name: 'Square', x: 0, y: 200 }, { id: 'Rect', name: 'Rectangle', x: 0, y: 0, attributes: ['# w: number'] }],
   [{ from: 'Square', to: 'Rect', kind: 'inherits' }],
 );
-sequence(people, messages, { upTo: player.frame });          // reveal one message per step
-communication(people, messages, { upTo: player.frame });     // the same list, drawn as a graph`}</Code>
+sequence(people, messages, { upTo: player.frame });          // reveal one message per step`}</Code>
           <p>Sequence diagrams compute their activation bars from the calls and returns, the same stack a running program keeps (<code>activations: false</code> hides them). An <code>alt</code> with <code>sections</code> gets an <code>[else]</code> divider, and each message can carry a <code>tone</code>. The class and object diagrams share box sizes, and the sequence and communication diagrams share a message type, so a pair of views of one thing can morph into each other instead of cutting.</p>
         </Section>
 

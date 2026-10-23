@@ -17,7 +17,7 @@ state ──▶ layout functions ──▶ Scene (plain data, stable ids) ──
 
 What it draws: data structures (arrays, trees, hash maps, linked lists, graphs, grids), algorithms as
 step-throughs, UML (sequence, class, state, use case, activity, component, deployment, object, package,
-communication, ER), architecture diagrams, git graphs, plots, probability, geometry, and OS scheduling and
+ER), architecture diagrams, git graphs, plots, probability, geometry, and OS scheduling and
 memory.
 
 ## Install
@@ -56,7 +56,7 @@ All versioned together; each exports its functions flat (`import { fn } from '@d
 | `@dsviz/geom` | `polygon segment tickMarks angleMark circle pointLabel` and construction helpers |
 | `@dsviz/os` | `simulate gantt stackHeap memory hex` |
 | `@dsviz/arch` | `architecture component zone packet` |
-| `@dsviz/uml` | `sequence communication classDiagram objectDiagram stateMachine useCase activity component deployment packageDiagram er` |
+| `@dsviz/uml` | `sequence classDiagram stateMachine useCase activity component deployment er` |
 | `@dsviz/git` | `graph gitLanes` |
 | `@dsviz/react` | `Diagram usePlayer useTicker useBurst`, controls, `Transport`, `CodeTrace`, `MathText` |
 

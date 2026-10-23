@@ -43,8 +43,6 @@ export interface Message {
   kind?: 'call' | 'return' | 'async';
   /** Colour this message (an error path, the interesting call). The step highlight still wins. */
   tone?: Tone;
-  /** Index of the message this one happens inside (a nested call). Sequence ignores it; `communication` numbers by it (1, 1.1, 1.2, 2…). */
-  parent?: number;
 }
 
 /** A note card. It sits in its own row, just before message `at` (messages.length = after the last). */
@@ -181,7 +179,7 @@ export function headSize(p: Participant): { w: number; h: number; dy: number } {
 /**
  * The head of a participant: a stick figure for an actor, a box otherwise.
  * (x, y) is the box centre, or the actor's head-and-shoulders anchor. Shared by
- * sequence and communication diagrams. Parts get ids `${k}:box|head|body|arms|legs|label|hit`.
+ * sequence diagrams. Parts get ids `${k}:box|head|body|arms|legs|label|hit`.
  */
 export function participantHead(p: Participant, x: number, y: number, k: string, o: HeadOptions = {}): SceneNode[] {
   const common = { opacity: o.opacity };

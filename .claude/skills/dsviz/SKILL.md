@@ -1,6 +1,6 @@
 ---
 name: dsviz
-description: Draw diagrams with the dsviz library (npm packages `@dsviz/*`), as SVG in a React app, in plain DOM, or as a standalone SVG string. Use this whenever a task asks for a diagram, figure or visual explanation in a project that depends on dsviz: UML (sequence, class, state machine, use case, activity, component, deployment, object, package, communication), entity-relationship diagrams, architecture/system diagrams, dependency or call graphs (DAGs), git commit graphs, data-structure figures (arrays, trees, hash maps, linked lists, grids, stacks, queues), plots (functions, tangents, Riemann sums), probability (bars, trees, Venn), geometry, OS scheduling (Gantt) and memory, step-through algorithm animations. Also use it to export a diagram with toSVG.
+description: Draw diagrams with the dsviz library (npm packages `@dsviz/*`), as SVG in a React app, in plain DOM, or as a standalone SVG string. Use this whenever a task asks for a diagram, figure or visual explanation in a project that depends on dsviz: UML (sequence, class, state machine, use case, activity, component, deployment), entity-relationship diagrams, architecture/system diagrams, dependency or call graphs (DAGs), git commit graphs, data-structure figures (arrays, trees, hash maps, linked lists, grids, stacks, queues), plots (functions, tangents, Riemann sums), probability (bars, trees, Venn), geometry, OS scheduling (Gantt) and memory, step-through algorithm animations. Also use it to export a diagram with toSVG.
 ---
 
 # dsviz
@@ -30,7 +30,6 @@ functions; a **registry** of copyable example components (`npx @dsviz/cli add <n
 
 One package per family, each exporting its functions flat (no namespaces: `fn`, not `plot.fn`):
 
-| Package | What is in it |
 |---|---|
 | `@dsviz/core` | `rect circle text arrow path`, `combine translate namespace`, `connector`, `createView`, `toSVG`, `fitViewBox`, `createPlayer`, `handle`, `burst` |
 | `@dsviz/layout` | `layered` (DAG), `tidy` (trees): positions only, no drawing |
@@ -40,7 +39,7 @@ One package per family, each exporting its functions flat (no namespaces: `fn`, 
 | `@dsviz/geom` | `polygon segment tickMarks angleMark circle pointLabel` + construction helpers |
 | `@dsviz/os` | `simulate gantt stackHeap memory hex` |
 | `@dsviz/arch` | `architecture component zone packet` |
-| `@dsviz/uml` | `sequence classDiagram stateMachine useCase activity component deployment objectDiagram packageDiagram communication er` |
+| `@dsviz/uml` | `sequence classDiagram stateMachine useCase activity component deployment er` |
 | `@dsviz/git` | `graph` (commit graph), `gitLanes` |
 | `@dsviz/react` | `Diagram usePlayer useTicker useBurst`, controls, `Transport`, `CodeTrace`, `MathText` |
 
@@ -88,7 +87,7 @@ Without React: `const view = createView(svgEl); view.render(scene);` Static: `to
 - **Paint order is array order.** Lines before the boxes they join; a `window` band before the array.
   Families already order their own parts (fragment boxes under messages, edges under nodes).
 - **Place or don't.** `x`/`y` are optional on every graph-like diagram (architecture, class, state, object,
-  package, component, deployment, use case, activity, ER, communication, `graph` with
+  component, deployment, use case, activity, ER, `graph` with
   `layout: 'layered'`): leave them out and `@dsviz/layout` places the boxes. Give them for boxes the user
   has dragged.
 
@@ -115,15 +114,12 @@ injected styles. `toSVG(scene, { theme: 'light' | 'dark' })` pins a palette insi
 | Diagram | Call | Notes |
 |---|---|---|
 | Sequence | `sequence(participants, messages, { upTo, fragments, notes, activations, highlight, numbered })` | kinds `call`/`return`/`async`; `upTo` reveals step by step; `highlight: false` for static |
-| Communication | `communication(participants, messages, { upTo, ring, radius, numbering, maxLabel })` | the SAME participants and messages as `sequence`; numbers 1, 2, 3… by default; `numbering: 'dewey'` nests them by `parent` (a message index) |
 | Class | `classDiagram(classes, relations, { route, collapsed })` | relations `inherits`, `implements`, `composition`, `aggregation`, `association`, `dependency` |
-| Object | `objectDiagram(objects, links, { collapsed })` | `name : Class` boxes with `slots`; give an object its class's `id` and the two views morph |
 | State | `stateMachine(states, transitions, { current, fired })` | kinds `initial`, `final`, `choice` |
 | Use case | `useCase(actors, cases, relations, { system })` | relations `association`, `include`, `extend`, `generalization`; `system` draws the boundary |
 | Activity | `activity(nodes, flows, { swimlanes, direction, current, taken })` | kinds `action decision merge fork join start end flowFinal`; flow `guard`; `current`/`taken` highlight a walk |
 | Component | `component(components, connections, { direction })` | `provides` / `requires` interfaces, `ports`, `parent` nesting; connections `assembly`, `dependency`, `delegate` |
 | Deployment | `deployment(nodes, artifacts, links)` | nodes with `stereotype` and `parent`; artifacts sit in a `node`; links `protocol`, `kind: 'deploy'` |
-| Package | `packageDiagram(packages, relations)` | nest through `children`; relations `import access merge dependency` at any depth |
 | ER | `er(entities, relationships, { collapsed })` | crow's foot; cardinalities `one many zero-one zero-many one-many` at each end, `identifying: false` dashed |
 | Architecture | `architecture(components, links, { zones, direction, route })` | kinds `client user lb gateway service cache db queue cdn storage file` |
 | Graph / DAG | `graph(nodes, edges, { layout: 'layered', shape: 'rect', directed, route: 'elbow' })` | node `kind` → role `node-<kind>` (`changed`, `upstream`, `downstream`, `test`) |
@@ -166,16 +162,11 @@ the id you gave it.
 - Fragments may nest (the inner one is inset). On an `alt`, `label` (if set) is the first guard,
   otherwise `sections[0].label`. A note at `at = k` sits in its own row before message `k`: inside a
   fragment's box when `from < k ≤ to`, above it when `k = from`.
-- `Message.parent` (index of an earlier message) is ignored by `sequence` and used by `communication`.
 - Types: `Participant`, `Message`, `Fragment`, `FragmentSection`, `Note`,
   `SequenceOptions` (every family exports its option and data types; see `references/api.md`).
 
 ## Other UML diagrams: what to know
 
-- **Communication** is the sequence diagram as a graph: one plain link per pair that talks, however many
-  messages cross it; each message is an arrow beside its link with a Dewey number (`1`, `1.1`, `1.2`,
-  `2`) taken from `parent`. It reveals with `upTo` like `sequence`. Participants without x/y are laid
-  out in layers, or on a circle with `ring: true`.
 - **Activity** `current` (a node id or a set, for parallel branches) and `taken` (flow indices, or a set)
   are the whole animation: compute them per step and the same layout highlights the walk. With
   `swimlanes`, give each node a `lane` id; fork/join bars need none (they stretch between their

@@ -31,7 +31,8 @@ const messages: Array<Message & { note: string }> = [
 
 const comm = (i: number) => communication(people, messages, { upTo: i, ring: true });
 const seq = (i: number) => sequence(people, messages, { upTo: i, numbered: true, gap: 120 });
-const commBox = fitViewBox(comm(messages.length - 1), 36);
+// one box over every step, so the camera never moves while stepping
+const commBox = fitViewBox(messages.flatMap((_, i) => comm(i).nodes), 36);
 const seqBox = fitViewBox(seq(messages.length - 1), 24);
 
 type View = 'both' | 'communication' | 'sequence';

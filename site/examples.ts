@@ -1,4 +1,4 @@
-/** The examples page, in order. `name` is the file in demos/. */
+/** The examples page, in order. `name` is the file in registry/ (registry/index.json is generated from this list: npm run registry). */
 export interface Example {
   name: string;
   title: string;

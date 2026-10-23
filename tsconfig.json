@@ -13,7 +13,8 @@
     "noEmit": true,
     "skipLibCheck": true,
     "types": [
-      "vite/client"
+      "vite/client",
+      "node"
     ],
     "paths": {
       "@figurae/*": [
@@ -24,6 +25,7 @@
   "include": [
     "packages/*/src",
     "site",
-    "tests"
+    "tests",
+    "registry"
   ]
 }

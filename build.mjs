@@ -16,7 +16,7 @@
 // ones that run.
 import { build } from 'esbuild';
 import { execFileSync } from 'node:child_process';
-import { existsSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 const files = (dir) =>
@@ -72,3 +72,9 @@ for (const pkg of order) {
   execFileSync('npx', ['tsc', '-p', `${base}/tsconfig.build.json`], { stdio: 'inherit' });
   console.log(`built ${dist}/`);
 }
+
+// The CLI has no src/: it ships the registry. Copy it in so `files` publishes it
+// (see the header of packages/cli/bin/figurae.js).
+rmSync('packages/cli/registry', { recursive: true, force: true });
+cpSync('registry', 'packages/cli/registry', { recursive: true });
+console.log('copied registry/ → packages/cli/registry/');

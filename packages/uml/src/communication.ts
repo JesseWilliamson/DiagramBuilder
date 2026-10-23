@@ -197,7 +197,10 @@ export function communication(input: readonly CommunicationParticipant[], messag
         const c = V2(mid.x + u.x * (j - (K - 1) / 2) * step, mid.y + u.y * (j - (K - 1) / 2) * step);
         const at = V2(c.x + n.x * 12, c.y + n.y * 12);
         msgs.push(...connector({ id: k, ...arrow(at), ...style, tone, opacity }).nodes);
-        msgs.push(text({ id: `${k}:label`, x: at.x + n.x * 10, y: at.y, text: label, size: 12, anchor: n.x >= 0 ? 'start' : 'end', role: 'message', tone, opacity }));
+        // the text starts beyond the arrow, clear of the (slanted) link: its near corners are
+        // up to 6 units above/below the anchor, where the link has moved sideways by 6·|ux/uy|
+        const lean = Math.min(14, 6 * Math.abs(u.x / (u.y || 1e-3)));
+        msgs.push(text({ id: `${k}:label`, x: at.x + n.x * 10 + Math.sign(n.x || 1) * lean, y: at.y, text: label, size: 12, anchor: n.x >= 0 ? 'start' : 'end', role: 'message', tone, opacity }));
       } else {
         // a flatter link: stack the messages outward from the link, text beyond each arrow
         const d = 14 + j * STACK;

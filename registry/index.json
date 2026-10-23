@@ -1,0 +1,549 @@
+[
+  {
+    "name": "scenes",
+    "title": "Scenes and ids",
+    "description": "Shapes keyed by id. Shuffle moves them, Add fades one in, Remove fades one out. Colour is a CSS transition.",
+    "group": "core",
+    "file": "Scenes.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "binary-search",
+    "title": "Binary search",
+    "description": "Generator frames, a code trace, and pointers that slide.",
+    "group": "ds",
+    "file": "BinarySearch.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/ds",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "why-fast",
+    "title": "Halving",
+    "description": "Why binary search takes log₂ n steps.",
+    "group": "ds",
+    "file": "WhyFast.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "bubble-sort",
+    "title": "Keys decide what moves",
+    "description": "With keys, a swap slides two tiles past each other. Without, the numbers change in place.",
+    "group": "ds",
+    "file": "BubbleSort.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/ds",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "hash-map",
+    "title": "Hash map",
+    "description": "Two Sum with a map of values seen. Rows are keyed by the map key, so each entry drops in as its own row.",
+    "group": "ds",
+    "file": "HashMap.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/ds",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "linked-list",
+    "title": "Reversing a linked list",
+    "description": "Each arrow is keyed by the node it leaves, so flipping a pointer swings it round.",
+    "group": "ds",
+    "file": "LinkedList.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/ds",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "bst",
+    "title": "Binary search tree",
+    "description": "Insert and search; new nodes grow out of their parent.",
+    "group": "ds",
+    "file": "Bst.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/ds",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "tidy-tree",
+    "title": "Tidy trees",
+    "description": "Reingold–Tilford for n-ary trees: subtrees pushed together until their outlines almost touch.",
+    "group": "ds",
+    "file": "TidyTree.tsx",
+    "packages": [
+      "@figurae/ds",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "graph",
+    "title": "BFS and DFS",
+    "description": "Drag the nodes; click one to start from it.",
+    "group": "ds",
+    "file": "Graph.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/ds",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "layered",
+    "title": "Layered layout and node kinds",
+    "description": "A pipeline with no coordinates: layers follow the edges, long edges bend around boxes. Click a task to see its blast radius, coloured by node kind.",
+    "group": "ds",
+    "file": "Layered.tsx",
+    "packages": [
+      "@figurae/ds",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "graph-coloring",
+    "title": "Graph colouring",
+    "description": "Click to cycle colours; clashing edges turn red.",
+    "group": "ds",
+    "file": "GraphColoring.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/ds",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "lcs",
+    "title": "Dynamic programming table",
+    "description": "Longest common subsequence, with dependency arrows and a traceback.",
+    "group": "ds",
+    "file": "Lcs.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/ds",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "tangent",
+    "title": "Tangent lines",
+    "description": "Drag along the curve. Switching functions morphs the curve.",
+    "group": "plot",
+    "file": "Tangent.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/plot",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "riemann",
+    "title": "Riemann sums",
+    "description": "Drag a and b, change n and the rule.",
+    "group": "plot",
+    "file": "Riemann.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/plot",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "vectors",
+    "title": "Vectors",
+    "description": "Sum, difference and projection, with draggable tips.",
+    "group": "plot",
+    "file": "Vectors.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/geom",
+      "@figurae/plot",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "dice",
+    "title": "Sample space",
+    "description": "Two dice. Click a cell or a bar to choose the event.",
+    "group": "prob",
+    "file": "Dice.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/prob",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "venn",
+    "title": "Venn diagram",
+    "description": "Regions built from arcs, so they can be shaded and measured. Drag the circles.",
+    "group": "prob",
+    "file": "Venn.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/prob",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "bayes",
+    "title": "Probability tree",
+    "description": "Multiply along the branches; Bayes compares the two + leaves.",
+    "group": "prob",
+    "file": "Bayes.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/prob",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "galton",
+    "title": "Galton board",
+    "description": "Keyed balls falling one row per tick into binomial bins.",
+    "group": "prob",
+    "file": "Galton.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/prob",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "large-numbers",
+    "title": "Law of large numbers",
+    "description": "Frequencies settle on 1/6 and the running mean on 3.5.",
+    "group": "prob",
+    "file": "LargeNumbers.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/plot",
+      "@figurae/prob",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "monty-hall",
+    "title": "Monty Hall",
+    "description": "Play, then simulate a few hundred games.",
+    "group": "prob",
+    "file": "MontyHall.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/prob",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "pythagoras",
+    "title": "Square in a square",
+    "description": "Drag the point on the top edge.",
+    "group": "geom",
+    "file": "Pythagoras.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "triangle",
+    "title": "Triangle centres",
+    "description": "Drag the vertices. The angle arc becomes a square at exactly 90°.",
+    "group": "geom",
+    "file": "Triangle.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/geom",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "inscribed",
+    "title": "Inscribed angle",
+    "description": "Drag P around the circle; the angle stays half the arc.",
+    "group": "geom",
+    "file": "Inscribed.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/geom",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "scheduling",
+    "title": "CPU scheduling",
+    "description": "simulate (@figurae/os) plus a Gantt chart keyed by process and segment.",
+    "group": "systems",
+    "file": "Scheduling.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/ds",
+      "@figurae/os",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "python-memory",
+    "title": "Names and objects",
+    "description": "Frames, heap objects and reference arrows.",
+    "group": "systems",
+    "file": "PythonMemory.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/os",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "pointers",
+    "title": "Pointer arithmetic",
+    "description": "The same bytes as char, int or double.",
+    "group": "systems",
+    "file": "Pointers.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/ds",
+      "@figurae/os",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "uml-arrows",
+    "title": "UML relationships",
+    "description": "The six arrows, each beside the code that creates it.",
+    "group": "design",
+    "file": "UmlArrows.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/react",
+      "@figurae/uml"
+    ]
+  },
+  {
+    "name": "class-diagram",
+    "title": "Class diagram",
+    "description": "Drag the classes; click one to see only its relationships.",
+    "group": "design",
+    "file": "ClassDiagram.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/react",
+      "@figurae/uml"
+    ]
+  },
+  {
+    "name": "sequence",
+    "title": "Sequence diagram",
+    "description": "A login, step by step. Activation bars follow the call stack.",
+    "group": "design",
+    "file": "Sequence.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/react",
+      "@figurae/uml"
+    ]
+  },
+  {
+    "name": "checkout",
+    "title": "Alternatives and notes",
+    "description": "An alt fragment with an [else] branch, per-message tones for the failure path, a note in its own row, and activation bars you can turn off.",
+    "group": "design",
+    "file": "Checkout.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/react",
+      "@figurae/uml"
+    ]
+  },
+  {
+    "name": "state-machine",
+    "title": "State machine",
+    "description": "An order lifecycle. Only legal events are enabled.",
+    "group": "design",
+    "file": "StateMachine.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/react",
+      "@figurae/uml"
+    ]
+  },
+  {
+    "name": "request-flow",
+    "title": "A request through a web stack",
+    "description": "Hop by hop with latency: cache hit versus miss.",
+    "group": "design",
+    "file": "RequestFlow.tsx",
+    "packages": [
+      "@figurae/arch",
+      "@figurae/core",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "load-balancer",
+    "title": "Load balancing",
+    "description": "Round robin, least connections and random, with a slow server. Click a server to take it down.",
+    "group": "design",
+    "file": "LoadBalancer.tsx",
+    "packages": [
+      "@figurae/arch",
+      "@figurae/core",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "consistent-hashing",
+    "title": "Consistent hashing",
+    "description": "Add or remove a server and count the keys that move, ring versus hash % N.",
+    "group": "design",
+    "file": "ConsistentHashing.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "trust-zones",
+    "title": "Trust boundaries",
+    "description": "Zones around machines and a sandbox. Step a job across and see which files may cross.",
+    "group": "design",
+    "file": "TrustZones.tsx",
+    "packages": [
+      "@figurae/arch",
+      "@figurae/core",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "git-graph",
+    "title": "Merge versus rebase",
+    "description": "graph from @figurae/git: lanes by first parent, curved edges, branch pills. Commits are keyed by hash, so the switch animates.",
+    "group": "design",
+    "file": "GitGraph.tsx",
+    "packages": [
+      "@figurae/git",
+      "@figurae/react"
+    ]
+  },
+  {
+    "name": "polling",
+    "title": "Polling in a loop",
+    "description": "A sequence diagram with a loop fragment that grows as the polls come back.",
+    "group": "design",
+    "file": "Polling.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/react",
+      "@figurae/uml"
+    ]
+  },
+  {
+    "name": "deployment",
+    "title": "Deployment diagram",
+    "description": "Machines with nested runtimes and the files they host. Add a second server and a load balancer; the layout rearranges.",
+    "group": "design",
+    "file": "Deployment.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/react",
+      "@figurae/uml"
+    ]
+  },
+  {
+    "name": "object-diagram",
+    "title": "Class view and object view",
+    "description": "The same ids drawn as classes or as live objects (name : Class, slots). Switch and the boxes morph.",
+    "group": "design",
+    "file": "ObjectDiagram.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/react",
+      "@figurae/uml"
+    ]
+  },
+  {
+    "name": "package-diagram",
+    "title": "Package diagram",
+    "description": "Nested packages and import / access / merge relations at any depth. Click one to see what it uses.",
+    "group": "design",
+    "file": "PackageDiagram.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/react",
+      "@figurae/uml"
+    ]
+  },
+  {
+    "name": "communication",
+    "title": "Communication diagram",
+    "description": "The login again, as links and numbered messages (1, 1.1, 1.1.1), stepped in step with the sequence view.",
+    "group": "design",
+    "file": "Communication.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/react",
+      "@figurae/uml"
+    ]
+  },
+  {
+    "name": "er",
+    "title": "Entity–relationship",
+    "description": "A shop schema in crow's-foot or Chen notation. Click an entity to see its relationships.",
+    "group": "design",
+    "file": "Er.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/react",
+      "@figurae/uml"
+    ]
+  },
+  {
+    "name": "use-case",
+    "title": "Use case diagram",
+    "description": "A web shop: actors, ovals, «include» and «extend». Click an actor to see what they can do; toggle the system boundary.",
+    "group": "design",
+    "file": "UseCase.tsx",
+    "packages": [
+      "@figurae/react",
+      "@figurae/uml"
+    ]
+  },
+  {
+    "name": "activity",
+    "title": "Activity diagram",
+    "description": "An order across three swimlanes: decision, fork and join, flow final. Step through, or switch the stock off for the other branch.",
+    "group": "design",
+    "file": "Activity.tsx",
+    "packages": [
+      "@figurae/core",
+      "@figurae/react",
+      "@figurae/uml"
+    ]
+  },
+  {
+    "name": "component",
+    "title": "Component diagram",
+    "description": "Lollipops and sockets join into assemblies; a port delegates into a nested component. Click one to see its interfaces.",
+    "group": "design",
+    "file": "Component.tsx",
+    "packages": [
+      "@figurae/react",
+      "@figurae/uml"
+    ]
+  }
+]

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { DIAGRAM_TYPES, describeSpec, fromSpec, validateSpec } from '../src';
-import type { DiagramSpec } from '../src';
+import { DIAGRAM_TYPES, describeSpec, fromSpec, validateSpec } from '../src/spec';
+import type { DiagramSpec } from '../src/spec';
 
 /** One small valid spec per type. */
 const valid: Record<DiagramSpec['type'], DiagramSpec> = {
@@ -49,7 +49,6 @@ const valid: Record<DiagramSpec['type'], DiagramSpec> = {
   },
   array: { type: 'array', values: [1, 3, 5, 7, 9], tones: { '2': 'active' }, pointers: [{ label: 'lo', at: 0 }, { label: 'hi', at: 4 }], window: [0, 4] },
   table: { type: 'table', rows: [[0, 1], [1, 1]], columns: ['a', 'b'], rowLabels: ['x', 'y'], tones: [{ row: 1, col: 1, tone: 'active' }] },
-  code: { type: 'code', code: 'def f(x):\n    return x * 2\n', highlight: [[2, 2]], language: 'python' },
 };
 
 const errorsOf = (x: unknown) => validateSpec(x).errors;
@@ -143,12 +142,6 @@ describe('validateSpec: every type, invalid', () => {
     expect(at(spec, 'tones[0].col')).toMatch(/^column 5 is out of range/);
     expect(at({ type: 'table', rows: [] }, 'rows')).toBe('needs at least 1 item');
   });
-  it('code: highlights inside the code, from ≤ to', () => {
-    const spec = { type: 'code', code: ['a', 'b', 'c'], highlight: [[3, 2], [2, 9]] };
-    expect(at(spec, 'highlight[0]')).toBe('must be [from, to] with from ≤ to, got [3, 2]');
-    expect(at(spec, 'highlight[1][1]')).toBe('line 9 is outside the code (lines 1..3)');
-    expect(at({ type: 'code', code: 42 }, 'code')).toBe('expected a list, got number 42');
-  });
 });
 
 describe('fromSpec', () => {
@@ -192,7 +185,6 @@ describe('describeSpec', () => {
     expect(describeSpec(valid.git)).toBe('Git history, 4 commits on 2 lines, 1 merge. main at Merge feature. Highlighted: Merge feature.');
     expect(describeSpec(valid.array)).toBe('Array of 5 values: 1, 3, 5, 7 and 9. Highlighted: index 2 (active). Pointers: lo at 0 and hi at 4. Window: indices 0 to 4.');
     expect(describeSpec(valid.table)).toBe('Table, 2 rows × 2 columns. Columns: a and b. 1 highlighted cell.');
-    expect(describeSpec(valid.code)).toBe('python code, 2 lines, highlighted line 2.');
   });
   it('cuts long lists', () => {
     const d = describeSpec({ type: 'array', values: Array.from({ length: 30 }, (_, i) => i) });

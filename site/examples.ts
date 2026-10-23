@@ -18,9 +18,6 @@ export const groups: Group[] = [
     intro: 'Primitives with stable ids. Change the state, render again, and everything that kept its id moves.',
     items: [
       { name: 'Scenes', title: 'Scenes and ids', desc: 'Shapes keyed by id. Shuffle moves them, Add fades one in, Remove fades one out. Colour is a CSS transition.' },
-      { name: 'Morph', title: 'Morphing paths', desc: 'Paths with different point counts are resampled by arc length, then tweened point to point.' },
-      { name: 'Spec', title: 'Diagrams as JSON', desc: 'A DiagramSpec is checked by validateSpec (every reference, every field), drawn by fromSpec and described by describeSpec. Edit it, or break it.' },
-      { name: 'GuessNumber', title: 'Dragging and clicking', desc: 'A draggable handle and a clickable track, driving plain React state.' },
     ],
   },
   {
@@ -29,7 +26,6 @@ export const groups: Group[] = [
     intro: 'Arrays, pointers, maps, lists, trees, graphs and grids. Algorithms are generators; usePlayer turns their frames into a timeline.',
     items: [
       { name: 'BinarySearch', title: 'Binary search', desc: 'Generator frames, a code trace, and pointers that slide.' },
-      { name: 'CodeBlock', title: 'Code in the diagram', desc: 'code.block: numbered lines and a highlight band that slides as you step, joined to the array by an arrow.' },
       { name: 'WhyFast', title: 'Halving', desc: 'Why binary search takes log₂ n steps.' },
       { name: 'BubbleSort', title: 'Keys decide what moves', desc: 'With keys, a swap slides two tiles past each other. Without, the numbers change in place.' },
       { name: 'HashMap', title: 'Hash map', desc: 'Two Sum with a map of values seen. Rows are keyed by the map key, so each entry drops in as its own row.' },

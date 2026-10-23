@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Api } from './Api';
 import { Examples, Home } from './Pages';
 import { Guide } from './Guide';
-import { ExamplesD3 } from './D3Examples';
 import { useRoute } from './router';
 
 function ThemeToggle() {
@@ -27,7 +26,6 @@ export function App() {
           <a className="logo" href="#/">dsviz</a>
           <nav>
             <a href="#/examples" aria-current={page === 'examples'}>Examples</a>
-            <a href="#/examples-d3" aria-current={page === 'examples-d3'}>Examples (d3)</a>
             <a href="#/guide" aria-current={page === 'guide'}>Guide</a>
             <a href="#/api" aria-current={page === 'api'}>API</a>
             <a href="https://github.com/JesseWilliamson/DiagramBuilder" target="_blank" rel="noreferrer">GitHub</a>
@@ -36,7 +34,7 @@ export function App() {
         </div>
       </header>
       <main>
-        {page === 'examples' ? <Examples /> : page === 'examples-d3' ? <ExamplesD3 /> : page === 'guide' ? <Guide /> : page === 'api' ? <Api /> : <Home />}
+        {page === 'examples' ? <Examples /> : page === 'guide' ? <Guide /> : page === 'api' ? <Api /> : <Home />}
       </main>
       <footer className="foot">dsviz · interactive SVG diagrams for teaching · MIT</footer>
     </>

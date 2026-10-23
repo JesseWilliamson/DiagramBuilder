@@ -22,12 +22,11 @@
  *
  * Coordinates are optional everywhere: nodes without x/y are placed by the
  * layered layout (graph, architecture, class, state) or by the family's own
- * layout (sequence, git, array, table, code).
+ * layout (sequence, git, array, table).
  */
 import { combine, estimateTextWidth, Scene, Tone } from './scene';
 import { array, graph as dsGraph, grid, pointer } from './ds';
 import { gitLanes, graph as gitGraph } from './git';
-import { block } from './code';
 import { classDiagram, sequence, stateMachine } from './uml';
 import type { RelationKind } from './uml';
 import { architecture } from './sys';
@@ -115,20 +114,9 @@ export interface TableSpec extends SpecBase {
   tones?: { row: number; col: number; tone: SpecTone }[];
 }
 
-export interface CodeSpec extends SpecBase {
-  type: 'code';
-  /** The source, as one string with line breaks or as a list of lines. */
-  code: string | string[];
-  /** 1-based inclusive line ranges. */
-  highlight?: [number, number][];
-  numbers?: boolean;
-  start?: number;
-  language?: string;
-}
-
-export type DiagramSpec = SequenceSpec | ClassSpec | StateSpec | ArchitectureSpec | GraphSpec | GitSpec | ArraySpec | TableSpec | CodeSpec;
+export type DiagramSpec = SequenceSpec | ClassSpec | StateSpec | ArchitectureSpec | GraphSpec | GitSpec | ArraySpec | TableSpec;
 export type DiagramType = DiagramSpec['type'];
-export const DIAGRAM_TYPES: readonly DiagramType[] = ['sequence', 'class', 'state', 'architecture', 'graph', 'git', 'array', 'table', 'code'];
+export const DIAGRAM_TYPES: readonly DiagramType[] = ['sequence', 'class', 'state', 'architecture', 'graph', 'git', 'array', 'table'];
 
 export interface SpecError {
   /** Where: `messages[3].to`, or '' for the spec itself. */
@@ -428,20 +416,6 @@ const validators: Record<DiagramType, (c: Checker, s: Obj) => void> = {
     });
   },
 
-  code(c, s) {
-    c.object(s, '', {
-      type: () => {}, title: c.str(),
-      code: (v, p) => (typeof v === 'string' ? (v.length > 20000 ? c.fail(p, 'is longer than 20000 characters') : undefined) : c.list(c.str({ empty: true }))(v, p)),
-      highlight: c.list(c.pair(c.num({ int: true, min: 1 }))), numbers: c.bool(), start: c.num({ int: true }), language: c.str(),
-    }, ['code']);
-    const lines = typeof s.code === 'string' ? s.code.replace(/\n$/, '').split('\n').length : Array.isArray(s.code) ? s.code.length : 0;
-    const start = typeof s.start === 'number' ? s.start : 1;
-    if (Array.isArray(s.highlight)) s.highlight.forEach((r, i) => {
-      if (!Array.isArray(r) || typeof r[0] !== 'number' || typeof r[1] !== 'number') return;
-      if (r[1] < r[0]) c.fail(`highlight[${i}]`, `must be [from, to] with from ≤ to, got [${r[0]}, ${r[1]}]`);
-      for (const [k, v] of r.entries()) if (v < start || v > start + lines - 1) c.fail(`highlight[${i}][${k}]`, `line ${v} is outside the code (lines ${start}..${start + lines - 1})`);
-    });
-  },
 };
 
 /** x and y come together: one without the other is almost certainly a mistake. */
@@ -553,8 +527,6 @@ export function fromSpec(spec: DiagramSpec | unknown, o: FromSpecOptions = {}): 
         id, cellWidth, cellHeight: 40, colLabels: s.columns, rowLabels: s.rowLabels, tones: (r, c) => tones.get(`${r},${c}`),
       });
     }
-    case 'code':
-      return block(s.code, { id, highlight: s.highlight, numbers: s.numbers, start: s.start, language: s.language });
   }
 }
 
@@ -626,11 +598,6 @@ export function describeSpec(s: DiagramSpec): string {
     case 'table': {
       const cols = Math.max(...s.rows.map((r) => r.length));
       return `${named(s, 'Table')}, ${plural(s.rows.length, 'row')} × ${plural(cols, 'column')}${s.columns?.length ? `. Columns: ${listing(s.columns.map(String))}` : ''}${s.tones?.length ? `. ${plural(s.tones.length, 'highlighted cell')}` : ''}.`;
-    }
-    case 'code': {
-      const lines = typeof s.code === 'string' ? s.code.replace(/\n$/, '').split('\n').length : s.code.length;
-      const hl = (s.highlight ?? []).map(([a, b]) => (a === b ? `${a}` : `${a}–${b}`));
-      return `${named(s, s.language ? `${s.language} code` : 'Code')}, ${plural(lines, 'line')}${hl.length ? `, highlighted line${hl.length > 1 || hl[0].includes('–') ? 's' : ''} ${listing(hl)}` : ''}.`;
     }
   }
 }

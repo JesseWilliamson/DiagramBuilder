@@ -122,8 +122,3 @@ ol.exercises { padding-left: 20px; display: grid; gap: 8px; }
 .spec-errors { margin: 0; padding-left: 18px; font-size: 13px; color: #c43939; }
 .spec-errors code { color: inherit; font-weight: 600; }
 
-/* examples-d3 */
-.d3-setup { padding: 8px 0 12px; border-bottom: 1px solid var(--line); }
-.d3-setup ol { margin: 0 0 8px; padding-left: 20px; }
-.d3-setup .row button { all: unset; cursor: pointer; font: 500 13px var(--font); color: var(--sub); padding: 3px 11px; border: 1px solid var(--line); border-radius: 5px; background: var(--bg); }
-.d3-setup .row button:hover { color: var(--ink); }

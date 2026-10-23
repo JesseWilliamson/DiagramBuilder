@@ -44,7 +44,8 @@ const CSS = /* css */ `
 ${TONES.map((t) => `.fig .tone-${t} { --c:var(--${t}); --cf:var(--${t}-fill); --co:var(--${t}-outline); }`).join('\n')}
 
 .fig svg { display: block; max-width: 100%; height: auto; overflow: visible; touch-action: manipulation; }
-.fig svg text { fill: var(--fg); font-size: 14px; font-weight: 500; pointer-events: none; user-select: none; font-variant-numeric: tabular-nums; }
+.fig svg { font-size: 14px; } /* inherited, so a font-size attribute on a <text> still wins */
+.fig svg text { fill: var(--fg); font-weight: 500; pointer-events: none; user-select: none; font-variant-numeric: tabular-nums; }
 .fig svg text.mono { font-family: var(--mono); font-weight: 600; }
 .fig svg text.math { font-family: var(--math); font-weight: 400; paint-order: stroke; stroke: var(--halo); stroke-width: 4px; stroke-linejoin: round; }
 .fig svg text.muted { fill: var(--muted); }
@@ -161,6 +162,8 @@ function markers(svg, prefix = 'm') {
 const cls = (...parts) => parts.filter(Boolean).join(' ');
 const tone = (t) => (t ? `tone-${t}` : '');
 // tr(selection, ms) = selection.transition() with this kit's timing. Use it as kit.tr(sel).attr(...).
+// A second unnamed transition on the same element cancels the first: put every attribute and
+// style you want to animate in ONE transition (or give them names: sel.transition('fade')).
 // (Don't pass a shared d3.transition() object to selection.transition(t): d3 looks the
 // transition up on an ancestor element, which fails while the figure isn't in the page yet.)
 const tr = (selection, ms = 450) => selection.transition().duration(ms).ease(d3.easeCubicInOut);
@@ -344,7 +347,7 @@ function transport(p) {
   const next = button('▶|', () => (p.pause(), p.next()));
   const scrub = el('input', { type: 'range', min: 0, step: 1, value: 0, 'aria-label': 'Step' });
   const count = el('span', { class: 'count' });
-  scrub.addEventListener('input', () => (p.pause(), p.set(+scrub.value)));
+  scrub.addEventListener('input', () => { const v = +scrub.value; p.pause(); p.set(v); }); // read first: pause() re-syncs the scrubber
   const sync = () => {
     const last = p.frames.length - 1;
     scrub.max = last; scrub.value = p.index;

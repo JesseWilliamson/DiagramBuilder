@@ -33,11 +33,6 @@ it draws are unchanged.
   - `component`: provided (lollipop) and required (socket) interfaces, ports, nesting;
     assembly, dependency, delegate connections.
   - `deployment`: nodes with top and right faces, nesting, artifacts, communication and deploy links.
-  - `objectDiagram`: `name : Class` instances with slots; shares ids and box sizes with `classDiagram`,
-    so the two views morph.
-  - `packageDiagram`: tabbed packages nested to any depth; import, access, merge, dependency.
-  - `communication`: the sequence diagram as a graph, with Dewey-numbered messages from `parent`;
-    `Message.parent` is new and ignored by `sequence`. `deweyNumbers()`.
   - `er`: entity-relationship diagrams in crow's-foot or Chen notation; keys, nullable attributes, weak
     entities.
   - `stickFigure` (the actor) is exported for hand-built scenes.
@@ -46,7 +41,7 @@ it draws are unchanged.
   each with its source. `npx @dsviz/cli add <name>` copies one into an app, shadcn style. `npm run registry`
   regenerates the index.
 - **Claude skill** rewritten for the package split, the new UML diagrams, with recipes for
-  a step-through activity diagram, class-to-object morphing, and communication
+  a step-through activity diagram
   plus sequence from one message list.
 
 ### Changed

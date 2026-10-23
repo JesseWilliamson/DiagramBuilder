@@ -246,22 +246,19 @@ you can connect and hit-test. Boxes without x/y are placed by `layered`.
 Shared options on the box-and-line diagrams: `id?`, `interactive?` (clicks report `e.node.data`),
 `draggable?`, `dim?: ReadonlySet<string>` (ids to fade), `rankGap?`, `nodeGap?`, `route?: 'elbow' / 'straight'`.
 
-### Sequence, communication, state, class, object
+### Sequence, state, class
 
 | Export | Signature and options | Returns |
 |---|---|---|
 | `sequence` | `sequence(participants: { id, label, kind?: 'object' / 'actor' }[], messages: { from, to, label, kind?: 'call' / 'return' / 'async', tone?, parent? }[], { id? = 'seq', upTo?, gap? = 150, row? = 44, numbered?, tone?, fragments?, notes?, activations? = true, highlight? = true })` | `x(participantId)`, `rowY(i)` |
 | `activations` | `activations(messages, fragments?): { participant, depth, start, end }[]`, the bars, from the call stack | |
-| `communication` | `communication(participants: CommunicationParticipant[] (Participant + x?, y?, tone?), messages: Message[], { id?, upTo?, numbered? = true, numbering?: 'flat' (1, 2, 3…, default) / 'dewey' (1, 1.1, 1.2… from `parent`), maxLabel? = 22, tone?, highlight?, ring?, radius?, interactive?, draggable?, dim?, rankGap?, nodeGap? })`; `ring: true` puts the heads on a circle in conversation order (`conversationOrder(participants, messages)`), each message an 18px arrow riding its link (`MESSAGE_ROW` holds the spacing) | `box(id)`, `numbers: string[]` |
-| `deweyNumbers`, `linkKey` | `deweyNumbers(messages): string[]` (`'1'`, `'1.1'`, `'2'`…); `linkKey(participants, a, b): string` (one key per pair, either direction) | |
 | `stateMachine` | `stateMachine(states: { id, label?, x?, y?, kind?: 'state' / 'initial' / 'final' / 'choice', tone? }[], transitions: { from, to, label?, bend? }[], { id? = 'fsm', current?, fired?, interactive?, draggable?, direction?: 'down' / 'right', rankGap?, nodeGap? })` | `frame(id)` |
 | `classDiagram` | `classDiagram(classes: { id, name, x?, y?, stereotype?, abstract?, attributes?: string[], methods?: string[], tone?, width? }[], relations: { from, to, kind, label?, fromLabel?, toLabel?, tone? }[], { id? = 'uml', collapsed?, interactive?, draggable?, route?, dim?, rankGap?, nodeGap? })`; `kind`: `inherits implements composition aggregation association dependency` | `box(id)` |
-| `objectDiagram` | `objectDiagram(objects: { id, name?, class?, anonymous?, slots?: Record<string, string / number / boolean>, x?, y?, tone?, width? }[], links: { from, to, fromRole?, toRole?, label?, tone? }[], { id?, collapsed?, interactive?, draggable?, route?, dim?, rankGap?, nodeGap? })`; title `name : Class` underlined; same `id` as the class morphs | `box(id)` |
 
 Sequence `fragments`: `{ kind: 'loop' / 'alt' / 'opt' / string, label?, from, to (message indices), over?: [a, b], sections?: { label, from, to }[] }[]`.
 Sequence `notes`: `{ over: id / [a, b], text, at, tone? }[]`, a note takes its own row before message `at`.
 
-### Use case, activity, component, deployment, package, ER
+### Use case, activity, component, deployment, ER
 
 | Export | Signature and options | Returns |
 |---|---|---|
@@ -269,7 +266,6 @@ Sequence `notes`: `{ over: id / [a, b], text, at, tone? }[]`, a note takes its o
 | `activity` | `activity(nodes: { id, kind?: ActivityKind, label?, lane?, x?, y?, tone? }[], flows: { from, to, guard?, tone? }[], { id?, swimlanes?: { id, name, tone? }[], direction?: 'down' / 'right', current?: string / Set<string>, taken?: number / Set<number>, interactive?, draggable?, rankGap?, nodeGap? })`; `ActivityKind`: `action decision merge fork join start end flowFinal` | `frame(id)`, `box(id)`, `frames`, `lanes` |
 | `component` | `component(components: { id, name, x?, y?, stereotype?, provides?, requires?: (string / { name, side? })[], ports?: { id, name?, side?, at?, x?, y? }[], parent?, tone?, width? }[], connections: { from, to, kind: 'assembly' / 'dependency' / 'delegate', interface?, label?, tone? }[], { id?, direction?: 'right' / 'down', interactive?, draggable?, dim?, route?, rankGap?, nodeGap? })`; `from` / `to` may be a component or port id; assembly goes requirer to provider (the plug is drawn halfway between the boxes); a delegate with `interface` points at that lollipop; `COMPONENT` holds the sizes, `componentSize(c)` a box's | `frame(id)`, `box(id)`, `frames` |
 | `deployment` | `deployment(nodes: { id, name, stereotype?, parent?, x?, y?, tone? }[], artifacts: { id, name, node, tone? }[], links: { from, to, kind?: 'communication' / 'deploy', protocol?, label?, tone? }[], { id?, interactive?, draggable?, route?, direction?: 'right' / 'down', rankGap?, nodeGap? })`; `x`/`y` is the centre of the front face; `DEPLOY`, `NODE_DEPTH` hold the sizes, `headHeight(node)` the title band | `box(id)` |
-| `packageDiagram` | `packageDiagram(packages: { id, name, children?, x?, y?, tone? }[], relations: { from, to, kind: 'import' / 'access' / 'merge' / 'dependency', label?, tone? }[], { id?, interactive?, draggable?, route?, dim?, direction?: 'down' / 'right', rankGap?, nodeGap? })` | `box(id)` (the body, not the tab); `packageOutline(l, t, w, h, tabW)` the folder points |
 | `er` | `er(entities: { id, name, x?, y?, attributes?: { name, type?, key?: 'primary' / 'foreign', nullable? }[], weak?, tone?, width? }[], relationships: { id?, from, to, fromCard?, toCard?, label?, identifying?, tone? }[], { id?, collapsed?, interactive?, draggable?, dim?, rankGap?, nodeGap? })`; crow's foot, `Cardinality`: `one many zero-one zero-many one-many` | `box(id)`, `relationshipIds` |
 
 ### Parts and tables
@@ -278,17 +274,17 @@ Sequence `notes`: `{ over: id / [a, b], text, at, tone? }[]`, a note takes its o
 |---|---|
 | `stickFigure`, `figureFrame`, `FIGURE` | the actor figure on its own: `stickFigure({ id, x, y, name?, tone?, opacity?, interactive?, draggable?, data? })`, its `Frame`, its size |
 | `RELATION_STYLE`, `USE_CASE_STYLE`, `PACKAGE_RELATION` | relation kind to line style and end markers, as data |
-| `classSize`, `objectSize`, `objectTitle`, `slotLines`, `erSize`, `erPort`, `ER_HEAD`, `MARKER_LENGTH`, `caseSize`, `activitySize`, `flowRoute`, `stateFrame`, `headSize`, `participantHead`, `cardinalityMarker`, `relationshipIds`, `ellipsePoints`, `NODE_DEPTH`, `TAB_H` | sizing and drawing helpers the layouts share; useful when you hand-build a box in the same style |
+| `classSize`, `erSize`, `erPort`, `ER_HEAD`, `MARKER_LENGTH`, `caseSize`, `activitySize`, `flowRoute`, `stateFrame`, `headSize`, `participantHead`, `cardinalityMarker`, `relationshipIds`, `ellipsePoints`, `NODE_DEPTH`, `TAB_H` | sizing and drawing helpers the layouts share; useful when you hand-build a box in the same style |
 
 Types: `Participant`, `Message`, `Note`, `Activation`, `Fragment`, `FragmentSection`, `SequenceOptions`,
-`SequenceDiagram`, `HeadOptions`, `CommunicationParticipant`, `CommunicationOptions`, `CommunicationDiagram`,
+`SequenceDiagram`, `HeadOptions`,
 `UmlState`, `Transition`, `StateMachineOptions`, `StateMachine`, `UmlClass`, `Relation`, `RelationKind`,
-`ClassDiagramOptions`, `ClassDiagram`, `UmlObject`, `ObjectLink`, `SlotValue`, `ObjectDiagramOptions`,
-`ObjectDiagram`, `UseCaseActor`, `UseCaseOval`, `UseCaseRelation`, `UseCaseRelationKind`, `UseCaseOptions`,
+`ClassDiagramOptions`, `ClassDiagram`,
+`UseCaseActor`, `UseCaseOval`, `UseCaseRelation`, `UseCaseRelationKind`, `UseCaseOptions`,
 `UseCaseDiagram`, `ActivityKind`, `ActivityNode`, `ActivityFlow`, `Swimlane`, `ActivityOptions`, `ActivityDiagram`,
 `Side`, `UmlInterface`, `UmlPort`, `UmlComponent`, `Connection`, `ConnectionKind`, `ComponentOptions`,
-`ComponentDiagram`, `DeployNode`, `Artifact`, `DeployLink`, `DeploymentOptions`, `Deployment`, `UmlPackage`,
-`PackageRelation`, `PackageRelationKind`, `PackageDiagramOptions`, `PackageDiagram`, `ErAttribute`, `ErEntity`,
+`ComponentDiagram`, `DeployNode`, `Artifact`, `DeployLink`, `DeploymentOptions`, `Deployment`,
+`ErAttribute`, `ErEntity`,
 `Cardinality`, `ErRelationship`, `ErOptions`, `ErDiagram`, `StickFigureOptions`.
 
 Sequence behaviour in detail (returns, self-calls, alt branches, note rows): SKILL.md "Sequence diagrams".

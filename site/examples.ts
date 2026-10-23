@@ -97,12 +97,9 @@ export const groups: Group[] = [
       { name: 'TrustZones', title: 'Trust boundaries', desc: 'Zones around machines and a sandbox. Step a job across and see which files may cross.' },
       { name: 'GitGraph', title: 'Merge versus rebase', desc: 'graph from @dsviz/git: lanes by first parent, curved edges, branch pills. Commits are keyed by hash, so the switch animates.' },
       { name: 'Polling', title: 'Polling in a loop', desc: 'A sequence diagram with a loop fragment that grows as the polls come back.' },
-      // uml: deployment, object, package
+      // uml: deployment
       { name: 'Deployment', title: 'Deployment diagram', desc: 'Machines (3D nodes) with a nested runtime and the files it hosts, joined by «protocol» lines. Add a second server and a load balancer: the nodes slide over. Click one to read what it runs.' },
-      { name: 'ObjectDiagram', title: 'Class view and object view', desc: 'The same ids drawn as classes or as live objects (name : Class, slots). Switch and the boxes morph.' },
-      { name: 'PackageDiagram', title: 'Package diagram', desc: 'Folders nested to any depth, relations routed in lanes between the rows. Click a package to see what it imports; flatten to see the leaves as a plain dependency graph.' },
-      // communication, er
-      { name: 'Communication', title: 'Communication diagram', desc: 'The login beside its sequence diagram, from one message list and one player: a ring of participants, one link per pair, and each message a small arrow riding its link with a Dewey number (1, 1.1, 1.1.1).' },
+      // er
       { name: 'Er', title: 'Entity–relationship', desc: "A shop schema in crow's-foot notation. Click an entity to read its relationships as sentences; the switch hides the attributes." },
       // uml: use case, activity, component
       { name: 'UseCase', title: 'Use case diagram', desc: 'A web shop: actors, ovals, «include» and «extend», cases ordered by who uses them. Click an actor to see their reach; toggle the system boundary.' },

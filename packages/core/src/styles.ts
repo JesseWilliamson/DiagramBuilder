@@ -241,7 +241,7 @@ ${TONES.map(toneVars).join('\n')}
 .dv-path.dv-role-note { fill: var(--dv-cf, var(--dv-band)); stroke: var(--dv-co, var(--dv-active-outline)); stroke-width: 1.5px; }
 .dv-text.dv-role-note-text { font-weight: 500; }
 
-/* uml: deployment, object, package */
+/* uml: deployment */
 /* deployment: a node's top and right faces are its fill shaded toward ink; artifacts are small tinted tiles with a folded-page icon */
 .dv-path:is(.dv-role-node-face-top, .dv-role-node-face-side) { stroke: var(--dv-co, var(--dv-outline)); stroke-width: 2px; stroke-linejoin: round; }
 .dv-path.dv-role-node-face-top { fill: color-mix(in srgb, var(--dv-fg) 10%, color-mix(in srgb, var(--dv-cf, var(--dv-surface)) 55%, var(--dv-surface))); }
@@ -250,20 +250,10 @@ ${TONES.map(toneVars).join('\n')}
 .dv-path.dv-role-artifact-icon { fill: var(--dv-surface); stroke: var(--dv-stroke); stroke-width: 1.5px; stroke-linejoin: round; pointer-events: none; }
 .dv-path.dv-role-artifact-icon-fold { fill: none; stroke: var(--dv-stroke); stroke-width: 1.5px; stroke-linejoin: round; pointer-events: none; }
 .dv-text.dv-role-artifact-name { font-family: var(--dv-mono); font-weight: 500; }
-/* object diagrams reuse the class card; the underline is what says "instance" */
-.dv-path.dv-role-object-name-underline { fill: none; stroke: var(--dv-fg); stroke-width: 1.5px; pointer-events: none; }
-.dv-text.dv-role-link-role { fill: var(--dv-muted); font-family: var(--dv-mono); font-weight: 500; paint-order: stroke; stroke: var(--dv-halo); stroke-width: 4px; stroke-linejoin: round; }
-.dv-text.dv-role-link-role${anyTone} { fill: var(--dv-c); }
-/* packages: a body with a tab, outlined like the cards */
-/* packages: one folder outline (tab + body), filled and outlined like the cards; relation labels are stereotypes with a halo */
-.dv-path.dv-role-package { fill: color-mix(in srgb, var(--dv-cf, var(--dv-surface)) 55%, var(--dv-surface)); stroke: var(--dv-co, var(--dv-outline)); stroke-width: 2px; stroke-linejoin: round; }
-.dv-text.dv-role-package-name { font-weight: 600; }
-.dv-text.dv-role-package-rel-label { fill: var(--dv-muted); font-style: italic; font-weight: 500; paint-order: stroke; stroke: var(--dv-halo); stroke-width: 4px; stroke-linejoin: round; pointer-events: none; }
-.dv-text.dv-role-package-rel-label${anyTone} { fill: var(--dv-c); }
-.dv-text:is(.dv-role-node-name, .dv-role-object-name) { font-weight: 700; }
-:is(.dv-rect.dv-role-artifact, .dv-path.dv-role-package).dv-interactive:hover { filter: brightness(.97); }
+.dv-text.dv-role-node-name { font-weight: 700; }
+.dv-rect.dv-role-artifact.dv-interactive:hover { filter: brightness(.97); }
 
-/* uml: communication, er */
+/* uml: er */
 /* er: the name sits in a shaded header band; rows are name 12 / type 11 mono; markers are 12px of ink at the box edge */
 .dv-path.dv-role-er-head { fill: color-mix(in srgb, var(--dv-fg) 5.5%, transparent); stroke: none; pointer-events: none; }
 .dv-path.dv-role-er-head${anyTone} { fill: color-mix(in srgb, var(--dv-c) 14%, transparent); }

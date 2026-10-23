@@ -1,7 +1,7 @@
 {
   "name": "@figurae/uml",
   "version": "3.0.0",
-  "description": "UML diagrams: class, sequence and state machine",
+  "description": "UML diagrams: class, object, package, sequence, communication, state machine, activity, use case, component, deployment, and ER",
   "author": "Jesse Williamson",
   "homepage": "https://jessewilliamson.github.io/DiagramBuilder/",
   "type": "module",

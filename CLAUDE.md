@@ -1,128 +1,104 @@
-# dsviz — handoff notes for Claude Code
+# figurae — handoff notes for Claude Code
 
-dsviz is a small SVG library for interactive, animated teaching diagrams. It started as a chat with
-Claude on claude.ai and is moving into the **getbetter** app (a LeetCode-style practice site with
-editorials and courses). These notes say where things stand and what's planned next.
+figurae (working name; was dsviz) is a small library of interactive, animated SVG teaching diagrams for
+computer science: data structures and algorithms, UML, system architecture, git, plots, probability, geometry,
+operating systems. Maths and sciences come later. It is used by the **getbetter** app (a LeetCode-style
+practice site with editorials and courses). These notes say where things stand and what is planned next.
 
 ## Read first
 
-1. `docs/user-messages.md`: Jesse's messages from the original session, verbatim. Message 4 is the
-   original brief and message 5 explains the screenshots. If anything below disagrees with his words,
-   his words win.
-   **Latest direction (Claude Code session):** "Don't literally give me Brilliant, I just want a library
-   for the diagrams (like Diagramatics) so I can use them in another project." So: dsviz is a diagram
-   library, installable into another app; the site is a docs + examples gallery, not a learning app.
-   The diagram look stays clean-textbook (ink lines, flat palette, light grids); light by default, dark
-   variant. An earlier round cloned Brilliant's whole UI (courses, lesson player, 3D buttons); that was
-   removed.
-2. `docs/getbetter-screens/*.png`: the site this goes into, and the diagrams to replace first.
+1. `docs/user-messages.md`: Jesse's messages from the original session, verbatim. If anything below disagrees
+   with his words, his words win.
+2. `docs/plan-v3.md`: the current plan (strip, split into packages, Radix + shadcn structure, UML). Everything
+   in it is done except where "Still to do" below says otherwise.
+3. `docs/getbetter-screens/*.png`: the site this goes into, and the control style to match.
 
-You have npm here, which the original session didn't. Install what the plan needs (shadcn/Radix,
-Motion, a real bundler) instead of hand-rolling substitutes.
+Models: Brilliant's internal diagram tool and Diagramatics (https://diagramatics.photon-ray.xyz/examples/):
+clean textbook figures (ink lines, flat palette, light grids), light by default with a dark variant, quiet
+interaction. No 3D buttons, no lesson UI: this is a diagram library plus a docs/examples site.
 
 ## Working with the owner
 
-- Jesse wants to **learn**, not just receive code. Explain design decisions, point out the
-  interesting idea in each change, and leave room for him to implement parts himself when he asks.
+- Jesse wants to **learn**, not just receive code. Explain design decisions, point out the interesting idea in
+  each change, and leave room for him to implement parts himself when he asks.
 - Prefers direct, plain explanations.
+- He asked for the restructure to be done by "cheaper agents" from a detailed plan; the plan and the
+  verification (typecheck, tests, build, a browser check of every example) are the owner session's job.
 
-## What exists now
+## Three layers (Radix → families → shadcn)
 
-- `src/` — framework-free core, no runtime dependencies:
-  - `scene.ts` primitives `rect`, `circle`, `text`, `arrow`, `path` (`dots: true` draws a dot per point, for vertices that must follow a morph); `combine` (takes nested lists of parts),
-    `translate`, `namespace`, `bounds`. `path.ts`: path data, Catmull-Rom smoothing, arc-length `resample`.
-  - `render.ts` `createView` (keyed reconciler + tween engine, `setViewBox`; each element carries its scene id as `data-id`), `describe.ts`, `static.ts` (`toSVG`),
-    `player.ts`, `handle.ts` (draggable dot + big invisible hit target, optional pulse `hint`), `fx.ts` (`burst`).
-  - `camera.ts`: `fitViewBox(parts)` and `nextCamera` (the `'grow'` auto camera: grow on overflow, shrink only below
-    50% fill). Policy: plots/draggables fixed; step-throughs `fitViewBox(player.frames.map(draw))`; camera frozen while
-    dragging. `mathtext.ts`: TeX-lite (`a^2`, `x_{i}`, `\cap`, `\text{}`) used for `role: 'math'` text and `<MathText>`.
-  - Draggable nodes get `tabindex=0`; arrow keys emit the normal drag events from a virtual pointer (`e.keyboard`).
-  - `styles.ts`: ONE theme (merged from the old flat + tactile looks, per Jesse): white canvas, 1.5px ink lines and
-    arrows, #e5e5e5 grids, thick blue curves, maths in STIX. Solid shapes (cells, nodes, UML cards, sys components) are
-    COLOURED: flat palette fill, 2px outline in a darker shade of it (`--dv-outline`, `--dv-<tone>-outline`; the
-    OUTLINES block). No lips/3D (removed at Jesse's request). Interaction feedback is quiet (hover brightens;
-    `dv-grabbed` adds a soft shadow; no press/lift motion). Controls are flat and quiet, except the slider: 8px track with dot notches.
-    `--dv-*` variables on `.dv-root` / `.dvc`; dark via `[data-theme="dark"]` or `.dark` (or the OS setting).
-    Roles (`grid`, `axis`, `curve`, `area`, `region`, `bar`, `guide`, `glow`, `handle`, `hit`, `math`…) decide looks.
-  - Families: `ds/` (array, pointer, hashMap (maps and sets, rows keyed by key), linkedList, binaryTree, graph, grid,
-    stack, queue — also exported top-level),
-    `plot/` (plane, axes, fn, point, segment, vector, tangent, area, riemann, integrate, label),
-    `prob/` (bars, sampleSpace, diePips, probTree, venn2 + vennRegions/vennAreas/vennRegionAt),
-    `geom/` (polygon, segment, tickMarks, angleMark, circle, pointLabel + intersection/centre helpers),
-    `sched/` (simulate: fcfs/sjf/srtf/rr/priority; gantt, whose segments may set their own lane/label/tone, so it is
-    a general timeline), `mem/` (stackHeap, memory, hex). `grid` takes `cellWidth`/`cellHeight` for tables of words.
-    `uml/` (classDiagram + RELATION_STYLE, sequence + activations() + `fragments` (loop/alt/opt boxes), stateMachine),
-    `sys/` (architecture with component kinds client/user/lb/gateway/service/cache/db/queue/cdn/storage/file → role
-    `sys-<kind>`, `zones` (dashed boundaries around groups, nested inside-out), links with `via` waypoints, packet, along()).
-    Both use core `connector.ts` (line + end markers 'arrow'|'open'|'triangle'|'diamond'|'diamond-filled', straight /
-    elbow / via routes, rectEdge).
-    `git/` (`git.graph`: commit graphs, lanes by first-parent inheritance like GitGoose's layout; `gitLanes`),
-    `code/` (`code.block`: numbered, highlighted code inside a scene),
-    `layout/` (`layered`: Sugiyama-lite DAG layout used by `graph({ layout: 'layered' })`, sys, class and state
-    diagrams for nodes without x/y; `tidy`: Reingold–Tilford, used by `tree()` and `binaryTree({ layout: 'tidy' })`).
-    `graph` nodes take `shape: 'rect'` and `kind` → role `node-<kind>` (changed/upstream/downstream/test styled).
-    `uml.sequence` has notes, alt `sections`, per-message tone, `activations: false`.
-    Non-ds families are namespaces: `import { plot, prob, geom, sched, mem, uml, sys, git, code, layout } from 'dsviz'`.
-  - `spec.ts`: `DiagramSpec` (JSON, discriminated on `type`), `validateSpec` (path-precise errors, strict about unknown
-    fields), `fromSpec`, `describeSpec` (alt text). This is what GitGoose's models emit and GitGoose verifies.
-  - Renderer crossfades text whose words change (a ghost of the old text fades out). `toSVG({ theme })`.
-- `src/react/` — `<Diagram>` (natural size by default: 1 scene unit = 1 CSS px, shrinks on narrow screens; `scale`,
-  `size="fill"`, fixed `viewBox`, `duration`, `ease`), `usePlayer` (`start: 'end'`), `useTicker`, `useBurst`, and small
-  neutral controls on Radix: `Slider`, `Segmented`, `Select`, `Switch`, `NumberStepper`, `Button`, `TextInput`,
-  `Transport` (`<Transport player={player} />`), `CodeTrace`, `MathText`.
-- `site/` — docs site (Vite + React, hash routes): home (`#/`, intro + live featured examples + usage), examples
-  (`#/examples`: 36 examples grouped by family, each the live diagram beside its editable source), guide
-  (`#/guide`), API (`#/api`). Every `site/demos/*.tsx` is a real module importing from `dsviz` / `dsviz/react`;
-  `site/live/useLive.tsx` + sucrase `compile.ts` + CodeMirror make the source editable in the page.
-- Install in another project: `npm install dsviz`. Published to npm by `.github/workflows/publish.yml` when a GitHub
-  release is published (tag `v<version>`, matching package.json), authenticated by npm Trusted Publishing (OIDC: no
-  npm token stored anywhere; the first version is published by hand, since npm only trusts publishers of existing packages). The repository is
-  private, so a git dependency cannot be fetched by anyone else's CI: that is why it is published.
-  `build.mjs` emits one ES module per source file (not a bundle) and rewrites relative imports to `.js`, so apps can
-  tree-shake it: a bundle's namespace objects (`plot`, `sys`…) kept every function alive (a lesson drawing one array
-  went from 79 KB to 34 KB).
-- `tests/` — vitest for path maths and every family's maths (`npm test`); `render.test.ts` runs in happy-dom
-  (dev dependency) for the renderer and React controls.
-- `.claude/skills/dsviz/` — the Claude skill for USING dsviz (SKILL.md + references/api.md, spec.md, recipes.md).
-  Shipped in the npm package; `npm run sync:skill -- <repo>` / `npx dsviz-sync-skill <repo>` copies it elsewhere
-  (GitGoose syncs it; never edit a copy). Keep references/api.md in step with the exports.
-- Scripts: `npm run dev` (site), `npm run build` (library → `dist/`), `npm run build:site` (→ `site-dist/`),
-  `npm run typecheck`. `.github/workflows/pages.yml` deploys the site to GitHub Pages on push to main.
+1. **Primitives, headless (`@figurae/core`).** `rect`, `circle`, `text`, `arrow`, `path`, `combine`,
+   `translate`, `namespace`, `bounds`; `createView` (keyed reconciler + tween engine: things that keep their
+   id move, new ids fade in, missing ids fade out; a single rAF loop; text crossfade; paths with different
+   point counts are resampled by arc length); `fitViewBox`/`nextCamera`; `createPlayer`; `handle` (draggable
+   dot with a big hit target, optional pulse hint); `connector` (line + end markers, straight/elbow/via
+   routes, `rectEdge`); `snapFrame`/`snapGuides` (grid + centre/edge alignment with guide lines); `toSVG`;
+   `describe`; TeX-lite `mathtext`; `styles.ts` (the one theme, `--dv-*` variables, dark via
+   `[data-theme="dark"]`/`.dark`/OS). Parts carry a semantic `role`; the stylesheet decides looks.
+   **Layouts never know about styling.** Drag handles pointer, touch (non-passive touchstart on draggables,
+   pointer capture) and keyboard (arrow keys emit the same drag events).
+2. **Families: pure `state → Scene` functions, one package each.** They import only `@figurae/core` and
+   `@figurae/layout` (`layered`: Sugiyama-lite DAG layout; `tidy`: Reingold–Tilford) and nothing else:
+   - `@figurae/ds` array, pointer, hashMap, linkedList, binaryTree, tree, graph, grid, stack, queue
+   - `@figurae/plot` plane, axes, fn, point, segment, vector, tangent, area, riemann, integrate, label
+   - `@figurae/prob` bars, sampleSpace, diePips, probTree, venn2 (+ region helpers)
+   - `@figurae/geom` polygon, segment, tickMarks, angleMark, circle, pointLabel (+ intersection/centre helpers)
+   - `@figurae/os` simulate (fcfs/sjf/srtf/rr/priority), gantt; stackHeap, memory, hex
+   - `@figurae/arch` architecture (component kinds, zones, links with waypoints), packet, along
+   - `@figurae/uml` classDiagram, objectDiagram, packageDiagram, sequence, communication, stateMachine,
+     activity (swimlanes, fork/join), useCase, component (lollipop/socket), deployment, er (crow's foot/Chen).
+     All take ids, tones, `interactive`, `draggable`, `x`/`y` optional (layered layout places the rest), and
+     return `box(id): Frame` for snapping. objectDiagram reuses classDiagram's ids so the two views morph;
+     communication shares `Message` with sequence so one list feeds both.
+   - `@figurae/git` graph (lanes by first parent), gitLanes
+   - `@figurae/react` `<Diagram>` (natural size, `viewBox`, `duration`; camera frozen and tween off while
+     dragging), `usePlayer`, `useTicker`, `useBurst`, `useSnap`, controls on Radix (`Slider`, `Segmented`,
+     `Select`, `Switch`, `NumberStepper`, `Button`, `TextInput`, `Transport`), `CodeTrace`, `MathText`.
+   Exports are flat: `import { fn } from '@figurae/plot'`. Two packages may export the same name
+   (`segment`, `circle`); alias on import. No umbrella package, no namespaces (so nothing to tree-shake away).
+3. **Components you copy (`registry/`, `@figurae/cli`).** Every example on the site is a complete component
+   in `registry/<Name>.tsx`; `npx @figurae/cli add binary-search` copies it into an app and prints the
+   `npm install` line. `registry/index.json` is generated by `npm run registry` from `site/examples.ts`
+   (the single list of examples: name, title, desc, group) and checked by `tests/registry.test.ts`. The CLI
+   ships the registry inside its package because the repo is private.
 
-Key design rule worth preserving: **layouts never know about styling**. They emit semantic parts
-(`role: 'value' | 'index' | 'tag' | 'window' …`) and the stylesheet decides how each part looks.
+## Repo
 
-## Done vs. still to do
+- `packages/*` — one package each (above), lockstep version 3.0.0, npm workspaces. Each builds to its own
+  `dist/` (one ES module per file; `build.mjs` builds in dependency order and emits `.d.ts` per package).
+- `site/` — docs site (Vite + React, hash routes): home (`#/`), examples (`#/examples`: 47 components grouped
+  by family, live diagram beside editable source via sucrase + CodeMirror), guide (`#/guide`), API (`#/api`).
+  `site/demos.ts` globs `../registry/*.tsx`. `site/live/compile.ts` maps every `@figurae/*` package for the
+  in-page editor: add a package there when you add one.
+- `tests/` — vitest; maths per family, `render.test.ts` in happy-dom, `snap`, `uml-a/b/c`, `registry`, `cli`.
+- `.claude/skills/figurae/` — the Claude skill for USING the library (SKILL.md + references/api.md,
+  recipes.md). `npm run sync:skill -- <repo>` copies it into another checkout. Keep `references/api.md` in
+  step with the exports. Not shipped on npm.
+- Scripts: `npm run dev`, `npm test`, `npm run typecheck`, `npm run build` (packages), `npm run build:site`,
+  `npm run registry`. `.github/workflows/pages.yml` deploys the site on push to main; `publish.yml`
+  publishes all workspaces on a GitHub release (tag `v<version>`, npm Trusted Publishing; each package
+  needs its own trusted-publisher entry on npm).
+- Verification that counts as done: typecheck clean, `npm test` green, both builds green, and a Playwright
+  pass over `#/examples` (every `.example` has an svg, no `.ex-error`, no console errors; chromium is at
+  `/opt/pw-browsers/chromium-1194/chrome-linux/chrome`, playwright at `/opt/node22/lib/node_modules/playwright`).
 
-Done: everything in "Decisions made in the last round" below, plus the examples site. Wired into getbetter: its
-second course, *Inside getbetter* (`content/course/getbetter/` there), has fifteen figures drawn with dsviz in
-`web/src/components/course/figures/`, sitting in getbetter's own frame and plain-button controls
-(`web/src/components/course/DiagramFrame.tsx`, which also maps `--dv-surface`/fonts onto the app's tokens). The
-library additions that course needed (zones, file kind, link waypoints, sequence fragments, gantt segment
-lane/label/tone, non-square grid cells, toned captions, the unbundled build) are general; the layout ones have tests,
-and TrustZones and Polling on the examples page show them.
-getbetter's problem editorials (`web/src/components/viz/` there, getbetter PR #44) draw a figure per code problem
-with dsviz, most on one shared step-through frame, including the two binary-search diagrams; `hashMap` was added for
-them. 2.2.0 (GitGoose plan 4, phase 6a) added the JSON spec, layered and tidy layouts, git graphs, sequence notes and alt
-sections, code blocks, text crossfade and the skill. Still open: three-set Venn; Walker's spacing fix for tidy trees
-(see the exercises in the guide).
+## Decisions worth keeping
 
-## The getbetter context (screenshots in `docs/getbetter-screens/`)
+- One theme, coloured solid shapes with a darker outline of their own hue, 1.5px ink lines, no lips/3D.
+- Keyed scenes over imperative drawing: the renderer owns animation, interruption, exit, camera. (A d3 rewrite
+  of all examples was tried in Oct 2026 and removed: d3 gives scales/shapes/hierarchy/joins but no scene
+  model, no interaction layer, no controls; animations and touch were worse because every cell had to
+  re-solve what `render.ts` solves once. Use d3 modules as pure maths inside layouts if useful:
+  d3-hierarchy could replace `layout/tidy.ts` and fix its Walker spacing issue.)
+- Removed on purpose: the JSON `DiagramSpec` (GitGoose uses Mermaid now), `code.block` (code inside the
+  figure; `CodeTrace` beside it stays), the Scenes/Morph/GuessNumber/Spec demos.
 
-- `binary-search-editorial-1.png`: editorial with an interactive binary search: a target stepper
-  (− 9 +), a row of small square cells with index numbers and `lo`/`hi` labels under them, a status
-  sentence, a code panel with the current line highlighted, and a transport bar (first / play / next
-  + scrubber with tick marks + "Step 0 / 8"). This is the first diagram to replace with dsviz.
-- `binary-search-editorial-2.png`: "why it is fast": an array-size slider, halving chips
-  (64 32 16 8 4 2 1), and a bar comparison (binary search vs linear scan). Second to replace.
-- `webgl-course-camera.png`: the course layout with a 3D WebGL diagram, sliders and selects in a side
-  panel. Out of scope for now, but it shows the control style to match.
+## Still to do
 
-## Suggested next steps
-
-1. Move this folder into the getbetter repo (e.g. `packages/dsviz` or `src/lib/dsviz`), switch the
-   build to the repo's bundler, and delete `site/` once there are real pages using it.
-2. Collapse to one dark-first theme matched to getbetter's tokens.
-3. Add `path`, then `dsviz/react` (`Diagram`, `usePlayer`), then rebuild the two binary search
-   diagrams from the editorial screenshots as the first real use.
-4. Add the families one at a time, each with one real lesson diagram as its test case.
+- Name: `figurae` is a working name (`@figurae/*` free on npm). Alternatives: `diagrammar`, `slatejs`,
+  `chalkviz`, `sketchline`, `inkscribe`. A rename is one sed.
+- First npm publish of 3.0.0 by hand (Trusted Publishing only trusts existing packages), then the workflow.
+- Known gaps from the UML batch: activity fork/join bars can overlap a node in the same layer; component
+  containers must have all children placed or all free; ER Chen notation draws no attribute ovals; interface
+  labels have no collision check. Three-set Venn. d3-hierarchy for tidy trees.
+- getbetter: move its fifteen course figures and the editorial figures from `dsviz` to `@figurae/*` imports.

@@ -46,7 +46,7 @@ interaction. No 3D buttons, no lesson UI: this is a diagram library plus a docs/
    - `@dsviz/os` simulate (fcfs/sjf/srtf/rr/priority), gantt; stackHeap, memory, hex
    - `@dsviz/arch` architecture (component kinds, zones, links with waypoints), packet, along
    - `@dsviz/uml` classDiagram, objectDiagram, packageDiagram, sequence, communication, stateMachine,
-     activity (swimlanes, fork/join), useCase, component (lollipop/socket), deployment, er (crow's foot/Chen).
+     activity (swimlanes, fork/join), useCase, component (lollipop/socket), deployment, er (crow's foot).
      All take ids, tones, `interactive`, `draggable`, `x`/`y` optional (layered layout places the rest), and
      return `box(id): Frame`. objectDiagram reuses classDiagram's ids so the two views morph;
      communication shares `Message` with sequence so one list feeds both.

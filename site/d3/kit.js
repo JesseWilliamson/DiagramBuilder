@@ -326,7 +326,7 @@ function player(frames, { interval = 800, onFrame, start = 0, invalidation } = {
     set(n) { i = clamp(n, 0, frames.length - 1); listeners.forEach((f) => f(frames[i], i)); },
     next() { api.set(i + 1); },
     prev() { api.set(i - 1); },
-    pause() { clearInterval(timer); timer = null; listeners.forEach((f) => f(frames[i], i)); },
+    pause() { if (timer == null) return; clearInterval(timer); timer = null; listeners.forEach((f) => f(frames[i], i)); }, // only notifies if it was playing: the transport needs the redraw to flip its icon, nothing else does
     play() {
       if (i >= frames.length - 1) i = -1;
       timer = setInterval(() => { if (i >= frames.length - 1) api.pause(); else api.next(); }, interval);

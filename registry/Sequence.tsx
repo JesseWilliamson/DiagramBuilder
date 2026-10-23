@@ -1,9 +1,9 @@
 // Logging in, as a sequence diagram. Step through it: activation bars grow and shrink
 // with the call stack, because activations() derives them from calls and returns.
 import { useMemo } from 'react';
-import { fitViewBox } from '@figurae/core';
-import { Diagram, Transport, usePlayer } from '@figurae/react';
-import { activations, Message, Participant, sequence } from '@figurae/uml';
+import { fitViewBox } from '@dsviz/core';
+import { Diagram, Transport, usePlayer } from '@dsviz/react';
+import { activations, Message, Participant, sequence } from '@dsviz/uml';
 
 const people: Participant[] = [
   { id: 'user', label: 'User', kind: 'actor' },

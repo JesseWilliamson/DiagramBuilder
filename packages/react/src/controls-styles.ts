@@ -1,5 +1,5 @@
 import { useInsertionEffect } from 'react';
-import { injectStyles } from '@figurae/core';
+import { injectStyles } from '@dsviz/core';
 
 /**
  * CSS for the controls. Deliberately quiet: small, flat, neutral greys with one
@@ -98,7 +98,7 @@ export const CONTROLS_CSS = /* css */ `
 @media (prefers-reduced-motion: reduce) { .dvc, .dvc * { transition: none !important; } }
 `;
 
-const ID = 'figurae-control-styles';
+const ID = 'dsviz-control-styles';
 /** The <style> element we added (or found), so later calls are one property read. */
 let added: HTMLStyleElement | null = null;
 

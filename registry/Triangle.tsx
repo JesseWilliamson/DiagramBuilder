@@ -1,9 +1,9 @@
 // Drag the corners. The angles always add to 180°, and the classic centres
 // (circumcentre, incentre, centroid, orthocentre) follow along.
 import { useState } from 'react';
-import { combine, Vec } from '@figurae/core';
-import { angleAt, angleMark, centroid as geomCentroid, circle, circumcircle, footOfPerpendicular, incircle as geomIncircle, orthocenter, pointLabel, polygon, segment, tickMarks, toDegrees } from '@figurae/geom';
-import { Diagram, MathText, Switch } from '@figurae/react';
+import { combine, Vec } from '@dsviz/core';
+import { angleAt, angleMark, centroid as geomCentroid, circle, circumcircle, footOfPerpendicular, incircle as geomIncircle, orthocenter, pointLabel, polygon, segment, tickMarks, toDegrees } from '@dsviz/geom';
+import { Diagram, MathText, Switch } from '@dsviz/react';
 
 const W = 440, H = 300;
 const mid = (a: Vec, b: Vec) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });

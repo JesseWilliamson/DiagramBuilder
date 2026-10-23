@@ -1,6 +1,6 @@
-# figurae — handoff notes for Claude Code
+# dsviz — handoff notes for Claude Code
 
-figurae (working name; was dsviz) is a small library of interactive, animated SVG teaching diagrams for
+dsviz is a small library of interactive, animated SVG teaching diagrams for
 computer science: data structures and algorithms, UML, system architecture, git, plots, probability, geometry,
 operating systems. Maths and sciences come later. It is used by the **getbetter** app (a LeetCode-style
 practice site with editorials and courses). These notes say where things stand and what is planned next.
@@ -27,37 +27,37 @@ interaction. No 3D buttons, no lesson UI: this is a diagram library plus a docs/
 
 ## Three layers (Radix → families → shadcn)
 
-1. **Primitives, headless (`@figurae/core`).** `rect`, `circle`, `text`, `arrow`, `path`, `combine`,
+1. **Primitives, headless (`@dsviz/core`).** `rect`, `circle`, `text`, `arrow`, `path`, `combine`,
    `translate`, `namespace`, `bounds`; `createView` (keyed reconciler + tween engine: things that keep their
    id move, new ids fade in, missing ids fade out; a single rAF loop; text crossfade; paths with different
    point counts are resampled by arc length); `fitViewBox`/`nextCamera`; `createPlayer`; `handle` (draggable
    dot with a big hit target, optional pulse hint); `connector` (line + end markers, straight/elbow/via
-   routes, `rectEdge`); `snapFrame`/`snapGuides` (grid + centre/edge alignment with guide lines); `toSVG`;
+   routes, `rectEdge`); `toSVG`;
    `describe`; TeX-lite `mathtext`; `styles.ts` (the one theme, `--dv-*` variables, dark via
    `[data-theme="dark"]`/`.dark`/OS). Parts carry a semantic `role`; the stylesheet decides looks.
    **Layouts never know about styling.** Drag handles pointer, touch (non-passive touchstart on draggables,
    pointer capture) and keyboard (arrow keys emit the same drag events).
-2. **Families: pure `state → Scene` functions, one package each.** They import only `@figurae/core` and
-   `@figurae/layout` (`layered`: Sugiyama-lite DAG layout; `tidy`: Reingold–Tilford) and nothing else:
-   - `@figurae/ds` array, pointer, hashMap, linkedList, binaryTree, tree, graph, grid, stack, queue
-   - `@figurae/plot` plane, axes, fn, point, segment, vector, tangent, area, riemann, integrate, label
-   - `@figurae/prob` bars, sampleSpace, diePips, probTree, venn2 (+ region helpers)
-   - `@figurae/geom` polygon, segment, tickMarks, angleMark, circle, pointLabel (+ intersection/centre helpers)
-   - `@figurae/os` simulate (fcfs/sjf/srtf/rr/priority), gantt; stackHeap, memory, hex
-   - `@figurae/arch` architecture (component kinds, zones, links with waypoints), packet, along
-   - `@figurae/uml` classDiagram, objectDiagram, packageDiagram, sequence, communication, stateMachine,
-     activity (swimlanes, fork/join), useCase, component (lollipop/socket), deployment, er (crow's foot/Chen).
+2. **Families: pure `state → Scene` functions, one package each.** They import only `@dsviz/core` and
+   `@dsviz/layout` (`layered`: Sugiyama-lite DAG layout; `tidy`: Reingold–Tilford) and nothing else:
+   - `@dsviz/ds` array, pointer, hashMap, linkedList, binaryTree, tree, graph, grid, stack, queue
+   - `@dsviz/plot` plane, axes, fn, point, segment, vector, tangent, area, riemann, integrate, label
+   - `@dsviz/prob` bars, sampleSpace, diePips, probTree, venn2 (+ region helpers)
+   - `@dsviz/geom` polygon, segment, tickMarks, angleMark, circle, pointLabel (+ intersection/centre helpers)
+   - `@dsviz/os` simulate (fcfs/sjf/srtf/rr/priority), gantt; stackHeap, memory, hex
+   - `@dsviz/arch` architecture (component kinds, zones, links with waypoints), packet, along
+   - `@dsviz/uml` classDiagram, objectDiagram, packageDiagram, sequence, communication, stateMachine,
+     activity (swimlanes, fork/join), useCase, component (lollipop/socket), deployment, er (crow's foot).
      All take ids, tones, `interactive`, `draggable`, `x`/`y` optional (layered layout places the rest), and
-     return `box(id): Frame` for snapping. objectDiagram reuses classDiagram's ids so the two views morph;
+     return `box(id): Frame`. objectDiagram reuses classDiagram's ids so the two views morph;
      communication shares `Message` with sequence so one list feeds both.
-   - `@figurae/git` graph (lanes by first parent), gitLanes
-   - `@figurae/react` `<Diagram>` (natural size, `viewBox`, `duration`; camera frozen and tween off while
-     dragging), `usePlayer`, `useTicker`, `useBurst`, `useSnap`, controls on Radix (`Slider`, `Segmented`,
+   - `@dsviz/git` graph (lanes by first parent), gitLanes
+   - `@dsviz/react` `<Diagram>` (natural size, `viewBox`, `duration`; camera frozen and tween off while
+     dragging), `usePlayer`, `useTicker`, `useBurst`, controls on Radix (`Slider`, `Segmented`,
      `Select`, `Switch`, `NumberStepper`, `Button`, `TextInput`, `Transport`), `CodeTrace`, `MathText`.
-   Exports are flat: `import { fn } from '@figurae/plot'`. Two packages may export the same name
+   Exports are flat: `import { fn } from '@dsviz/plot'`. Two packages may export the same name
    (`segment`, `circle`); alias on import. No umbrella package, no namespaces (so nothing to tree-shake away).
-3. **Components you copy (`registry/`, `@figurae/cli`).** Every example on the site is a complete component
-   in `registry/<Name>.tsx`; `npx @figurae/cli add binary-search` copies it into an app and prints the
+3. **Components you copy (`registry/`, `@dsviz/cli`).** Every example on the site is a complete component
+   in `registry/<Name>.tsx`; `npx @dsviz/cli add binary-search` copies it into an app and prints the
    `npm install` line. `registry/index.json` is generated by `npm run registry` from `site/examples.ts`
    (the single list of examples: name, title, desc, group) and checked by `tests/registry.test.ts`. The CLI
    ships the registry inside its package because the repo is private.
@@ -68,10 +68,10 @@ interaction. No 3D buttons, no lesson UI: this is a diagram library plus a docs/
   `dist/` (one ES module per file; `build.mjs` builds in dependency order and emits `.d.ts` per package).
 - `site/` — docs site (Vite + React, hash routes): home (`#/`), examples (`#/examples`: 47 components grouped
   by family, live diagram beside editable source via sucrase + CodeMirror), guide (`#/guide`), API (`#/api`).
-  `site/demos.ts` globs `../registry/*.tsx`. `site/live/compile.ts` maps every `@figurae/*` package for the
+  `site/demos.ts` globs `../registry/*.tsx`. `site/live/compile.ts` maps every `@dsviz/*` package for the
   in-page editor: add a package there when you add one.
-- `tests/` — vitest; maths per family, `render.test.ts` in happy-dom, `snap`, `uml-a/b/c`, `registry`, `cli`.
-- `.claude/skills/figurae/` — the Claude skill for USING the library (SKILL.md + references/api.md,
+- `tests/` — vitest; maths per family, `render.test.ts` in happy-dom, `uml-a/b/c`, `registry`, `cli`.
+- `.claude/skills/dsviz/` — the Claude skill for USING the library (SKILL.md + references/api.md,
   recipes.md). `npm run sync:skill -- <repo>` copies it into another checkout. Keep `references/api.md` in
   step with the exports. Not shipped on npm.
 - Scripts: `npm run dev`, `npm test`, `npm run typecheck`, `npm run build` (packages), `npm run build:site`,
@@ -95,13 +95,13 @@ interaction. No 3D buttons, no lesson UI: this is a diagram library plus a docs/
 
 ## Still to do
 
-- Name: `figurae` is a working name (`@figurae/*` free on npm). Alternatives: `diagrammar`, `slatejs`,
-  `chalkviz`, `sketchline`, `inkscribe`. A rename is one sed.
+- Name: `dsviz` (the owner's choice; `figurae` was tried and rejected). Packages are scoped `@dsviz/*`; the `@dsviz`
+  org must be created on npm before the first publish.
 - First npm publish of 3.0.0 by hand (Trusted Publishing only trusts existing packages), then the workflow.
 - Known gaps from the UML batch: activity fork/join bars can overlap a node in the same layer; component
-  containers must have all children placed or all free; ER Chen notation draws no attribute ovals; interface
+  containers must have all children placed or all free; interface
   labels have no collision check. Three-set Venn. d3-hierarchy for tidy trees.
 - Tighten the export surface: core re-exports renderer internals (`tagFor`, `classFor`, `numericProps`, `feel`…),
   ds exports `show`, `useScene` is `useMemo` renamed. Make `packages/core/src/index.ts` an explicit list.
 - `sequence` lacks `interactive`/`draggable`; `stateMachine` lacks `dim`.
-- getbetter: move its fifteen course figures and the editorial figures from `dsviz` to `@figurae/*` imports.
+- getbetter: move its fifteen course figures and the editorial figures from `dsviz` to `@dsviz/*` imports.

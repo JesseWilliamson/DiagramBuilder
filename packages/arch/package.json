@@ -1,5 +1,5 @@
 {
-  "name": "@figurae/arch",
+  "name": "@dsviz/arch",
   "version": "3.0.0",
   "description": "System-architecture diagrams: components, zones, links, packets",
   "author": "Jesse Williamson",
@@ -19,8 +19,8 @@
     "src"
   ],
   "dependencies": {
-    "@figurae/core": "^3.0.0",
-    "@figurae/layout": "^3.0.0"
+    "@dsviz/core": "^3.0.0",
+    "@dsviz/layout": "^3.0.0"
   },
   "repository": {
     "type": "git",

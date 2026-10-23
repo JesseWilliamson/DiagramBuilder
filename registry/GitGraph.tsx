@@ -3,8 +3,8 @@
 // copies the feature commits onto main as NEW commits (new hashes, so the old
 // dots fade out and new ones fade in) and leaves the old ones unreferenced.
 import { useState } from 'react';
-import { Commit, graph, Ref } from '@figurae/git';
-import { Diagram, Segmented } from '@figurae/react';
+import { Commit, graph, Ref } from '@dsviz/git';
+import { Diagram, Segmented } from '@dsviz/react';
 
 type View = 'before' | 'merge' | 'rebase';
 const base: Commit[] = [

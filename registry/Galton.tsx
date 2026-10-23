@@ -1,9 +1,9 @@
 // A Galton board. Every peg is a coin flip: left or right. Add up enough flips and
 // the bins fill into a bell shape, the binomial distribution, whatever the bias.
 import { useEffect, useMemo, useState } from 'react';
-import { circle, combine, easeInQuad, path } from '@figurae/core';
-import { bars } from '@figurae/prob';
-import { Button, Diagram, Slider, Switch, useTicker } from '@figurae/react';
+import { circle, combine, easeInQuad, path } from '@dsviz/core';
+import { bars } from '@dsviz/prob';
+import { Button, Diagram, Slider, Switch, useTicker } from '@dsviz/react';
 
 const ROWS = 10, DX = 26, DY = 20;
 type Ball = { id: number; path: boolean[]; step: number };

@@ -10,7 +10,7 @@
  *
  * A set is the same table without the value column: pass keys alone.
  */
-import { Scene, SceneNode, V2, Vec, rect, text } from '@figurae/core';
+import { Scene, SceneNode, V2, Vec, rect, text } from '@dsviz/core';
 import { Key, ToneSpec, resolveTone, show } from './common';
 
 export interface HashMapOptions<V = unknown> {

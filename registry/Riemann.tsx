@@ -1,9 +1,9 @@
 // Riemann sums: area under a curve, approximated by n rectangles.
 // Rectangles are keyed by index, so changing n resizes the ones you have and fades in the rest.
 import { useState } from 'react';
-import { combine } from '@figurae/core';
-import { axes, fn, integrate, plane, point, riemann, RiemannRule, segment } from '@figurae/plot';
-import { Diagram, MathText, Segmented, Slider } from '@figurae/react';
+import { combine } from '@dsviz/core';
+import { axes, fn, integrate, plane, point, riemann, RiemannRule, segment } from '@dsviz/plot';
+import { Diagram, MathText, Segmented, Slider } from '@dsviz/react';
 
 const f = (x: number) => 1.5 * (0.1 * x ** 3 - 0.9 * x ** 2 + 2 * x + 0.6);
 const p = plane({ x: [-0.5, 6.5], y: [-0.6, 4], width: 440, height: 260 });

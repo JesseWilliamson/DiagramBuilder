@@ -6,8 +6,8 @@
     "group": "core",
     "file": "Scenes.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/react"
     ]
   },
   {
@@ -17,9 +17,9 @@
     "group": "ds",
     "file": "BinarySearch.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/ds",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/ds",
+      "@dsviz/react"
     ]
   },
   {
@@ -29,8 +29,8 @@
     "group": "ds",
     "file": "WhyFast.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/react"
     ]
   },
   {
@@ -40,9 +40,9 @@
     "group": "ds",
     "file": "BubbleSort.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/ds",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/ds",
+      "@dsviz/react"
     ]
   },
   {
@@ -52,9 +52,9 @@
     "group": "ds",
     "file": "HashMap.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/ds",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/ds",
+      "@dsviz/react"
     ]
   },
   {
@@ -64,9 +64,9 @@
     "group": "ds",
     "file": "LinkedList.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/ds",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/ds",
+      "@dsviz/react"
     ]
   },
   {
@@ -76,9 +76,9 @@
     "group": "ds",
     "file": "Bst.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/ds",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/ds",
+      "@dsviz/react"
     ]
   },
   {
@@ -88,8 +88,8 @@
     "group": "ds",
     "file": "TidyTree.tsx",
     "packages": [
-      "@figurae/ds",
-      "@figurae/react"
+      "@dsviz/ds",
+      "@dsviz/react"
     ]
   },
   {
@@ -99,9 +99,9 @@
     "group": "ds",
     "file": "Graph.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/ds",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/ds",
+      "@dsviz/react"
     ]
   },
   {
@@ -111,8 +111,8 @@
     "group": "ds",
     "file": "Layered.tsx",
     "packages": [
-      "@figurae/ds",
-      "@figurae/react"
+      "@dsviz/ds",
+      "@dsviz/react"
     ]
   },
   {
@@ -122,9 +122,9 @@
     "group": "ds",
     "file": "GraphColoring.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/ds",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/ds",
+      "@dsviz/react"
     ]
   },
   {
@@ -134,9 +134,9 @@
     "group": "ds",
     "file": "Lcs.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/ds",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/ds",
+      "@dsviz/react"
     ]
   },
   {
@@ -146,9 +146,9 @@
     "group": "plot",
     "file": "Tangent.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/plot",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/plot",
+      "@dsviz/react"
     ]
   },
   {
@@ -158,9 +158,9 @@
     "group": "plot",
     "file": "Riemann.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/plot",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/plot",
+      "@dsviz/react"
     ]
   },
   {
@@ -170,10 +170,10 @@
     "group": "plot",
     "file": "Vectors.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/geom",
-      "@figurae/plot",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/geom",
+      "@dsviz/plot",
+      "@dsviz/react"
     ]
   },
   {
@@ -183,9 +183,9 @@
     "group": "prob",
     "file": "Dice.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/prob",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/prob",
+      "@dsviz/react"
     ]
   },
   {
@@ -195,9 +195,9 @@
     "group": "prob",
     "file": "Venn.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/prob",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/prob",
+      "@dsviz/react"
     ]
   },
   {
@@ -207,9 +207,9 @@
     "group": "prob",
     "file": "Bayes.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/prob",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/prob",
+      "@dsviz/react"
     ]
   },
   {
@@ -219,9 +219,9 @@
     "group": "prob",
     "file": "Galton.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/prob",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/prob",
+      "@dsviz/react"
     ]
   },
   {
@@ -231,10 +231,10 @@
     "group": "prob",
     "file": "LargeNumbers.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/plot",
-      "@figurae/prob",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/plot",
+      "@dsviz/prob",
+      "@dsviz/react"
     ]
   },
   {
@@ -244,9 +244,9 @@
     "group": "prob",
     "file": "MontyHall.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/prob",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/prob",
+      "@dsviz/react"
     ]
   },
   {
@@ -256,8 +256,8 @@
     "group": "geom",
     "file": "Pythagoras.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/react"
     ]
   },
   {
@@ -267,9 +267,9 @@
     "group": "geom",
     "file": "Triangle.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/geom",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/geom",
+      "@dsviz/react"
     ]
   },
   {
@@ -279,22 +279,22 @@
     "group": "geom",
     "file": "Inscribed.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/geom",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/geom",
+      "@dsviz/react"
     ]
   },
   {
     "name": "scheduling",
     "title": "CPU scheduling",
-    "description": "simulate (@figurae/os) plus a Gantt chart keyed by process and segment.",
+    "description": "simulate (@dsviz/os) plus a Gantt chart keyed by process and segment.",
     "group": "systems",
     "file": "Scheduling.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/ds",
-      "@figurae/os",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/ds",
+      "@dsviz/os",
+      "@dsviz/react"
     ]
   },
   {
@@ -304,9 +304,9 @@
     "group": "systems",
     "file": "PythonMemory.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/os",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/os",
+      "@dsviz/react"
     ]
   },
   {
@@ -316,10 +316,10 @@
     "group": "systems",
     "file": "Pointers.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/ds",
-      "@figurae/os",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/ds",
+      "@dsviz/os",
+      "@dsviz/react"
     ]
   },
   {
@@ -329,9 +329,9 @@
     "group": "design",
     "file": "UmlArrows.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/react",
-      "@figurae/uml"
+      "@dsviz/core",
+      "@dsviz/react",
+      "@dsviz/uml"
     ]
   },
   {
@@ -341,9 +341,9 @@
     "group": "design",
     "file": "ClassDiagram.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/react",
-      "@figurae/uml"
+      "@dsviz/core",
+      "@dsviz/react",
+      "@dsviz/uml"
     ]
   },
   {
@@ -353,9 +353,9 @@
     "group": "design",
     "file": "Sequence.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/react",
-      "@figurae/uml"
+      "@dsviz/core",
+      "@dsviz/react",
+      "@dsviz/uml"
     ]
   },
   {
@@ -365,9 +365,9 @@
     "group": "design",
     "file": "Checkout.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/react",
-      "@figurae/uml"
+      "@dsviz/core",
+      "@dsviz/react",
+      "@dsviz/uml"
     ]
   },
   {
@@ -377,9 +377,8 @@
     "group": "design",
     "file": "StateMachine.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/react",
-      "@figurae/uml"
+      "@dsviz/react",
+      "@dsviz/uml"
     ]
   },
   {
@@ -389,9 +388,9 @@
     "group": "design",
     "file": "RequestFlow.tsx",
     "packages": [
-      "@figurae/arch",
-      "@figurae/core",
-      "@figurae/react"
+      "@dsviz/arch",
+      "@dsviz/core",
+      "@dsviz/react"
     ]
   },
   {
@@ -401,9 +400,9 @@
     "group": "design",
     "file": "LoadBalancer.tsx",
     "packages": [
-      "@figurae/arch",
-      "@figurae/core",
-      "@figurae/react"
+      "@dsviz/arch",
+      "@dsviz/core",
+      "@dsviz/react"
     ]
   },
   {
@@ -413,8 +412,8 @@
     "group": "design",
     "file": "ConsistentHashing.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/react"
+      "@dsviz/core",
+      "@dsviz/react"
     ]
   },
   {
@@ -424,20 +423,20 @@
     "group": "design",
     "file": "TrustZones.tsx",
     "packages": [
-      "@figurae/arch",
-      "@figurae/core",
-      "@figurae/react"
+      "@dsviz/arch",
+      "@dsviz/core",
+      "@dsviz/react"
     ]
   },
   {
     "name": "git-graph",
     "title": "Merge versus rebase",
-    "description": "graph from @figurae/git: lanes by first parent, curved edges, branch pills. Commits are keyed by hash, so the switch animates.",
+    "description": "graph from @dsviz/git: lanes by first parent, curved edges, branch pills. Commits are keyed by hash, so the switch animates.",
     "group": "design",
     "file": "GitGraph.tsx",
     "packages": [
-      "@figurae/git",
-      "@figurae/react"
+      "@dsviz/git",
+      "@dsviz/react"
     ]
   },
   {
@@ -447,21 +446,21 @@
     "group": "design",
     "file": "Polling.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/react",
-      "@figurae/uml"
+      "@dsviz/core",
+      "@dsviz/react",
+      "@dsviz/uml"
     ]
   },
   {
     "name": "deployment",
     "title": "Deployment diagram",
-    "description": "Machines with nested runtimes and the files they host. Add a second server and a load balancer; the layout rearranges.",
+    "description": "Machines (3D nodes) with a nested runtime and the files it hosts, joined by «protocol» lines. Add a second server and a load balancer: the nodes slide over. Click one to read what it runs.",
     "group": "design",
     "file": "Deployment.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/react",
-      "@figurae/uml"
+      "@dsviz/core",
+      "@dsviz/react",
+      "@dsviz/uml"
     ]
   },
   {
@@ -471,79 +470,80 @@
     "group": "design",
     "file": "ObjectDiagram.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/react",
-      "@figurae/uml"
+      "@dsviz/core",
+      "@dsviz/react",
+      "@dsviz/uml"
     ]
   },
   {
     "name": "package-diagram",
     "title": "Package diagram",
-    "description": "Nested packages and import / access / merge relations at any depth. Click one to see what it uses.",
+    "description": "Folders nested to any depth, relations routed in lanes between the rows. Click a package to see what it imports; flatten to see the leaves as a plain dependency graph.",
     "group": "design",
     "file": "PackageDiagram.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/react",
-      "@figurae/uml"
+      "@dsviz/core",
+      "@dsviz/react",
+      "@dsviz/uml"
     ]
   },
   {
     "name": "communication",
     "title": "Communication diagram",
-    "description": "The login again, as links and numbered messages (1, 1.1, 1.1.1), stepped in step with the sequence view.",
+    "description": "The login beside its sequence diagram, from one message list and one player: a ring of participants, one link per pair, and each message a small arrow riding its link with a Dewey number (1, 1.1, 1.1.1).",
     "group": "design",
     "file": "Communication.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/react",
-      "@figurae/uml"
+      "@dsviz/core",
+      "@dsviz/react",
+      "@dsviz/uml"
     ]
   },
   {
     "name": "er",
     "title": "Entity–relationship",
-    "description": "A shop schema in crow's-foot or Chen notation. Click an entity to see its relationships.",
+    "description": "A shop schema in crow's-foot notation. Click an entity to read its relationships as sentences; the switch hides the attributes.",
     "group": "design",
     "file": "Er.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/react",
-      "@figurae/uml"
+      "@dsviz/core",
+      "@dsviz/react",
+      "@dsviz/uml"
     ]
   },
   {
     "name": "use-case",
     "title": "Use case diagram",
-    "description": "A web shop: actors, ovals, «include» and «extend». Click an actor to see what they can do; toggle the system boundary.",
+    "description": "A web shop: actors, ovals, «include» and «extend», cases ordered by who uses them. Click an actor to see their reach; toggle the system boundary.",
     "group": "design",
     "file": "UseCase.tsx",
     "packages": [
-      "@figurae/react",
-      "@figurae/uml"
+      "@dsviz/react",
+      "@dsviz/uml"
     ]
   },
   {
     "name": "activity",
     "title": "Activity diagram",
-    "description": "An order across three swimlanes: decision, fork and join, flow final. Step through, or switch the stock off for the other branch.",
+    "description": "An order across three swimlanes: a decision with guards, a fork and join round two parallel actions, a flow final. Step through, or switch the stock off to take the other branch.",
     "group": "design",
     "file": "Activity.tsx",
     "packages": [
-      "@figurae/core",
-      "@figurae/react",
-      "@figurae/uml"
+      "@dsviz/core",
+      "@dsviz/react",
+      "@dsviz/uml"
     ]
   },
   {
     "name": "component",
     "title": "Component diagram",
-    "description": "Lollipops and sockets join into assemblies; a port delegates into a nested component. Click one to see its interfaces.",
+    "description": "A shop: lollipops (provides) and sockets (requires) plug together into assemblies; a port on the backend delegates to the part inside. Click a component to read its interfaces; hide the inside to see it as a black box.",
     "group": "design",
     "file": "Component.tsx",
     "packages": [
-      "@figurae/react",
-      "@figurae/uml"
+      "@dsviz/core",
+      "@dsviz/react",
+      "@dsviz/uml"
     ]
   }
 ]

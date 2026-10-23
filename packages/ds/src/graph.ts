@@ -9,8 +9,8 @@
  * layout is out of scope, but positions are just data, so you can plug one in
  * (d3-force, or your own) and feed the results back in.
  */
-import { Frame, Scene, SceneNode, Tone, V2, Vec, arrow, bendControl, circle, connector, estimateTextWidth, pointOnArrow, rect, rectEdge, text, vnorm, vsub } from '@figurae/core';
-import { layered } from '@figurae/layout';
+import { Frame, Scene, SceneNode, Tone, V2, Vec, arrow, bendControl, circle, connector, estimateTextWidth, pointOnArrow, rect, rectEdge, text, vnorm, vsub } from '@dsviz/core';
+import { layered } from '@dsviz/layout';
 import { Key, show } from './common';
 
 export interface GraphNodeSpec {

@@ -21,7 +21,7 @@
  * commits by hash, so a "before / after" pair of pictures (a rebase, a merge)
  * animates: commits that survive stay put or slide, new ones fade in.
  */
-import { Scene, SceneNode, Tone, V2, Vec, circle, estimateTextWidth, path, rect, text } from '@figurae/core';
+import { Scene, SceneNode, Tone, V2, Vec, circle, estimateTextWidth, path, rect, text } from '@dsviz/core';
 
 export interface Commit {
   hash: string;

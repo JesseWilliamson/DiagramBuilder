@@ -1,5 +1,5 @@
 {
-  "name": "@figurae/uml",
+  "name": "@dsviz/uml",
   "version": "3.0.0",
   "description": "UML diagrams: class, object, package, sequence, communication, state machine, activity, use case, component, deployment, and ER",
   "author": "Jesse Williamson",
@@ -19,8 +19,8 @@
     "src"
   ],
   "dependencies": {
-    "@figurae/core": "^3.0.0",
-    "@figurae/layout": "^3.0.0"
+    "@dsviz/core": "^3.0.0",
+    "@dsviz/layout": "^3.0.0"
   },
   "repository": {
     "type": "git",

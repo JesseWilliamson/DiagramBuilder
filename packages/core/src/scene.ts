@@ -1,5 +1,5 @@
 /**
- * The scene graph: the one data format everything in figurae agrees on.
+ * The scene graph: the one data format everything in dsviz agrees on.
  *
  *   your state  ──layout()──▶  Scene (plain objects)  ──renderer──▶  SVG
  *

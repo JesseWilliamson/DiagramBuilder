@@ -1,9 +1,9 @@
 // Two dice: 36 equally likely outcomes. An event is a set of cells; its probability is
 // (cells in the event) / 36. Click a cell or a bar to pick the sum.
 import { useState } from 'react';
-import { combine } from '@figurae/core';
-import { bars, diePips, sampleSpace } from '@figurae/prob';
-import { Diagram, MathText, Segmented } from '@figurae/react';
+import { combine } from '@dsviz/core';
+import { bars, diePips, sampleSpace } from '@dsviz/prob';
+import { Diagram, MathText, Segmented } from '@dsviz/react';
 
 const counts = [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]; // ways to roll 2, 3, …, 12
 type Mode = '=' | '≥' | '≤';

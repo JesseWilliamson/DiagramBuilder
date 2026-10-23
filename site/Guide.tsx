@@ -25,7 +25,6 @@ const toc = [
   ['sizing', 'Sizing'],
   ['design', 'Architecture and layout'],
   ['uml', 'UML diagrams'],
-  ['snapping', 'Snapping'],
   ['git', 'Git history'],
   ['vanilla', 'Without React'],
   ['exercises', 'Exercises'],
@@ -39,16 +38,16 @@ export function Guide() {
       </nav>
       <div className="doc-main">
         <h1>Guide</h1>
-        <p className="lede">figurae draws interactive, animated SVG diagrams for teaching computer science: data structures and algorithms, UML, software architecture, git history, plots, probability, geometry, scheduling and memory. It is three layers: a headless core (primitives, renderer, camera, player), one package per family of diagrams (pure functions from your state to a scene), and copyable example components. The core has no dependencies; <code>@figurae/react</code> is a thin wrapper.</p>
+        <p className="lede">dsviz draws interactive, animated SVG diagrams for teaching computer science: data structures and algorithms, UML, software architecture, git history, plots, probability, geometry, scheduling and memory. It is three layers: a headless core (primitives, renderer, camera, player), one package per family of diagrams (pure functions from your state to a scene), and copyable example components. The core has no dependencies; <code>@dsviz/react</code> is a thin wrapper.</p>
 
         <Section id="start" title="First diagram">
-          <Code>{`npm install @figurae/core @figurae/ds @figurae/react   # react >= 18 as a peer dependency`}</Code>
+          <Code>{`npm install @dsviz/core @dsviz/ds @dsviz/react   # react >= 18 as a peer dependency`}</Code>
           <p>A diagram is a function from your state to a scene. Render it with <code>&lt;Diagram&gt;</code>; when the state changes, render again.</p>
           <Code>{`
 import { useState } from 'react';
-import { combine } from '@figurae/core';
-import { array, pointer } from '@figurae/ds';
-import { Diagram, Slider } from '@figurae/react';
+import { combine } from '@dsviz/core';
+import { array, pointer } from '@dsviz/ds';
+import { Diagram, Slider } from '@dsviz/react';
 
 export function Example() {
   const [i, setI] = useState(2);
@@ -64,18 +63,18 @@ export function Example() {
         </Section>
 
         <Section id="packages" title="Packages">
-          <p>Each family is its own package and exports its functions flat, with no namespaces: <code>{"import { fn } from '@figurae/plot'"}</code>. A family depends on <code>@figurae/core</code> (and <code>@figurae/layout</code> if it places boxes for you) and on nothing else, so an app installs only what it draws.</p>
+          <p>Each family is its own package and exports its functions flat, with no namespaces: <code>{"import { fn } from '@dsviz/plot'"}</code>. A family depends on <code>@dsviz/core</code> (and <code>@dsviz/layout</code> if it places boxes for you) and on nothing else, so an app installs only what it draws.</p>
           <ul>
-            <li><code>@figurae/core</code>: <code>rect circle text arrow path</code>, <code>combine</code>, <code>connector</code>, <code>createView</code>, <code>toSVG</code>, <code>fitViewBox</code>, <code>createPlayer</code>, <code>handle</code>, <code>snapFrame</code>.</li>
-            <li><code>@figurae/layout</code>: <code>layered</code> (DAGs) and <code>tidy</code> (trees); positions only.</li>
-            <li><code>@figurae/ds</code>: <code>array pointer linkedList binaryTree tree graph grid stack queue hashMap</code>.</li>
-            <li><code>@figurae/plot</code>, <code>@figurae/prob</code>, <code>@figurae/geom</code>: maths on a plane, probability, geometry.</li>
-            <li><code>@figurae/os</code>: CPU scheduling (<code>simulate</code>, <code>gantt</code>) and memory (<code>stackHeap</code>, <code>memory</code>).</li>
-            <li><code>@figurae/arch</code>: architecture diagrams. <code>@figurae/git</code>: commit graphs.</li>
-            <li><code>@figurae/uml</code>: eleven UML and ER diagrams (below).</li>
-            <li><code>@figurae/react</code>: <code>&lt;Diagram&gt;</code>, <code>usePlayer</code>, <code>useSnap</code>, controls.</li>
+            <li><code>@dsviz/core</code>: <code>rect circle text arrow path</code>, <code>combine</code>, <code>connector</code>, <code>createView</code>, <code>toSVG</code>, <code>fitViewBox</code>, <code>createPlayer</code>, <code>handle</code></li>
+            <li><code>@dsviz/layout</code>: <code>layered</code> (DAGs) and <code>tidy</code> (trees); positions only.</li>
+            <li><code>@dsviz/ds</code>: <code>array pointer linkedList binaryTree tree graph grid stack queue hashMap</code>.</li>
+            <li><code>@dsviz/plot</code>, <code>@dsviz/prob</code>, <code>@dsviz/geom</code>: maths on a plane, probability, geometry.</li>
+            <li><code>@dsviz/os</code>: CPU scheduling (<code>simulate</code>, <code>gantt</code>) and memory (<code>stackHeap</code>, <code>memory</code>).</li>
+            <li><code>@dsviz/arch</code>: architecture diagrams. <code>@dsviz/git</code>: commit graphs.</li>
+            <li><code>@dsviz/uml</code>: eleven UML and ER diagrams (below).</li>
+            <li><code>@dsviz/react</code>: <code>&lt;Diagram&gt;</code>, <code>usePlayer</code>, controls.</li>
           </ul>
-          <p>Two packages sometimes use one name (<code>graph</code> in ds and git, <code>segment</code> in plot and geom): alias on import, <code>{"import { graph as gitGraph } from '@figurae/git'"}</code>.</p>
+          <p>Two packages sometimes use one name (<code>graph</code> in ds and git, <code>segment</code> in plot and geom): alias on import, <code>{"import { graph as gitGraph } from '@dsviz/git'"}</code>.</p>
         </Section>
 
         <Section id="scenes" title="Scenes and ids">
@@ -94,7 +93,7 @@ arr.window(lo, hi);                                         // a band behind cel
 const p = plane({ x: [-4, 4], y: [-3, 3], width: 440, height: 300 });
 fn(p, Math.sin);                                       // world units, y up
 p.toWorld(e.x, e.y);                                        // drag position → maths coordinates`}</Code>
-          <p>The families are the packages above: data structures (<code>array, pointer, linkedList, binaryTree, tree, graph, grid, stack, queue, hashMap</code> in <code>@figurae/ds</code>), then <code>@figurae/plot</code>, <code>prob</code>, <code>geom</code>, <code>os</code>, <code>arch</code>, <code>uml</code> and <code>git</code>. See the <a href="#/api">API</a> for the full list.</p>
+          <p>The families are the packages above: data structures (<code>array, pointer, linkedList, binaryTree, tree, graph, grid, stack, queue, hashMap</code> in <code>@dsviz/ds</code>), then <code>@dsviz/plot</code>, <code>prob</code>, <code>geom</code>, <code>os</code>, <code>arch</code>, <code>uml</code> and <code>git</code>. See the <a href="#/api">API</a> for the full list.</p>
           <p>Ids inside a layout come from your data. <code>array</code> keys cells by index unless you pass <code>keys</code>; give each element a stable key and a swap becomes two tiles sliding past each other instead of two numbers changing in place.</p>
         </Section>
 
@@ -123,7 +122,7 @@ p.toWorld(e.x, e.y);                                        // drag position →
         <Section id="interaction" title="Interaction">
           <p><code>&lt;Diagram onClick onDrag&gt;</code> report the node (with its <code>data</code>) and the pointer position in scene coordinates. Mark nodes <code>interactive</code> for a pointer cursor, <code>draggable</code> to receive drags.</p>
           <p>For small things you drag, use <code>handle({'{ id, x, y }'})</code>: a visible dot plus a large invisible hit target (small targets are the main reason drag interactions feel bad). <code>point(p, x, y, {'{ id, draggable: true }'})</code> from plot and <code>polygon(points, {'{ draggable: true }'})</code> from geom use it for you, and <code>hint: true</code> pulses a ring until the first touch.</p>
-          <p>Everything draggable is also reachable with Tab and movable with the arrow keys (Shift for bigger steps). The keys drive a virtual pointer and send the same <code>dragstart / drag / dragend</code> events, so your <code>onDrag</code> handler works unchanged, snapping included. <code>e.keyboard</code> tells you which it was.</p>
+          <p>Everything draggable is also reachable with Tab and movable with the arrow keys (Shift for bigger steps). The keys drive a virtual pointer and send the same <code>dragstart / drag / dragend</code> events, so your <code>onDrag</code> handler works unchanged. <code>e.keyboard</code> tells you which it was.</p>
         </Section>
 
         <Section id="player" title="Stepping through algorithms">
@@ -172,18 +171,18 @@ vector(p, O, proj, { id: 'r', label: 'proj_v u' })      // labels on marks are m
         </Section>
 
         <Section id="design" title="Architecture and layout">
-          <p><code>@figurae/arch</code> draws system architecture (clients, load balancers, services, caches, databases, queues) and <code>@figurae/uml</code> draws UML. Both are built on <code>connector()</code> from core, a line with a marker at either end. Each marker is a small shape with its own role (<code>end-solid</code>, <code>end-hollow</code>, <code>end-open</code>), and the line stops where the marker starts, so it never shows through a hollow triangle.</p>
+          <p><code>@dsviz/arch</code> draws system architecture (clients, load balancers, services, caches, databases, queues) and <code>@dsviz/uml</code> draws UML. Both are built on <code>connector()</code> from core, a line with a marker at either end. Each marker is a small shape with its own role (<code>end-solid</code>, <code>end-hollow</code>, <code>end-open</code>), and the line stops where the marker starts, so it never shows through a hollow triangle.</p>
           <Code>{`
-import { combine } from '@figurae/core';
-import { architecture, packet } from '@figurae/arch';
+import { combine } from '@dsviz/core';
+import { architecture, packet } from '@dsviz/arch';
 
 const a = architecture(components, links, { zones });
 combine(a, packet({ id: 'req', ...a.along('lb', 'app', 1) }));  // same id → it glides`}</Code>
-          <p>You place things (x, y), or leave x and y out: <code>graph(…, {"{ layout: 'layered' }"})</code>, <code>architecture</code> and every UML diagram that has boxes then use <code>layered</code> from <code>@figurae/layout</code>, which puts each node one layer past everything that points at it, orders each layer to avoid crossings and bends long edges around the boxes in between. The layouts size boxes from their text and route the lines. Component colours come from the stylesheet by kind (<code>.dv-role-sys-db</code>), so a host app can restyle every database in one rule.</p>
+          <p>You place things (x, y), or leave x and y out: <code>graph(…, {"{ layout: 'layered' }"})</code>, <code>architecture</code> and every UML diagram that has boxes then use <code>layered</code> from <code>@dsviz/layout</code>, which puts each node one layer past everything that points at it, orders each layer to avoid crossings and bends long edges around the boxes in between. The layouts size boxes from their text and route the lines. Component colours come from the stylesheet by kind (<code>.dv-role-sys-db</code>), so a host app can restyle every database in one rule.</p>
         </Section>
 
         <Section id="uml" title="UML diagrams">
-          <p><code>@figurae/uml</code> has eleven diagram functions. Every one takes your data plus options, returns a scene, and returns <code>box(id)</code> or <code>frame(id)</code> so you can attach things to its boxes. Boxes without x and y are placed by <code>layered</code>. Ids come from your data, so a box that keeps its id moves instead of redrawing.</p>
+          <p><code>@dsviz/uml</code> has eleven diagram functions. Every one takes your data plus options, returns a scene, and returns <code>box(id)</code> or <code>frame(id)</code> so you can attach things to its boxes. Boxes without x and y are placed by <code>layered</code>. Ids come from your data, so a box that keeps its id moves instead of redrawing.</p>
           <ul>
             <li><code>sequence</code>: lifelines and call / return / async messages; activation bars from the call stack; <code>fragments</code> (loop, alt, opt), <code>notes</code>; <code>upTo</code> reveals one message per step.</li>
             <li><code>communication</code>: the same participants and messages as a graph, one link per pair, messages numbered 1, 1.1, 1.2 from their <code>parent</code>.</li>
@@ -195,10 +194,10 @@ combine(a, packet({ id: 'req', ...a.along('lb', 'app', 1) }));  // same id → i
             <li><code>component</code>: components with provided (lollipop) and required (socket) interfaces, ports and nesting.</li>
             <li><code>deployment</code>: nodes with a top and right face, artifacts inside them, communication and deploy links.</li>
             <li><code>packageDiagram</code>: tabbed packages nested to any depth; import, access, merge and dependency arrows.</li>
-            <li><code>er</code>: entity-relationship diagrams in crow's-foot or Chen notation, with primary and foreign keys and weak entities.</li>
+            <li><code>er</code>: entity-relationship diagrams in crow's-foot notation, with primary and foreign keys and weak entities.</li>
           </ul>
           <Code>{`
-import { classDiagram, objectDiagram, communication, sequence } from '@figurae/uml';
+import { classDiagram, objectDiagram, communication, sequence } from '@dsviz/uml';
 
 classDiagram(
   [{ id: 'Square', name: 'Square', x: 0, y: 200 }, { id: 'Rect', name: 'Rectangle', x: 0, y: 0, attributes: ['# w: number'] }],
@@ -209,28 +208,8 @@ communication(people, messages, { upTo: player.frame });     // the same list, d
           <p>Sequence diagrams compute their activation bars from the calls and returns, the same stack a running program keeps (<code>activations: false</code> hides them). An <code>alt</code> with <code>sections</code> gets an <code>[else]</code> divider, and each message can carry a <code>tone</code>. The class and object diagrams share box sizes, and the sequence and communication diagrams share a message type, so a pair of views of one thing can morph into each other instead of cutting.</p>
         </Section>
 
-        <Section id="snapping" title="Snapping">
-          <p>Drag a box in a design tool and it pulls to the other boxes: its centre and two edges match theirs on each axis, the closest pair within a few pixels wins, and a faint guide shows what lined up. With no alignment it falls back to a grid. That is <code>snapFrame(moving, others, {'{ grid, threshold }'})</code> in core, which returns the corrected centre and the guides, and <code>snapGuides(guides)</code>, which turns the guides into dashed scene paths (<code>role: 'snap-guide'</code>) spanning the two boxes.</p>
-          <p>In React, <code>useSnap</code> keeps the guides in state and looks the moving box up among the others by id:</p>
-          <Code>{`
-const diagram = classDiagram(classes.map((c) => ({ ...c, ...where[c.id] })), relations, { draggable: true });
-const { guides, snap, clear } = useSnap(
-  Object.fromEntries(classes.map((c) => [c.id, diagram.box(c.id)])),
-  { grid: 10 },
-);
-<Diagram
-  scene={combine(diagram, snapGuides(guides))}
-  onDrag={(e) => {
-    const id = (e.node.data as { class: string }).class;
-    setWhere((w) => ({ ...w, [id]: snap(id, e) }));      // e has x, y: a point in scene units
-  }}
-  onDragEnd={clear}
-/>`}</Code>
-          <p>The diagram does not know about snapping: it draws wherever you tell it, and your state is the only place a position lives. The snapping is a function from a pointer position and the other frames to a better position. Keyboard drags go through the same events, so they snap too. Class, object, state, component, package and deployment diagrams all have a demo on the examples page.</p>
-        </Section>
-
         <Section id="git" title="Git history">
-          <p><code>graph(commits, refs)</code> from <code>@figurae/git</code> draws a commit graph from <code>{'{ hash, parents, label }'}</code>, newest first, the order <code>git log</code> prints. Lanes follow the first-parent rule: a commit's first parent inherits its column, so a branch runs straight down and a branch on top of another continues its line; a merge's other parents open or join lanes. Commits are keyed by hash, so a before / after pair animates: a merge adds one dot, a rebase replaces dots.</p>
+          <p><code>graph(commits, refs)</code> from <code>@dsviz/git</code> draws a commit graph from <code>{'{ hash, parents, label }'}</code>, newest first, the order <code>git log</code> prints. Lanes follow the first-parent rule: a commit's first parent inherits its column, so a branch runs straight down and a branch on top of another continues its line; a merge's other parents open or join lanes. Commits are keyed by hash, so a before / after pair animates: a merge adds one dot, a rebase replaces dots.</p>
           <Code>{`
 graph(
   [{ hash: 'm', parents: ['c', 'f'], label: 'Merge feature' }, { hash: 'c', parents: ['b'] }, { hash: 'f', parents: ['b'] }, { hash: 'b', parents: [] }],
@@ -242,8 +221,8 @@ graph(
 
         <Section id="vanilla" title="Without React">
           <Code>{`
-import { createView, toSVG } from '@figurae/core';
-import { array } from '@figurae/ds';
+import { createView, toSVG } from '@dsviz/core';
+import { array } from '@dsviz/ds';
 
 const view = createView(document.querySelector('svg'));
 view.render(array([1, 2, 3]));            // animate in the DOM
@@ -261,7 +240,6 @@ toSVG(scene, { theme: 'dark' });           // pinned palette + background, for a
             <li><b>Three-set Venn.</b> Generalise <code>vennRegions</code>: each of the 7 regions is bounded by arcs between pairwise intersection points.</li>
             <li><b>Reingold–Tilford.</b> <code>packages/layout/src/tidy.ts</code> does it (<code>tree()</code>, and <code>binaryTree</code> with <code>layout: 'tidy'</code>). Delete it and rebuild it from <code>tests/tidy.test.ts</code>; then try Walker's fix, which spreads small subtrees evenly between big ones.</li>
             <li><b>Text crossfade.</b> Done in <code>packages/core/src/render.ts</code> with a fading ghost copy. Try the other approach: keep two text elements per id and swap which one is live. What does each do when a label changes twice inside one animation?</li>
-            <li><b>Equal-spacing snaps.</b> <code>snapFrame</code> only matches edges and centres. Add the rule design tools have: when the moving box would sit the same distance from its neighbour as two other boxes sit from each other, pull it there and draw a guide for the gap. Start from <code>packages/core/src/snap.ts</code> and <code>tests/snap.test.ts</code>.</li>
           </ol>
         </Section>
       </div>

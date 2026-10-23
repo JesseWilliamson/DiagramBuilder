@@ -2,9 +2,9 @@
 // The packet is one circle with a stable id: each frame puts it at the end of
 // the next link, and the tween engine slides it there.
 import { useMemo, useState } from 'react';
-import { combine, fitViewBox } from '@figurae/core';
-import { architecture, Component, Link, packet } from '@figurae/arch';
-import { Diagram, Segmented, Transport, usePlayer } from '@figurae/react';
+import { combine, fitViewBox } from '@dsviz/core';
+import { architecture, Component, Link, packet } from '@dsviz/arch';
+import { Diagram, Segmented, Transport, usePlayer } from '@dsviz/react';
 
 const parts: Component[] = [
   { id: 'client', kind: 'client', label: 'Browser', x: 0, y: 140 },

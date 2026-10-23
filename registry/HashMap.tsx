@@ -2,9 +2,9 @@
 // values already seen, then remember this one. The map's rows are keyed by
 // value, so each new entry drops in as its own row.
 import { useMemo, useState } from 'react';
-import { combine, fitViewBox, translate } from '@figurae/core';
-import { array, hashMap } from '@figurae/ds';
-import { Diagram, NumberStepper, Transport, usePlayer } from '@figurae/react';
+import { combine, fitViewBox, translate } from '@dsviz/core';
+import { array, hashMap } from '@dsviz/ds';
+import { Diagram, NumberStepper, Transport, usePlayer } from '@dsviz/react';
 
 const nums = [3, 8, 1, 6, 4, 9];
 

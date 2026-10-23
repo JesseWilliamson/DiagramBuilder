@@ -9,7 +9,7 @@
  * Primitives (numbers, strings, None) are drawn inline in their slot. A
  * `{ ref: 'id' }` value draws a dot in the slot and an arrow to heap object `id`.
  */
-import { Scene, SceneNode, Tone, V2, Vec, arrow, circle, estimateTextWidth, rect, text } from '@figurae/core';
+import { Scene, SceneNode, Tone, V2, Vec, arrow, circle, estimateTextWidth, rect, text } from '@dsviz/core';
 
 export type MemValue = number | string | boolean | null | { ref: string };
 

@@ -1,5 +1,5 @@
 {
-  "name": "@figurae/prob",
+  "name": "@dsviz/prob",
   "version": "3.0.0",
   "description": "Probability diagrams: bars, sample spaces, dice, probability trees, Venn diagrams",
   "author": "Jesse Williamson",
@@ -19,7 +19,7 @@
     "src"
   ],
   "dependencies": {
-    "@figurae/core": "^3.0.0"
+    "@dsviz/core": "^3.0.0"
   },
   "repository": {
     "type": "git",

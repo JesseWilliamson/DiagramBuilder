@@ -4,7 +4,7 @@
  * Give each pointer a stable `id` (e.g. 'mid') and just change `at` between
  * renders — the arrow and its label slide to the new target.
  */
-import { Scene, SceneNode, Tone, Vec, arrow, estimateTextWidth, rect, text } from '@figurae/core';
+import { Scene, SceneNode, Tone, Vec, arrow, estimateTextWidth, rect, text } from '@dsviz/core';
 
 export interface PointerOptions {
   id: string;

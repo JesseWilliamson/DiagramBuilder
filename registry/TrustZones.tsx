@@ -2,9 +2,9 @@
 // a sandbox inside it. The point of drawing them is to ask, for every arrow,
 // what is allowed across. The expected answers never cross into the sandbox.
 import { useState } from 'react';
-import { combine, fitViewBox } from '@figurae/core';
-import { architecture, Component, Link, Zone } from '@figurae/arch';
-import { Diagram, Segmented } from '@figurae/react';
+import { combine, fitViewBox } from '@dsviz/core';
+import { architecture, Component, Link, Zone } from '@dsviz/arch';
+import { Diagram, Segmented } from '@dsviz/react';
 
 const parts: Component[] = [
   { id: 'api', kind: 'service', label: 'API', sub: 'owns the problem', x: 0, y: 90 },

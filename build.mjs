@@ -12,7 +12,7 @@
 // esbuild leaves import paths as written ('./vec'), which bundlers resolve but
 // Node's ESM loader does not, so each relative import is pointed at the file
 // it means ('./vec.js', './ds/index.js'). Imports of other packages
-// ('@figurae/core'), React and Radix stay imports, so the app's copies are the
+// ('@dsviz/core'), React and Radix stay imports, so the app's copies are the
 // ones that run.
 import { build } from 'esbuild';
 import { execFileSync } from 'node:child_process';
@@ -27,7 +27,7 @@ const files = (dir) =>
 
 // Dependencies first, so a package's declarations can import its neighbours' .d.ts.
 const deps = (pkg) => Object.keys(JSON.parse(readFileSync(`packages/${pkg}/package.json`, 'utf8')).dependencies ?? {})
-  .filter((d) => d.startsWith('@figurae/')).map((d) => d.slice('@figurae/'.length));
+  .filter((d) => d.startsWith('@dsviz/')).map((d) => d.slice('@dsviz/'.length));
 const order = [];
 const visit = (pkg) => {
   if (order.includes(pkg)) return;
@@ -67,14 +67,14 @@ for (const pkg of order) {
     writeFileSync(js, code);
   }
 
-  // Declarations resolve '@figurae/*' to the neighbours' dist/index.d.ts (see the
+  // Declarations resolve '@dsviz/*' to the neighbours' dist/index.d.ts (see the
   // package's tsconfig.build.json), which is why dependencies are built first.
   execFileSync('npx', ['tsc', '-p', `${base}/tsconfig.build.json`], { stdio: 'inherit' });
   console.log(`built ${dist}/`);
 }
 
 // The CLI has no src/: it ships the registry. Copy it in so `files` publishes it
-// (see the header of packages/cli/bin/figurae.js).
+// (see the header of packages/cli/bin/dsviz.js).
 rmSync('packages/cli/registry', { recursive: true, force: true });
 cpSync('registry', 'packages/cli/registry', { recursive: true });
 console.log('copied registry/ → packages/cli/registry/');

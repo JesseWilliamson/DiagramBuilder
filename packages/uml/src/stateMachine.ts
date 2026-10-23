@@ -7,8 +7,8 @@
  * to highlight where the machine is now and `fired` to highlight the
  * transition just taken.
  */
-import { Frame, Scene, SceneNode, Tone, V2, Vec, circle, connector, estimateTextWidth, path, pointAlong, rect, rectEdge, text, vadd, vnorm, vperp, vscale, vsub } from '@figurae/core';
-import { layered } from '@figurae/layout';
+import { Frame, Scene, SceneNode, Tone, V2, Vec, circle, connector, estimateTextWidth, path, pointAlong, rect, rectEdge, text, vadd, vnorm, vperp, vscale, vsub } from '@dsviz/core';
+import { layered } from '@dsviz/layout';
 
 export interface UmlState {
   id: string;

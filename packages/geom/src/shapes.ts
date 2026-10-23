@@ -2,7 +2,7 @@
  * Geometry figure parts. These work directly in PIXELS (y down), the way a
  * compass-and-ruler figure is drawn, so a polygon's vertices are just your state.
  */
-import { Scene, SceneNode, Tone, V2, Vec, circle as circleNode, handle, path, text, vadd, vnorm, vscale, vsub } from '@figurae/core';
+import { Scene, SceneNode, Tone, V2, Vec, circle as circleNode, handle, path, text, vadd, vnorm, vscale, vsub } from '@dsviz/core';
 import { angleAt, arcPoints, centroid, toDegrees } from './math';
 
 const pt = (v: Vec): [number, number] => [v.x, v.y];

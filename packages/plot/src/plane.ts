@@ -10,7 +10,7 @@
  * <Diagram viewBox> so the camera stays put while things inside it move (an
  * auto-fitting camera would chase a dragged point around).
  */
-import { V2, Vec } from '@figurae/core';
+import { V2, Vec } from '@dsviz/core';
 
 export interface PlaneOptions {
   x: [number, number];

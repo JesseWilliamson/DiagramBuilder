@@ -1,10 +1,10 @@
 // CPU scheduling. Same five processes, four policies: watch the bars rearrange,
 // and the average waiting time change, as you switch.
 import { useState } from 'react';
-import { combine, text, Tone } from '@figurae/core';
-import { array } from '@figurae/ds';
-import { gantt, Policy, Process, simulate } from '@figurae/os';
-import { Diagram, NumberStepper, Segmented, Transport, usePlayer } from '@figurae/react';
+import { combine, text, Tone } from '@dsviz/core';
+import { array } from '@dsviz/ds';
+import { gantt, Policy, Process, simulate } from '@dsviz/os';
+import { Diagram, NumberStepper, Segmented, Transport, usePlayer } from '@dsviz/react';
 
 const procs: Process[] = [
   { id: 'P1', arrival: 0, burst: 6 },

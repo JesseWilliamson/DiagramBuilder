@@ -1,9 +1,9 @@
 // A loop fragment: the box around the polls grows as each one comes back, and
 // stops growing at the message that ends the loop.
 import { useMemo } from 'react';
-import { fitViewBox } from '@figurae/core';
-import { Diagram, Transport, usePlayer } from '@figurae/react';
-import { Fragment, Message, Participant, sequence } from '@figurae/uml';
+import { fitViewBox } from '@dsviz/core';
+import { Diagram, Transport, usePlayer } from '@dsviz/react';
+import { Fragment, Message, Participant, sequence } from '@dsviz/uml';
 
 const people: Participant[] = [
   { id: 'app', label: 'App' },

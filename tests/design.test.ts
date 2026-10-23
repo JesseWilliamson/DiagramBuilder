@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { bounds, connector, pointAlong, rectEdge, route } from '@figurae/core';
-import { architecture, Component, component, Zone } from '@figurae/arch';
-import { activations, classSize, Fragment, Message, Participant, sequence, SequenceDiagram } from '@figurae/uml';
+import { bounds, connector, pointAlong, rectEdge, route } from '@dsviz/core';
+import { architecture, Component, component, Zone } from '@dsviz/arch';
+import { activations, classSize, Fragment, Message, Participant, sequence, SequenceDiagram } from '@dsviz/uml';
 
 describe('rectEdge', () => {
   const f = { x: 0, y: 0, w: 100, h: 40 };

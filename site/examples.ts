@@ -41,7 +41,7 @@ export const groups: Group[] = [
   {
     id: 'plot',
     title: 'Plots',
-    intro: 'plane (@figurae/plot) maps maths coordinates (y up) to pixels. Axes, curves, points, tangents, areas and Riemann sums all take the plane.',
+    intro: 'plane (@dsviz/plot) maps maths coordinates (y up) to pixels. Axes, curves, points, tangents, areas and Riemann sums all take the plane.',
     items: [
       { name: 'Tangent', title: 'Tangent lines', desc: 'Drag along the curve. Switching functions morphs the curve.' },
       { name: 'Riemann', title: 'Riemann sums', desc: 'Drag a and b, change n and the rule.' },
@@ -76,7 +76,7 @@ export const groups: Group[] = [
     title: 'Systems',
     intro: 'CPU scheduling and memory.',
     items: [
-      { name: 'Scheduling', title: 'CPU scheduling', desc: 'simulate (@figurae/os) plus a Gantt chart keyed by process and segment.' },
+      { name: 'Scheduling', title: 'CPU scheduling', desc: 'simulate (@dsviz/os) plus a Gantt chart keyed by process and segment.' },
       { name: 'PythonMemory', title: 'Names and objects', desc: 'Frames, heap objects and reference arrows.' },
       { name: 'Pointers', title: 'Pointer arithmetic', desc: 'The same bytes as char, int or double.' },
     ],
@@ -84,7 +84,7 @@ export const groups: Group[] = [
   {
     id: 'design',
     title: 'Software design',
-    intro: 'UML (classDiagram, sequence, stateMachine), system design (architecture, packet) and git history (graph from @figurae/git). Lines and their end markers come from connector().',
+    intro: 'UML (classDiagram, sequence, stateMachine), system design (architecture, packet) and git history (graph from @dsviz/git). Lines and their end markers come from connector().',
     items: [
       { name: 'UmlArrows', title: 'UML relationships', desc: 'The six arrows, each beside the code that creates it.' },
       { name: 'ClassDiagram', title: 'Class diagram', desc: 'Drag the classes; click one to see only its relationships.' },
@@ -95,19 +95,19 @@ export const groups: Group[] = [
       { name: 'LoadBalancer', title: 'Load balancing', desc: 'Round robin, least connections and random, with a slow server. Click a server to take it down.' },
       { name: 'ConsistentHashing', title: 'Consistent hashing', desc: 'Add or remove a server and count the keys that move, ring versus hash % N.' },
       { name: 'TrustZones', title: 'Trust boundaries', desc: 'Zones around machines and a sandbox. Step a job across and see which files may cross.' },
-      { name: 'GitGraph', title: 'Merge versus rebase', desc: 'graph from @figurae/git: lanes by first parent, curved edges, branch pills. Commits are keyed by hash, so the switch animates.' },
+      { name: 'GitGraph', title: 'Merge versus rebase', desc: 'graph from @dsviz/git: lanes by first parent, curved edges, branch pills. Commits are keyed by hash, so the switch animates.' },
       { name: 'Polling', title: 'Polling in a loop', desc: 'A sequence diagram with a loop fragment that grows as the polls come back.' },
       // uml: deployment, object, package
-      { name: 'Deployment', title: 'Deployment diagram', desc: 'Machines with nested runtimes and the files they host. Add a second server and a load balancer; the layout rearranges.' },
+      { name: 'Deployment', title: 'Deployment diagram', desc: 'Machines (3D nodes) with a nested runtime and the files it hosts, joined by «protocol» lines. Add a second server and a load balancer: the nodes slide over. Click one to read what it runs.' },
       { name: 'ObjectDiagram', title: 'Class view and object view', desc: 'The same ids drawn as classes or as live objects (name : Class, slots). Switch and the boxes morph.' },
-      { name: 'PackageDiagram', title: 'Package diagram', desc: 'Nested packages and import / access / merge relations at any depth. Click one to see what it uses.' },
+      { name: 'PackageDiagram', title: 'Package diagram', desc: 'Folders nested to any depth, relations routed in lanes between the rows. Click a package to see what it imports; flatten to see the leaves as a plain dependency graph.' },
       // communication, er
-      { name: 'Communication', title: 'Communication diagram', desc: 'The login again, as links and numbered messages (1, 1.1, 1.1.1), stepped in step with the sequence view.' },
-      { name: 'Er', title: 'Entity–relationship', desc: "A shop schema in crow's-foot or Chen notation. Click an entity to see its relationships." },
+      { name: 'Communication', title: 'Communication diagram', desc: 'The login beside its sequence diagram, from one message list and one player: a ring of participants, one link per pair, and each message a small arrow riding its link with a Dewey number (1, 1.1, 1.1.1).' },
+      { name: 'Er', title: 'Entity–relationship', desc: "A shop schema in crow's-foot notation. Click an entity to read its relationships as sentences; the switch hides the attributes." },
       // uml: use case, activity, component
-      { name: 'UseCase', title: 'Use case diagram', desc: 'A web shop: actors, ovals, «include» and «extend». Click an actor to see what they can do; toggle the system boundary.' },
-      { name: 'Activity', title: 'Activity diagram', desc: 'An order across three swimlanes: decision, fork and join, flow final. Step through, or switch the stock off for the other branch.' },
-      { name: 'Component', title: 'Component diagram', desc: 'Lollipops and sockets join into assemblies; a port delegates into a nested component. Click one to see its interfaces.' },
+      { name: 'UseCase', title: 'Use case diagram', desc: 'A web shop: actors, ovals, «include» and «extend», cases ordered by who uses them. Click an actor to see their reach; toggle the system boundary.' },
+      { name: 'Activity', title: 'Activity diagram', desc: 'An order across three swimlanes: a decision with guards, a fork and join round two parallel actions, a flow final. Step through, or switch the stock off to take the other branch.' },
+      { name: 'Component', title: 'Component diagram', desc: 'A shop: lollipops (provides) and sockets (requires) plug together into assemblies; a port on the backend delegates to the part inside. Click a component to read its interfaces; hide the inside to see it as a black box.' },
     ],
   },
 ];

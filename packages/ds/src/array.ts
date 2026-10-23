@@ -8,7 +8,7 @@
  *  - the index labels (0, 1, 2…) are identified by POSITION, because index 3
  *    is always index 3 no matter what value sits in it.
  */
-import { Part, Scene, SceneNode, Tone, V2, Vec, rect, text } from '@figurae/core';
+import { Part, Scene, SceneNode, Tone, V2, Vec, rect, text } from '@dsviz/core';
 import { Key, ToneSpec, resolveTone, show } from './common';
 
 export interface ArrayOptions<T = unknown> {

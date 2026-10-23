@@ -1,5 +1,5 @@
 /**
- * Tiny 2D vector helpers. Everything in figurae uses plain `{x, y}` objects
+ * Tiny 2D vector helpers. Everything in dsviz uses plain `{x, y}` objects
  * (not a class) so that positions stay serialisable and easy to diff.
  *
  * Coordinates are SVG-native: +x goes right, +y goes DOWN.

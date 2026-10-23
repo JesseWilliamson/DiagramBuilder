@@ -21,11 +21,17 @@
  * the lane's centre, and nodes that share a lane and a layer (the two branches
  * of a decision) sit side by side inside it. Lanes are columns when the flow
  * runs down, rows when it runs right. A fork or join bar is stretched to span
- * the nodes it touches. Flows are routed with right angles, around any node
- * that is in the way; a flow back up (a retry loop) goes round the right side.
+ * the flows it splits or gathers, plus 24.
+ *
+ * Flows leave the bottom centre of a node and enter the top centre of the
+ * next, with right angles in between; a branch out of a decision that goes
+ * sideways leaves by the diamond's side point instead. They are routed round
+ * any node or bar in the way, and a flow back up (a retry loop) goes round
+ * the right side. A guard sits beside the first segment after the decision,
+ * off the line, with a halo.
  */
-import { Frame, Scene, SceneNode, Tone, V2, Vec, circle, connector, estimateTextWidth, path, rect, text } from '@figurae/core';
-import { layered } from '@figurae/layout';
+import { Frame, Scene, SceneNode, Tone, V2, Vec, circle, connector, estimateTextWidth, path, rect, text } from '@dsviz/core';
+import { layered } from '@dsviz/layout';
 
 export type ActivityKind = 'action' | 'decision' | 'merge' | 'fork' | 'join' | 'start' | 'end' | 'flowFinal';
 
@@ -69,7 +75,7 @@ export interface ActivityOptions {
   /** Nodes emit clicks with `{ node: id }`. */
   interactive?: boolean;
   draggable?: boolean;
-  /** Space between layers and between neighbours in a layer. Defaults 56 and 36. */
+  /** Space between layers and between neighbours in a layer. Defaults 46 and 36. */
   rankGap?: number;
   nodeGap?: number;
 }
@@ -82,26 +88,26 @@ export interface ActivityDiagram extends Scene {
   lanes: Record<string, Frame>;
 }
 
-const BAR = 6, HEAD = 28;
+const BAR = 6, HEAD = 26, DIAMOND = 26, ACTION_H = 38;
 const isBar = (k?: ActivityKind) => k === 'fork' || k === 'join';
 
 /** Size of a node. A bar is `len` long across the flow. */
 export function activitySize(n: ActivityNode, down = true, len = 80): { w: number; h: number } {
   switch (n.kind ?? 'action') {
-    case 'start': return { w: 18, h: 18 };
-    case 'end': return { w: 24, h: 24 };
-    case 'flowFinal': return { w: 22, h: 22 };
-    case 'decision': case 'merge': return { w: 40, h: 40 };
+    case 'start': return { w: 16, h: 16 };
+    case 'end': return { w: 16, h: 16 };
+    case 'flowFinal': return { w: 16, h: 16 };
+    case 'decision': case 'merge': return { w: DIAMOND, h: DIAMOND };
     case 'fork': case 'join': return down ? { w: len, h: BAR } : { w: BAR, h: len };
-    default: return { w: Math.max(96, Math.ceil(estimateTextWidth(n.label ?? n.id, 13) + 28)), h: 38 };
+    default: return { w: Math.max(96, Math.ceil(estimateTextWidth(n.label ?? n.id, 13) + 28)), h: ACTION_H };
   }
 }
 
 /** A box in flow coordinates: u across the flow, v along it, cu / cv the half sizes. */
 interface Cell { u: number; v: number; cu: number; cv: number }
 
-/** Right-angled route from a to b, in (u, v) points; see the header comment. */
-function flowRoute(a: Cell, b: Cell, others: Cell[], bars: [boolean, boolean]): [number, number][] {
+/** Right-angled route from a to b, in (u, v) points; see the header comment. `diamond`: a is a decision. */
+export function flowRoute(a: Cell, b: Cell, others: Cell[], bars: [boolean, boolean], diamond = false): [number, number][] {
   // a bar is entered at the point of it nearest the other end, not at its centre
   const at = (c: Cell, other: Cell, bar: boolean): Cell => (bar ? { ...c, u: Math.max(c.u - c.cu + 8, Math.min(c.u + c.cu - 8, other.u)), cu: 0 } : c);
   const A = at(a, b, bars[0]), B = at(b, a, bars[1]);
@@ -109,6 +115,11 @@ function flowRoute(a: Cell, b: Cell, others: Cell[], bars: [boolean, boolean]): 
     const s: [number, number] = [A.u, A.v + A.cv], e: [number, number] = [B.u, B.v - B.cv];
     const lo = Math.min(A.u, B.u), hi = Math.max(A.u, B.u);
     const blocks = others.filter((o) => o.v > A.v + 1 && o.v < B.v - 1 && o.u + o.cu + 8 > lo && o.u - o.cu - 8 < hi);
+    if (diamond && !blocks.length && Math.abs(B.u - A.u) > A.cu + 8) {
+      // a branch going sideways leaves by the diamond's point on that side, then turns down
+      const k = B.u > A.u ? 1 : -1;
+      return [[A.u + k * A.cu, A.v], [B.u, A.v], e];
+    }
     if (blocks.length) {
       const x = Math.max(...blocks.map((o) => o.u + o.cu)) + 18;
       return [s, [A.u, s[1] + 14], [x, s[1] + 14], [x, e[1] - 14], [B.u, e[1] - 14], e];
@@ -139,7 +150,7 @@ export function activity(input: readonly ActivityNode[], flows: readonly Activit
   const free = input.filter((n) => n.x == null || n.y == null);
   const freeIds = new Set(free.map((n) => n.id));
   const L = free.length
-    ? layered(free.map((n) => ({ id: n.id, ...size(n) })), flows.filter((f) => freeIds.has(f.from) && freeIds.has(f.to)), { direction: o.direction ?? 'down', rankGap: o.rankGap ?? 56, nodeGap: o.nodeGap ?? 36 })
+    ? layered(free.map((n) => ({ id: n.id, ...size(n) })), flows.filter((f) => freeIds.has(f.from) && freeIds.has(f.to)), { direction: o.direction ?? 'down', rankGap: o.rankGap ?? 46, nodeGap: o.nodeGap ?? 36 })
     : undefined;
   const at = new Map<string, Vec>(input.map((n) => [n.id, V2(n.x ?? 0, n.y ?? 0)]));
   for (const n of free) at.set(n.id, L!.pos(n.id));
@@ -148,6 +159,11 @@ export function activity(input: readonly ActivityNode[], flows: readonly Activit
   const nb = (n: ActivityNode) => {
     const side = flows.flatMap((f) => (n.kind === 'fork' && f.from === n.id ? [f.to] : n.kind === 'join' && f.to === n.id ? [f.from] : []));
     return side.length ? side : flows.flatMap((f) => (f.from === n.id ? [f.to] : f.to === n.id ? [f.from] : []));
+  };
+  // a flow meets a bar at the point nearest its other end, so a bar spans those points, plus 24
+  const barLen = (n: ActivityNode, u: number) => {
+    const ns = nb(n).map((k) => at.get(k)!).filter(Boolean).map(U);
+    return Math.max(48, 2 * Math.max(...ns.map((x) => Math.abs(x - u))) + 24);
   };
   const fr = (n: ActivityNode): Frame => ({ ...at.get(n.id)!, ...size(n, lens.get(n.id)) });
 
@@ -165,7 +181,7 @@ export function activity(input: readonly ActivityNode[], flows: readonly Activit
       const own = members.filter((n) => laneIdx(n) === i);
       const m = Math.max(0, ...own.map(crossOf));
       const k = Math.max(1, ...[...groups].filter(([key]) => key.startsWith(`${i}|`)).map(([, g]) => g.length));
-      return Math.max(down ? 170 : 84, k * m + (k - 1) * gap + 40);
+      return Math.max(down ? 150 : 84, k * m + (k - 1) * gap + 48);
     });
     let c = 0;
     lanes.forEach((_, i) => (laneBand[i] = { c0: c, c1: (c += widths[i]) }));
@@ -180,8 +196,7 @@ export function activity(input: readonly ActivityNode[], flows: readonly Activit
     const ns = nb(n).map((k) => at.get(k)!).filter(Boolean).map(U);
     if (!ns.length) continue;
     if (free.includes(n) && !(lanes.length && n.lane)) at.set(n.id, P((Math.min(...ns) + Math.max(...ns)) / 2, Vv(at.get(n.id)!)));
-    const u = U(at.get(n.id)!);
-    lens.set(n.id, Math.max(80, 2 * Math.max(...ns.map((x) => Math.abs(x - u))) + 36));
+    lens.set(n.id, barLen(n, U(at.get(n.id)!)));
   }
   const frames: Record<string, Frame> = Object.fromEntries(input.map((n) => [n.id, fr(n)]));
 
@@ -190,7 +205,7 @@ export function activity(input: readonly ActivityNode[], flows: readonly Activit
   const nodeCell = (f: Frame): Cell => (down ? { u: f.x, v: f.y, cu: f.w / 2, cv: f.h / 2 } : { u: f.y, v: f.x, cu: f.h / 2, cv: f.w / 2 });
   const cells = input.map((n) => nodeCell(frames[n.id]));
   const vmin = (cells.length ? Math.min(...cells.map((c) => c.v - c.cv)) : 0) - 28, vmax = (cells.length ? Math.max(...cells.map((c) => c.v + c.cv)) : 0) + 28;
-  const head = down ? HEAD : Math.max(70, ...lanes.map((l) => estimateTextWidth(l.name, 13) + 24));
+  const head = down ? HEAD : Math.max(70, ...lanes.map((l) => estimateTextWidth(l.name, 12) + 24));
   const laneBox = (i: number, from: number, to: number): Frame => {
     const { c0, c1 } = laneBand[i], p = P((c0 + c1) / 2, (from + to) / 2);
     return down ? { x: p.x, y: p.y, w: c1 - c0, h: to - from } : { x: p.x, y: p.y, w: to - from, h: c1 - c0 };
@@ -204,7 +219,7 @@ export function activity(input: readonly ActivityNode[], flows: readonly Activit
     nodes.push(
       rect({ id: k, ...f, role: 'lane' }),
       rect({ id: `${k}:title`, ...band, role: 'lane-title', tone: l.tone }),
-      text({ id: `${k}:name`, x: band.x, y: band.y, text: l.name, size: 13, role: 'lane-name' }),
+      text({ id: `${k}:name`, x: band.x, y: band.y, text: l.name, size: 12, role: 'lane-name' }),
     );
   });
   const isCurrent = (k: string) => (typeof o.current === 'string' ? o.current === k : !!o.current?.has(k));
@@ -212,29 +227,46 @@ export function activity(input: readonly ActivityNode[], flows: readonly Activit
   flows.forEach((f, i) => {
     const a = input.find((n) => n.id === f.from), b = input.find((n) => n.id === f.to);
     if (!a || !b) return;
-    const others = input.filter((n) => n !== a && n !== b && !isBar(n.kind)).map((n) => nodeCell(frames[n.id]));
-    const pts = flowRoute(nodeCell(frames[a.id]), nodeCell(frames[b.id]), others, [isBar(a.kind), isBar(b.kind)]).map(([u, v]) => P(u, v));
-    const guard = f.guard && (f.guard.startsWith('[') ? f.guard : `[${f.guard}]`);
-    nodes.push(...connector({ id: `${id}:flow:${i}`, from: pts[0], to: pts[pts.length - 1], via: pts.slice(1, -1), end: 'arrow', label: guard, tone: taken(i) ? 'active' : f.tone }).nodes);
+    const others = input.filter((n) => n !== a && n !== b).map((n) => nodeCell(frames[n.id]));
+    const uv = flowRoute(nodeCell(frames[a.id]), nodeCell(frames[b.id]), others, [isBar(a.kind), isBar(b.kind)], a.kind === 'decision');
+    const pts = uv.map(([u, v]) => P(u, v));
+    const tone = taken(i) ? 'active' : f.tone;
+    nodes.push(...connector({ id: `${id}:flow:${i}`, from: pts[0], to: pts[pts.length - 1], via: pts.slice(1, -1), end: 'arrow', tone }).nodes);
+    if (f.guard) {
+      // the guard sits beside the first segment, off the line: to the right of a segment along the
+      // flow, on the near side of one across it, 10 in from the decision
+      const guard = f.guard.startsWith('[') ? f.guard : `[${f.guard}]`;
+      const [p0, p1] = uv;
+      const along = Math.abs(p1[0] - p0[0]) < 1;
+      const len = Math.hypot(p1[0] - p0[0], p1[1] - p0[1]);
+      const t = along ? Math.min(0.5, 12 / Math.max(len, 1)) : Math.min(0.5, (estimateTextWidth(guard, 11) / 2 + 10) / Math.max(len, 1));
+      const q: [number, number] = [p0[0] + (p1[0] - p0[0]) * t, p0[1] + (p1[1] - p0[1]) * t];
+      const k = along ? 1 : -1; // across-segment: the label goes on the side toward the start of the flow
+      const at = down ? V2(q[0] + (along ? 8 : 0), q[1] + (along ? 0 : k * 9)) : V2(q[1] + (along ? 0 : k * 9), q[0] + (along ? 8 : 0));
+      const anchor = down ? (along ? 'start' : 'middle') : (along ? 'middle' : 'start');
+      nodes.push(text({ id: `${id}:flow:${i}:label`, x: at.x, y: at.y + (!down && along ? 10 : 0), text: guard, size: 11, anchor, role: 'edge-label', tone }));
+    }
   });
   for (const n of input) {
     const f = frames[n.id], { x, y } = f, k = `${id}:n:${n.id}`;
     const on = isCurrent(n.id), tone = on ? 'active' : n.tone;
     const ev = { interactive: o.interactive, draggable: o.draggable, data: { node: n.id } };
     switch (n.kind ?? 'action') {
-      case 'start': nodes.push(circle({ id: k, x, y, r: 9, role: 'pseudo', tone: on ? 'active' : undefined, ...ev })); break;
-      case 'end': nodes.push(circle({ id: k, x, y, r: 12, role: 'outline', tone }), circle({ id: `${k}:dot`, x, y, r: 7.5, role: 'pseudo', tone: on ? 'active' : undefined, ...ev })); break;
+      case 'start': nodes.push(circle({ id: k, x, y, r: 8, role: 'pseudo', tone: on ? 'active' : undefined, ...ev })); break;
+      case 'end': nodes.push(circle({ id: k, x, y, r: 8, role: 'outline', tone }), circle({ id: `${k}:dot`, x, y, r: 5, role: 'pseudo', tone: on ? 'active' : undefined, ...ev })); break;
       case 'flowFinal':
-        nodes.push(circle({ id: k, x, y, r: 11, role: 'flow-final', tone, ...ev }),
-          path({ id: `${k}:x1`, points: [[x - 5, y - 5], [x + 5, y + 5]], role: 'figure-line' }), path({ id: `${k}:x2`, points: [[x - 5, y + 5], [x + 5, y - 5]], role: 'figure-line' }));
+        nodes.push(circle({ id: k, x, y, r: 8, role: 'flow-final', tone, ...ev }),
+          path({ id: `${k}:x1`, points: [[x - 4, y - 4], [x + 4, y + 4]], role: 'figure-line' }), path({ id: `${k}:x2`, points: [[x - 4, y + 4], [x + 4, y - 4]], role: 'figure-line' }));
         break;
-      case 'decision': case 'merge':
-        nodes.push(path({ id: k, points: [[x, y - 20], [x + 20, y], [x, y + 20], [x - 20, y]], closed: true, role: 'decision', tone, ...ev }));
-        if (n.label) nodes.push(text({ id: `${k}:label`, x: x + 24, y: y - 22, text: n.label, size: 12, role: 'caption', anchor: 'start' }));
+      case 'decision': case 'merge': {
+        const r = DIAMOND / 2;
+        nodes.push(path({ id: k, points: [[x, y - r], [x + r, y], [x, y + r], [x - r, y]], closed: true, role: 'decision', tone, ...ev }));
+        if (n.label) nodes.push(text({ id: `${k}:label`, x: x + r + 6, y: y - r - 2, text: n.label, size: 12, role: 'caption', anchor: 'start' }));
         break;
-      case 'fork': case 'join': nodes.push(rect({ id: k, x, y, w: f.w, h: f.h, rx: 2, role: 'fork-bar', tone, ...ev })); break;
+      }
+      case 'fork': case 'join': nodes.push(rect({ id: k, x, y, w: f.w, h: f.h, rx: 1, role: 'fork-bar', tone, ...ev })); break;
       default:
-        nodes.push(rect({ id: k, x, y, w: f.w, h: f.h, rx: 12, role: 'card', tone, ...ev }), text({ id: `${k}:label`, x, y, text: n.label ?? n.id, size: 13, role: 'value' }));
+        nodes.push(rect({ id: k, x, y, w: f.w, h: f.h, rx: 10, role: 'card', tone, ...ev }), text({ id: `${k}:label`, x, y, text: n.label ?? n.id, size: 13, role: 'value' }));
     }
   }
   const frame = (k: string) => frames[k] ?? { x: 0, y: 0, w: 0, h: 0 };

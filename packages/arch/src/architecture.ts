@@ -14,8 +14,8 @@
  * Components without x/y are placed by the layered layout (layout/layered.ts),
  * following the links: give every component a position, or none.
  */
-import { Box, Frame, Scene, SceneNode, Tone, Vec, circle, connector, estimateTextWidth, path, pointAlong, rect, rectEdge, text } from '@figurae/core';
-import { layered } from '@figurae/layout';
+import { Box, Frame, Scene, SceneNode, Tone, Vec, circle, connector, estimateTextWidth, path, pointAlong, rect, rectEdge, text } from '@dsviz/core';
+import { layered } from '@dsviz/layout';
 
 export type ComponentKind = 'client' | 'user' | 'lb' | 'gateway' | 'service' | 'cache' | 'db' | 'queue' | 'cdn' | 'storage' | 'file';
 

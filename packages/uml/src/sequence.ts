@@ -27,7 +27,7 @@
  * of its own, so rows are "slots": a slot is a message or a note, and the
  * y of everything comes from adding up the slots above it.
  */
-import { Scene, SceneNode, Tone, circle, connector, estimateTextWidth, path, rect, text } from '@figurae/core';
+import { Scene, SceneNode, Tone, circle, connector, estimateTextWidth, path, rect, text } from '@dsviz/core';
 
 export interface Participant {
   id: string;

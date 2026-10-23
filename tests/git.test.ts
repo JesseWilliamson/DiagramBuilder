@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Commit, gitLanes, graph } from '@figurae/git';
+import { Commit, gitLanes, graph } from '@dsviz/git';
 
 /** Commits newest first, from "hash:parent,parent" strings. */
 const log = (...lines: string[]): Commit[] =>

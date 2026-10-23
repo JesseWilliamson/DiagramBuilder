@@ -2,9 +2,9 @@
 // node is current and which flows have been taken, and the diagram just highlights them.
 // Switch "In stock" off to take the other branch of the decision.
 import { useMemo, useState } from 'react';
-import { fitViewBox } from '@figurae/core';
-import { Diagram, Switch, Transport, usePlayer } from '@figurae/react';
-import { activity, ActivityFlow, ActivityNode } from '@figurae/uml';
+import { fitViewBox } from '@dsviz/core';
+import { Diagram, Switch, Transport, usePlayer } from '@dsviz/react';
+import { activity, ActivityFlow, ActivityNode } from '@dsviz/uml';
 
 const lanes = [{ id: 'cust', name: 'Customer' }, { id: 'shop', name: 'Shop' }, { id: 'wh', name: 'Warehouse' }];
 

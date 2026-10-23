@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bounds, combine, dotData, namespace, path, pathData, resample, resampleProps, translate } from '@figurae/core';
+import { bounds, combine, dotData, namespace, path, pathData, resample, resampleProps, translate } from '@dsviz/core';
 
 describe('pathData', () => {
   it('draws straight segments, closing with Z', () => {

@@ -1,5 +1,5 @@
 {
-  "name": "@figurae/geom",
+  "name": "@dsviz/geom",
   "version": "3.0.0",
   "description": "Geometry diagrams: polygons, angles, circles, tick marks",
   "author": "Jesse Williamson",
@@ -19,7 +19,7 @@
     "src"
   ],
   "dependencies": {
-    "@figurae/core": "^3.0.0"
+    "@dsviz/core": "^3.0.0"
   },
   "repository": {
     "type": "git",

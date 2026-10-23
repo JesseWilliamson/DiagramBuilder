@@ -1,7 +1,7 @@
-# figurae API reference
+# dsviz API reference
 
 Every function and type exported by the 11 packages, from their `src/index.ts`. Import each symbol from
-the package named in the heading (`import { fn } from '@figurae/plot'`); there are no namespaces.
+the package named in the heading (`import { fn } from '@dsviz/plot'`); there are no namespaces.
 In the tables, `a / b` means "one of"; `?` marks an optional field; defaults follow `=`. Every option not
 marked required is optional. Each layout takes an `id` option (the prefix of its node ids) so two copies
 can share a scene.
@@ -9,7 +9,7 @@ can share a scene.
 Names that two packages both export: `graph` (ds, git), `component` (arch: one box; uml: the diagram),
 `segment` (plot, geom), `circle` (core primitive, geom figure), `ToneSpec` / `resolveTone` (ds, prob).
 
-Common types (all from `@figurae/core` unless noted):
+Common types (all from `@dsviz/core` unless noted):
 
 ```ts
 type Vec = { x: number; y: number };
@@ -18,13 +18,13 @@ type Part = Scene | SceneNode | Part[] | null | undefined | false;
 interface Box { x: number; y: number; w: number; h: number }          // top-left + size
 interface Frame { x: number; y: number; w: number; h: number }        // CENTRE + size (what box(id) returns)
 type ViewBox = [x: number, y: number, w: number, h: number];
-type Key = string | number;                                           // @figurae/ds
-type ToneSpec<K, V> = Record<string, Tone> | ((key: K, value: V) => Tone | undefined);   // @figurae/ds, prob: { 2: 'active' } or a function
+type Key = string | number;                                           // @dsviz/ds
+type ToneSpec<K, V> = Record<string, Tone> | ((key: K, value: V) => Tone | undefined);   // @dsviz/ds, prob: { 2: 'active' } or a function
 ```
 
-## @figurae/core
+## @dsviz/core
 
-Headless: scene, renderer, camera, player, connectors, snapping. No dependencies.
+Headless: scene, renderer, camera, player, connectors. No dependencies.
 
 ### Scene
 
@@ -72,14 +72,6 @@ Types: `Scene`, `SceneNode`, `CircleNode`, `RectNode`, `TextNode`, `ArrowNode`, 
 Types: `ConnectorEnd` = `'none' / 'arrow' / 'open' / 'triangle' / 'diamond' / 'diamond-filled'`, `Frame`,
 `ConnectorOptions`, `ConnectorScene`.
 
-### Snapping
-
-| Export | Signature |
-|---|---|
-| `snapFrame` | `snapFrame(moving: Frame, others: Frame[], { grid = 0, threshold = 6, margin = 12 }): { x, y, guides: SnapGuide[] }`; per axis the moving box's centre and two edges are matched against the same three lines of every other box, the closest pair within `threshold` wins; no match falls back to `grid` (no guide); `x` / `y` are the corrected centre |
-| `snapGuides` | `snapGuides(guides, id = 'snap'): PathNode[]`, dashed faint paths (`role: 'snap-guide'`), each spanning both boxes plus `margin` |
-
-Types: `SnapGuide` = `{ axis: 'x' / 'y'; at; from; to; kind: 'center' / 'edge' / 'grid' }`, `SnapOptions`.
 
 ### Rendering and export
 
@@ -125,7 +117,7 @@ Types: `View`, `ViewOptions`, `RenderOptions`, `ViewEvent`, `ViewEventType`, `To
 | `geometry feel` | the fixed look constants (corner scale, arrowhead, easing and duration); not options |
 | `describe tagFor classFor numericProps pointsOf bendControl arrowPath pointOnArrow` | renderer internals, exported so `toSVG` and `createView` agree; app code rarely needs them. Types `Description`, `SvgTag` |
 
-## @figurae/layout
+## @dsviz/layout
 
 Pure placement maths, no DOM, no drawing.
 
@@ -137,7 +129,7 @@ Pure placement maths, no DOM, no drawing.
 
 Types: `LayeredNode`, `LayeredEdge`, `LayeredOptions`, `LayeredLayout`, `TidyOptions`, `TidyPlacement`.
 
-## @figurae/ds
+## @dsviz/ds
 
 Data structures. `tones` on `array`, `stack`, `queue` is keyed by **index** (`{ 2: 'active' }` or
 `(i, value) => …`), not by the `keys` entry; `keys` only decides identity for animation.
@@ -166,7 +158,7 @@ Types: `Key`, `ToneSpec`, `ArrayOptions`, `ArrayDiagram`, `PointerOptions`, `Lis
 `NaryTreeDiagram`, `GraphNodeSpec`, `GraphEdgeSpec`, `GraphOptions`, `GraphDiagram`, `GridOptions`,
 `GridDiagram`, `HashMapOptions`, `HashMapDiagram`.
 
-## @figurae/plot
+## @dsviz/plot
 
 World coordinates (y up) through a `Plane`.
 
@@ -186,7 +178,7 @@ World coordinates (y up) through a `Plane`.
 
 Types: `Plane`, `PlaneOptions`, `AxesOptions`, `FnOptions`, `PointOptions`, `LineOptions`, `AreaOptions`, `RiemannRule`.
 
-## @figurae/prob
+## @dsviz/prob
 
 | Export | Signature | Returns |
 |---|---|---|
@@ -201,7 +193,7 @@ Types: `BarsOptions`, `BarsDiagram`, `SampleSpaceOptions`, `SampleSpaceDiagram`,
 `ProbTreeDiagram`, `Disc`, `VennRegion` (`'aOnly' / 'bOnly' / 'both' / 'neither'`), `VennOptions`, `ToneSpec`,
 `resolveTone`.
 
-## @figurae/geom
+## @dsviz/geom
 
 Figure parts in pixel coordinates.
 
@@ -217,7 +209,7 @@ Figure parts in pixel coordinates.
 
 Types: `PolygonOptions`, `SegmentOptions`, `AngleMarkOptions`.
 
-## @figurae/os
+## @dsviz/os
 
 | Export | Signature | Returns |
 |---|---|---|
@@ -231,7 +223,7 @@ Types: `Process`, `Policy`, `Segment`, `Tick`, `Stats`, `Schedule`, `GanttSegmen
 `StackFrame`, `HeapObject`, `MemValue`, `StackHeapOptions`, `StackHeapDiagram`, `MemoryGroup`, `MemoryOptions`,
 `MemoryDiagram`.
 
-## @figurae/arch
+## @dsviz/arch
 
 | Export | Signature |
 |---|---|
@@ -246,10 +238,10 @@ service cache db queue cdn storage file` (role `sys-<kind>`). `Link` = `{ from, 
 plain?, via?: Vec[] }`. `Zone` = `{ id, label, around: string[], padding?, tone? }`.
 Types: `ComponentKind`, `Component`, `Link`, `Zone`, `ArchitectureOptions`, `Architecture`.
 
-## @figurae/uml
+## @dsviz/uml
 
 Eleven diagrams. Every one returns a `Scene` plus `box(id)` or `frame(id)` (a `Frame`: centre + size), so
-you can snap, connect and hit-test. Boxes without x/y are placed by `layered`.
+you can connect and hit-test. Boxes without x/y are placed by `layered`.
 
 Shared options on the box-and-line diagrams: `id?`, `interactive?` (clicks report `e.node.data`),
 `draggable?`, `dim?: ReadonlySet<string>` (ids to fade), `rankGap?`, `nodeGap?`, `route?: 'elbow' / 'straight'`.
@@ -260,7 +252,7 @@ Shared options on the box-and-line diagrams: `id?`, `interactive?` (clicks repor
 |---|---|---|
 | `sequence` | `sequence(participants: { id, label, kind?: 'object' / 'actor' }[], messages: { from, to, label, kind?: 'call' / 'return' / 'async', tone?, parent? }[], { id? = 'seq', upTo?, gap? = 150, row? = 44, numbered?, tone?, fragments?, notes?, activations? = true, highlight? = true })` | `x(participantId)`, `rowY(i)` |
 | `activations` | `activations(messages, fragments?): { participant, depth, start, end }[]`, the bars, from the call stack | |
-| `communication` | `communication(participants: CommunicationParticipant[] (Participant + x?, y?, tone?), messages: Message[], { id?, upTo?, numbered? = true, tone?, highlight?, ring?, interactive?, draggable?, dim?, rankGap?, nodeGap? })` | `box(id)`, `numbers: string[]` |
+| `communication` | `communication(participants: CommunicationParticipant[] (Participant + x?, y?, tone?), messages: Message[], { id?, upTo?, numbered? = true, numbering?: 'flat' (1, 2, 3…, default) / 'dewey' (1, 1.1, 1.2… from `parent`), maxLabel? = 22, tone?, highlight?, ring?, radius?, interactive?, draggable?, dim?, rankGap?, nodeGap? })`; `ring: true` puts the heads on a circle in conversation order (`conversationOrder(participants, messages)`), each message an 18px arrow riding its link (`MESSAGE_ROW` holds the spacing) | `box(id)`, `numbers: string[]` |
 | `deweyNumbers`, `linkKey` | `deweyNumbers(messages): string[]` (`'1'`, `'1.1'`, `'2'`…); `linkKey(participants, a, b): string` (one key per pair, either direction) | |
 | `stateMachine` | `stateMachine(states: { id, label?, x?, y?, kind?: 'state' / 'initial' / 'final' / 'choice', tone? }[], transitions: { from, to, label?, bend? }[], { id? = 'fsm', current?, fired?, interactive?, draggable?, direction?: 'down' / 'right', rankGap?, nodeGap? })` | `frame(id)` |
 | `classDiagram` | `classDiagram(classes: { id, name, x?, y?, stereotype?, abstract?, attributes?: string[], methods?: string[], tone?, width? }[], relations: { from, to, kind, label?, fromLabel?, toLabel?, tone? }[], { id? = 'uml', collapsed?, interactive?, draggable?, route?, dim?, rankGap?, nodeGap? })`; `kind`: `inherits implements composition aggregation association dependency` | `box(id)` |
@@ -275,10 +267,10 @@ Sequence `notes`: `{ over: id / [a, b], text, at, tone? }[]`, a note takes its o
 |---|---|---|
 | `useCase` | `useCase(actors: { id, name, x?, y?, side?: 'left' / 'right', tone? }[], cases: { id, name, x?, y?, tone? }[], relations: { from, to, kind: 'association' / 'include' / 'extend' / 'generalization', tone? }[], { id?, system?: { name, tone? }, interactive?, draggable?, dim?, rankGap?, nodeGap? })` | `frame(id)`, `box(id)`, `frames`, `boundary?` |
 | `activity` | `activity(nodes: { id, kind?: ActivityKind, label?, lane?, x?, y?, tone? }[], flows: { from, to, guard?, tone? }[], { id?, swimlanes?: { id, name, tone? }[], direction?: 'down' / 'right', current?: string / Set<string>, taken?: number / Set<number>, interactive?, draggable?, rankGap?, nodeGap? })`; `ActivityKind`: `action decision merge fork join start end flowFinal` | `frame(id)`, `box(id)`, `frames`, `lanes` |
-| `component` | `component(components: { id, name, x?, y?, stereotype?, provides?, requires?: (string / { name, side? })[], ports?: { id, name?, side?, at? }[], parent?, tone?, width? }[], connections: { from, to, kind: 'assembly' / 'dependency' / 'delegate', interface?, label?, tone? }[], { id?, direction?: 'right' / 'down', interactive?, draggable?, dim?, route?, rankGap?, nodeGap? })`; `from` / `to` may be a component or port id; assembly goes requirer to provider | `frame(id)`, `box(id)`, `frames` |
-| `deployment` | `deployment(nodes: { id, name, stereotype?, parent?, x?, y?, tone? }[], artifacts: { id, name, node, tone? }[], links: { from, to, kind?: 'communication' / 'deploy', protocol?, label?, tone? }[], { id?, interactive?, draggable?, route?, rankGap?, nodeGap? })`; `x`/`y` is the centre of the front face | `box(id)` |
-| `packageDiagram` | `packageDiagram(packages: { id, name, children?, x?, y?, tone? }[], relations: { from, to, kind: 'import' / 'access' / 'merge' / 'dependency', label?, tone? }[], { id?, interactive?, draggable?, route?, dim?, rankGap?, nodeGap? })` | `box(id)` (the body, not the tab) |
-| `er` | `er(entities: { id, name, x?, y?, attributes?: { name, type?, key?: 'primary' / 'foreign', nullable? }[], weak?, tone?, width? }[], relationships: { id?, from, to, fromCard?, toCard?, label?, identifying?, tone? }[], { id?, notation?: 'crows-foot' / 'chen', collapsed?, interactive?, draggable?, dim?, rankGap?, nodeGap? })`; `Cardinality`: `one many zero-one zero-many one-many` | `box(id)`, `relationshipIds` |
+| `component` | `component(components: { id, name, x?, y?, stereotype?, provides?, requires?: (string / { name, side? })[], ports?: { id, name?, side?, at?, x?, y? }[], parent?, tone?, width? }[], connections: { from, to, kind: 'assembly' / 'dependency' / 'delegate', interface?, label?, tone? }[], { id?, direction?: 'right' / 'down', interactive?, draggable?, dim?, route?, rankGap?, nodeGap? })`; `from` / `to` may be a component or port id; assembly goes requirer to provider (the plug is drawn halfway between the boxes); a delegate with `interface` points at that lollipop; `COMPONENT` holds the sizes, `componentSize(c)` a box's | `frame(id)`, `box(id)`, `frames` |
+| `deployment` | `deployment(nodes: { id, name, stereotype?, parent?, x?, y?, tone? }[], artifacts: { id, name, node, tone? }[], links: { from, to, kind?: 'communication' / 'deploy', protocol?, label?, tone? }[], { id?, interactive?, draggable?, route?, direction?: 'right' / 'down', rankGap?, nodeGap? })`; `x`/`y` is the centre of the front face; `DEPLOY`, `NODE_DEPTH` hold the sizes, `headHeight(node)` the title band | `box(id)` |
+| `packageDiagram` | `packageDiagram(packages: { id, name, children?, x?, y?, tone? }[], relations: { from, to, kind: 'import' / 'access' / 'merge' / 'dependency', label?, tone? }[], { id?, interactive?, draggable?, route?, dim?, direction?: 'down' / 'right', rankGap?, nodeGap? })` | `box(id)` (the body, not the tab); `packageOutline(l, t, w, h, tabW)` the folder points |
+| `er` | `er(entities: { id, name, x?, y?, attributes?: { name, type?, key?: 'primary' / 'foreign', nullable? }[], weak?, tone?, width? }[], relationships: { id?, from, to, fromCard?, toCard?, label?, identifying?, tone? }[], { id?, collapsed?, interactive?, draggable?, dim?, rankGap?, nodeGap? })`; crow's foot, `Cardinality`: `one many zero-one zero-many one-many` | `box(id)`, `relationshipIds` |
 
 ### Parts and tables
 
@@ -286,7 +278,7 @@ Sequence `notes`: `{ over: id / [a, b], text, at, tone? }[]`, a note takes its o
 |---|---|
 | `stickFigure`, `figureFrame`, `FIGURE` | the actor figure on its own: `stickFigure({ id, x, y, name?, tone?, opacity?, interactive?, draggable?, data? })`, its `Frame`, its size |
 | `RELATION_STYLE`, `USE_CASE_STYLE`, `PACKAGE_RELATION` | relation kind to line style and end markers, as data |
-| `classSize`, `objectSize`, `objectTitle`, `slotLines`, `erSize`, `caseSize`, `activitySize`, `stateFrame`, `headSize`, `participantHead`, `cardinalityMarker`, `relationshipIds`, `ellipsePoints`, `NODE_DEPTH`, `TAB_H` | sizing and drawing helpers the layouts share; useful when you hand-build a box in the same style |
+| `classSize`, `objectSize`, `objectTitle`, `slotLines`, `erSize`, `erPort`, `ER_HEAD`, `MARKER_LENGTH`, `caseSize`, `activitySize`, `flowRoute`, `stateFrame`, `headSize`, `participantHead`, `cardinalityMarker`, `relationshipIds`, `ellipsePoints`, `NODE_DEPTH`, `TAB_H` | sizing and drawing helpers the layouts share; useful when you hand-build a box in the same style |
 
 Types: `Participant`, `Message`, `Note`, `Activation`, `Fragment`, `FragmentSection`, `SequenceOptions`,
 `SequenceDiagram`, `HeadOptions`, `CommunicationParticipant`, `CommunicationOptions`, `CommunicationDiagram`,
@@ -301,7 +293,7 @@ Types: `Participant`, `Message`, `Note`, `Activation`, `Fragment`, `FragmentSect
 
 Sequence behaviour in detail (returns, self-calls, alt branches, note rows): SKILL.md "Sequence diagrams".
 
-## @figurae/git
+## @dsviz/git
 
 | Export | Signature |
 |---|---|
@@ -310,7 +302,7 @@ Sequence behaviour in detail (returns, self-calls, alt branches, note rows): SKI
 
 Types: `Commit`, `Ref`, `GitGraphOptions`, `LanePlacement`, `GitGraph`.
 
-## @figurae/react
+## @dsviz/react
 
 ```tsx
 <Diagram scene={Scene}
@@ -325,7 +317,6 @@ Types: `Commit`, `Ref`, `GitGraphOptions`, `LanePlacement`, `GitGraph`.
 | `usePlayer` | `usePlayer(makeFrames: () => Iterable<S>, deps, { interval? = 700, loop?, maxFrames?, start?: 'first' / 'end' }): PlayerState<S>` = `{ frame, frames, index, count, playing, next(), prev(), first(), seek(i), toggle(), play(), pause() }`; `makeFrames` runs on mount and again when `deps` change (resets to step 0); a generator function works as is; `frame` is `undefined` only if it yields nothing |
 | `useTicker` | `useTicker(ms, active = true): number`, a counter that increments every `ms` |
 | `useBurst` | `useBurst(lifetime = 650): [nodes, fire(x, y, { count?, radius? })]` |
-| `useSnap` | `useSnap(frames: Record<id, Frame>, { grid?, threshold?, margin? }): { guides, snap(id, point): Vec, clear() }`; `snap` looks the moving box up by id and ignores it among the others; call `snap(id, e)` in `onDrag`, `clear()` in `onDragEnd`, draw `snapGuides(guides)` |
 | `useScene` | `useScene(build, deps)`, just `useMemo` |
 | `Transport` | `<Transport player={player} />`: first / play / next + scrubber with ticks and "Step i / n" |
 | `CodeTrace` | `<CodeTrace lines={string[]} active={number / number[] / null} />`, source lines with the current one highlighted (HTML, beside the diagram) |

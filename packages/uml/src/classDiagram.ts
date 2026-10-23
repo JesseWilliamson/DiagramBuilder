@@ -14,8 +14,8 @@
  * layout (layout/layered.ts) places them: parents above children, owners above
  * their parts. Box sizes come from the text.
  */
-import { ConnectorEnd, Frame, Scene, SceneNode, Tone, connector, estimateTextWidth, path, rect, text } from '@figurae/core';
-import { layered } from '@figurae/layout';
+import { ConnectorEnd, Frame, Scene, SceneNode, Tone, connector, estimateTextWidth, path, rect, text } from '@dsviz/core';
+import { layered } from '@dsviz/layout';
 
 export interface UmlClass {
   id: string;

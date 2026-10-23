@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { parseMath } from '@figurae/core';
+import { parseMath } from '@dsviz/core';
 import { useControlStyles } from './controls-styles';
 
 /**

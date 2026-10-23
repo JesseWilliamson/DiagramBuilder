@@ -123,7 +123,10 @@ const W = d3.max(Object.values(laid), (l) => l.right) + 8, H = d3.max(Object.val
 const fig = kit.figure(W, H, { pad: 4 });
 const { svg } = fig;
 const edgeLayer = svg.append('g'), dotLayer = svg.append('g'), labelLayer = svg.append('g');
-const settle = (sel) => kit.tr(sel).style('opacity', (d) => d.dim); // fade to this datum's opacity
+// One transition per element: fade to this datum's opacity and (optionally) move it.
+// Starting a second transition with the same name on the same element would cancel the first,
+// so opacity and position have to go through the same one.
+const settle = (sel, attrs = (t) => t) => attrs(kit.tr(sel).style('opacity', (d) => d.dim));
 const moveTo = (d) => `translate(${d.x},${d.y})`;
 
 function draw(view) {
@@ -134,7 +137,7 @@ function draw(view) {
     (update) => update,
     (exit) => kit.tr(exit, 300).style('opacity', 0).remove(),
   ).attr('class', (d) => kit.cls('line', d.dashed && 'dashed', kit.tone(d.tone))).style('stroke-width', '2.5px')
-    .call(settle).call((s) => kit.tr(s).attr('d', (d) => d.d));
+    .call((s) => settle(s, (t) => t.attr('d', (d) => d.d)));
 
   // commits: one <g> per hash that slides to its new place. A highlighted one gets a halo ring.
   dotLayer.selectAll('g.commit').data(dots, (d) => d.id).join((enter) => {
@@ -151,7 +154,7 @@ function draw(view) {
       g.select('.dot').style('fill', (d) => (d.merge ? 'var(--surface)' : 'var(--c)')).style('stroke', (d) => (d.merge ? 'var(--c)' : 'var(--surface)'))
         .style('stroke-width', (d) => (d.merge ? '2.5px' : '2px'));
     })
-    .call(settle).call((g) => kit.tr(g).attr('transform', moveTo));
+    .call((g) => settle(g, (t) => t.attr('transform', moveTo)));
 
   // branch / tag / HEAD pills, keyed by ref name: moving a branch slides its pill
   labelLayer.selectAll('g.pill').data(pills, (d) => d.id).join((enter) => {
@@ -167,13 +170,13 @@ function draw(view) {
         .style('stroke', 'var(--c, var(--faint))').style('stroke-dasharray', (d) => (d.kind === 'remote' ? '3 2' : null));
       g.select('text').style('fill', (d) => (d.kind === 'head' ? 'var(--surface)' : null));
     })
-    .call(settle).call((g) => kit.tr(g).attr('transform', moveTo));
+    .call((g) => settle(g, (t) => t.attr('transform', moveTo)));
 
   labelLayer.selectAll('text.msg').data(labels, (d) => d.id).join(
     (enter) => enter.append('text').attr('class', 'msg').attr('x', (d) => d.x).attr('y', (d) => d.y).attr('dy', '.35em').style('font-size', '12.5px').style('opacity', 0).text((d) => d.text),
     (update) => update,
     (exit) => kit.tr(exit, 300).style('opacity', 0).remove(),
-  ).call(settle).call((t) => kit.tr(t).attr('x', (d) => d.x).attr('y', (d) => d.y));
+  ).call((t) => settle(t, (tr) => tr.attr('x', (d) => d.x).attr('y', (d) => d.y)));
 
   status.set(pictures[view].note);
 }

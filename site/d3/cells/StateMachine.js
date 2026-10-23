@@ -121,7 +121,6 @@ let log = ['created → Pending'];
 function draw() {
   // "where are we" and "what just fired" are classes: the stylesheet fades between them
   nodes.select('rect').attr('class', (s) => kit.cls('solid', s.id === current && 'tone-active'));
-  nodes.select('text').attr('class', (s) => kit.cls('value', s.id === current && 'tone-active'));
   nodes.selectAll('.dot').attr('class', (s) => kit.cls('dot fill-ink', s.id === current && 'tone-active'));
   nodes.select('.ring').style('stroke', (s) => (s.id === current ? 'var(--active)' : 'var(--fg)'));
   lines.select('path').attr('class', (t, i) => kit.cls('line', fired === i && 'tone-active'));

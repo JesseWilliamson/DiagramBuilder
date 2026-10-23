@@ -377,7 +377,6 @@
     "group": "design",
     "file": "StateMachine.tsx",
     "packages": [
-      "@figurae/core",
       "@figurae/react",
       "@figurae/uml"
     ]

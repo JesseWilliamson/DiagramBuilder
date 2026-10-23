@@ -2,8 +2,8 @@
 // nodes are placed left to right by the layered layout and keep their ids, so the diagram
 // rearranges instead of redrawing. Click a node or artifact; drag a machine (its contents go along).
 import { useState } from 'react';
-import { combine, fitViewBox, snapGuides } from '@figurae/core';
-import { Diagram, Switch, useSnap } from '@figurae/react';
+import { fitViewBox } from '@figurae/core';
+import { Diagram, Switch } from '@figurae/react';
 import { Artifact, DeployLink, DeployNode, deployment } from '@figurae/uml';
 
 function model(balanced: boolean, second: boolean) {
@@ -47,10 +47,6 @@ export default function Deployment() {
   const m = model(balanced, second);
   const nodes = m.nodes.map((n) => ({ ...n, ...moved[n.id], tone: n.id === sel ? ('active' as const) : undefined }));
   const diagram = deployment(nodes, m.artifacts, m.links, { interactive: true, draggable: true });
-  const { guides, snap, clear } = useSnap(
-    Object.fromEntries(m.nodes.filter((n) => !n.parent).map((n) => [n.id, diagram.box(n.id)])),
-    { grid: 10 },
-  );
 
   const what = (id: string) => {
     const n = m.nodes.find((x) => x.id === id);
@@ -66,15 +62,13 @@ export default function Deployment() {
   return (
     <>
       <Diagram
-        scene={combine(diagram, snapGuides(guides))}
+        scene={diagram}
         viewBox={viewBox}
         onDrag={(e) => {
           const id = (e.node.data as { node?: string })?.node;
           if (!id) return;
-          const p = snap(id, e);
-          setMoved((s) => ({ ...s, [id]: { x: p.x, y: p.y } }));
+          setMoved((s) => ({ ...s, [id]: { x: e.x, y: e.y } }));
         }}
-        onDragEnd={clear}
         onClick={(e) => {
           const d = e.node.data as { node?: string; artifact?: string } | undefined;
           const id = d?.node ?? d?.artifact;

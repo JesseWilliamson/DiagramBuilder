@@ -25,7 +25,6 @@ const toc = [
   ['sizing', 'Sizing'],
   ['design', 'Architecture and layout'],
   ['uml', 'UML diagrams'],
-  ['snapping', 'Snapping'],
   ['git', 'Git history'],
   ['vanilla', 'Without React'],
   ['exercises', 'Exercises'],
@@ -66,14 +65,14 @@ export function Example() {
         <Section id="packages" title="Packages">
           <p>Each family is its own package and exports its functions flat, with no namespaces: <code>{"import { fn } from '@figurae/plot'"}</code>. A family depends on <code>@figurae/core</code> (and <code>@figurae/layout</code> if it places boxes for you) and on nothing else, so an app installs only what it draws.</p>
           <ul>
-            <li><code>@figurae/core</code>: <code>rect circle text arrow path</code>, <code>combine</code>, <code>connector</code>, <code>createView</code>, <code>toSVG</code>, <code>fitViewBox</code>, <code>createPlayer</code>, <code>handle</code>, <code>snapFrame</code>.</li>
+            <li><code>@figurae/core</code>: <code>rect circle text arrow path</code>, <code>combine</code>, <code>connector</code>, <code>createView</code>, <code>toSVG</code>, <code>fitViewBox</code>, <code>createPlayer</code>, <code>handle</code></li>
             <li><code>@figurae/layout</code>: <code>layered</code> (DAGs) and <code>tidy</code> (trees); positions only.</li>
             <li><code>@figurae/ds</code>: <code>array pointer linkedList binaryTree tree graph grid stack queue hashMap</code>.</li>
             <li><code>@figurae/plot</code>, <code>@figurae/prob</code>, <code>@figurae/geom</code>: maths on a plane, probability, geometry.</li>
             <li><code>@figurae/os</code>: CPU scheduling (<code>simulate</code>, <code>gantt</code>) and memory (<code>stackHeap</code>, <code>memory</code>).</li>
             <li><code>@figurae/arch</code>: architecture diagrams. <code>@figurae/git</code>: commit graphs.</li>
             <li><code>@figurae/uml</code>: eleven UML and ER diagrams (below).</li>
-            <li><code>@figurae/react</code>: <code>&lt;Diagram&gt;</code>, <code>usePlayer</code>, <code>useSnap</code>, controls.</li>
+            <li><code>@figurae/react</code>: <code>&lt;Diagram&gt;</code>, <code>usePlayer</code>, controls.</li>
           </ul>
           <p>Two packages sometimes use one name (<code>graph</code> in ds and git, <code>segment</code> in plot and geom): alias on import, <code>{"import { graph as gitGraph } from '@figurae/git'"}</code>.</p>
         </Section>
@@ -209,26 +208,6 @@ communication(people, messages, { upTo: player.frame });     // the same list, d
           <p>Sequence diagrams compute their activation bars from the calls and returns, the same stack a running program keeps (<code>activations: false</code> hides them). An <code>alt</code> with <code>sections</code> gets an <code>[else]</code> divider, and each message can carry a <code>tone</code>. The class and object diagrams share box sizes, and the sequence and communication diagrams share a message type, so a pair of views of one thing can morph into each other instead of cutting.</p>
         </Section>
 
-        <Section id="snapping" title="Snapping">
-          <p>Drag a box in a design tool and it pulls to the other boxes: its centre and two edges match theirs on each axis, the closest pair within a few pixels wins, and a faint guide shows what lined up. With no alignment it falls back to a grid. That is <code>snapFrame(moving, others, {'{ grid, threshold }'})</code> in core, which returns the corrected centre and the guides, and <code>snapGuides(guides)</code>, which turns the guides into dashed scene paths (<code>role: 'snap-guide'</code>) spanning the two boxes.</p>
-          <p>In React, <code>useSnap</code> keeps the guides in state and looks the moving box up among the others by id:</p>
-          <Code>{`
-const diagram = classDiagram(classes.map((c) => ({ ...c, ...where[c.id] })), relations, { draggable: true });
-const { guides, snap, clear } = useSnap(
-  Object.fromEntries(classes.map((c) => [c.id, diagram.box(c.id)])),
-  { grid: 10 },
-);
-<Diagram
-  scene={combine(diagram, snapGuides(guides))}
-  onDrag={(e) => {
-    const id = (e.node.data as { class: string }).class;
-    setWhere((w) => ({ ...w, [id]: snap(id, e) }));      // e has x, y: a point in scene units
-  }}
-  onDragEnd={clear}
-/>`}</Code>
-          <p>The diagram does not know about snapping: it draws wherever you tell it, and your state is the only place a position lives. The snapping is a function from a pointer position and the other frames to a better position. Keyboard drags go through the same events, so they snap too. Class, object, state, component, package and deployment diagrams all have a demo on the examples page.</p>
-        </Section>
-
         <Section id="git" title="Git history">
           <p><code>graph(commits, refs)</code> from <code>@figurae/git</code> draws a commit graph from <code>{'{ hash, parents, label }'}</code>, newest first, the order <code>git log</code> prints. Lanes follow the first-parent rule: a commit's first parent inherits its column, so a branch runs straight down and a branch on top of another continues its line; a merge's other parents open or join lanes. Commits are keyed by hash, so a before / after pair animates: a merge adds one dot, a rebase replaces dots.</p>
           <Code>{`
@@ -261,7 +240,6 @@ toSVG(scene, { theme: 'dark' });           // pinned palette + background, for a
             <li><b>Three-set Venn.</b> Generalise <code>vennRegions</code>: each of the 7 regions is bounded by arcs between pairwise intersection points.</li>
             <li><b>Reingold–Tilford.</b> <code>packages/layout/src/tidy.ts</code> does it (<code>tree()</code>, and <code>binaryTree</code> with <code>layout: 'tidy'</code>). Delete it and rebuild it from <code>tests/tidy.test.ts</code>; then try Walker's fix, which spreads small subtrees evenly between big ones.</li>
             <li><b>Text crossfade.</b> Done in <code>packages/core/src/render.ts</code> with a fading ghost copy. Try the other approach: keep two text elements per id and swap which one is live. What does each do when a label changes twice inside one animation?</li>
-            <li><b>Equal-spacing snaps.</b> <code>snapFrame</code> only matches edges and centres. Add the rule design tools have: when the moving box would sit the same distance from its neighbour as two other boxes sit from each other, pull it there and draw a guide for the gap. Start from <code>packages/core/src/snap.ts</code> and <code>tests/snap.test.ts</code>.</li>
           </ol>
         </Section>
       </div>

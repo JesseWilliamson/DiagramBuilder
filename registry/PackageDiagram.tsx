@@ -2,8 +2,8 @@
 // packages at any depth: the line meets the outer frames. Click a package to light up what it, and
 // everything inside it, imports, accesses or depends on. Top-level packages can be dragged.
 import { useState } from 'react';
-import { combine, fitViewBox, snapGuides, Tone } from '@figurae/core';
-import { Diagram, useSnap } from '@figurae/react';
+import { fitViewBox, Tone } from '@figurae/core';
+import { Diagram } from '@figurae/react';
 import { packageDiagram, PackageRelation, UmlPackage } from '@figurae/uml';
 
 const packages: UmlPackage[] = [
@@ -40,20 +40,17 @@ export default function PackageDiagram() {
     relations.map((r) => ({ ...r, tone: out.includes(r) ? 'active' : undefined })),
     { interactive: true, draggable: true, route: 'straight', rankGap: 80 },
   );
-  const { guides, snap, clear } = useSnap(Object.fromEntries(packages.map((p) => [p.id, diagram.box(p.id)])), { grid: 10 });
 
   return (
     <>
       <Diagram
-        scene={combine(diagram, snapGuides(guides))}
+        scene={diagram}
         viewBox={viewBox}
         onDrag={(e) => {
           const id = (e.node.data as { package?: string })?.package;
           if (!id || !packages.some((p) => p.id === id)) return;
-          const p = snap(id, e);
-          setMoved((s) => ({ ...s, [id]: { x: p.x, y: p.y } }));
+          setMoved((s) => ({ ...s, [id]: { x: e.x, y: e.y } }));
         }}
-        onDragEnd={clear}
         onClick={(e) => {
           const id = (e.node.data as { package?: string })?.package;
           if (id) setSel((s) => (s === id ? null : id));

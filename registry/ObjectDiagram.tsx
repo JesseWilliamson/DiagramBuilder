@@ -3,8 +3,8 @@
 // names gain an underline and a `name : Class` title, attributes become `attr = value` slots, and
 // the interfaces (which have no instances) fade away. Drag to rearrange; both views share positions.
 import { useState } from 'react';
-import { combine, fitViewBox, snapGuides } from '@figurae/core';
-import { Diagram, Segmented, Switch, useSnap } from '@figurae/react';
+import { fitViewBox } from '@figurae/core';
+import { Diagram, Segmented, Switch } from '@figurae/react';
 import { classDiagram, ObjectLink, objectDiagram, Relation, UmlClass, UmlObject } from '@figurae/uml';
 
 const classes: UmlClass[] = [
@@ -52,24 +52,18 @@ export default function ObjectDiagram() {
     view === 'class'
       ? classDiagram(classes.map((c) => ({ ...c, ...where[c.id] })), relations, { id: 'uml', collapsed: !slots, interactive: true, draggable: true })
       : objectDiagram(objects.map((u) => ({ ...u, ...where[u.id] })), links, { id: 'uml', collapsed: !slots, interactive: true, draggable: true, route: 'straight' });
-  const { guides, snap, clear } = useSnap(
-    Object.fromEntries((view === 'class' ? classes : objects).map((c) => [c.id, diagram.box(c.id)])),
-    { grid: 10 },
-  );
 
   return (
     <>
       <Diagram
-        scene={combine(diagram, snapGuides(guides))}
+        scene={diagram}
         viewBox={viewBox}
         onDrag={(e) => {
           const d = e.node.data as { class?: string; object?: string };
           const id = d?.class ?? d?.object;
           if (!id) return;
-          const p = snap(id, e);
-          setWhere((w) => ({ ...w, [id]: { x: p.x, y: p.y } }));
+          setWhere((w) => ({ ...w, [id]: { x: e.x, y: e.y } }));
         }}
-        onDragEnd={clear}
         onClick={(e) => {
           const d = e.node.data as { class?: string; object?: string } | undefined;
           const u = objects.find((o) => o.id === (d?.object ?? d?.class));

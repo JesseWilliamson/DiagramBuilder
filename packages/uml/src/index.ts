@@ -5,7 +5,7 @@
  *   structure:  classDiagram, objectDiagram, component, deployment, packageDiagram, er
  *
  * Boxes carry stable ids, so a box that keeps its id moves instead of redrawing. Boxes without x/y are
- * placed by @figurae/layout; draggable ones snap with `snapFrame` / `useSnap` (core, react).
+ * placed by @figurae/layout.
  */
 export * from './classDiagram';
 export * from './sequence';

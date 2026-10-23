@@ -173,7 +173,6 @@ ${TONES.map(toneVars).join('\n')}
 .dv-path.dv-role-region${anyTone} { fill: var(--dv-cf); }
 .dv-path.dv-role-region.dv-tone-muted { fill: transparent; }
 .dv-path.dv-role-guide { fill: none; stroke: var(--dv-fg); stroke-dasharray: 4 4; stroke-width: 1.5; }
-.dv-path.dv-role-snap-guide { fill: none; stroke: var(--dv-accent); stroke-dasharray: 4 3; stroke-width: 1; opacity: 0.7; pointer-events: none; }
 .dv-path.dv-role-glow { fill: none; stroke: var(--dv-fg); stroke-dasharray: 5 5; stroke-width: 2; filter: drop-shadow(0 0 3px #5cf0b6) drop-shadow(0 0 7px #5cf0b6); }
 .dv-path.dv-role-marker { fill: var(--dv-c, var(--dv-muted)); stroke: none; }
 .dv-path.dv-role-bar, .dv-rect.dv-role-bar { stroke: var(--dv-stroke); stroke-width: 1.5px; }

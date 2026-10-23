@@ -1,8 +1,7 @@
 // An order's lifecycle as a state machine. Only the events that are legal in the
 // current state are enabled: that list IS the state machine.
 import { useState } from 'react';
-import { combine, snapGuides } from '@figurae/core';
-import { Button, Diagram, useSnap } from '@figurae/react';
+import { Button, Diagram } from '@figurae/react';
 import { stateMachine, Transition, UmlState } from '@figurae/uml';
 
 const states: UmlState[] = [
@@ -49,20 +48,17 @@ export default function StateMachine() {
 
   // Drag a state: it snaps to the others' centres and edges, with a guide while it does.
   const diagram = stateMachine(pos, transitions, { current, fired, draggable: true });
-  const { guides, snap, clear } = useSnap(Object.fromEntries(pos.map((s) => [s.id, diagram.frame(s.id)])), { grid: 10 });
 
   return (
     <>
       <Diagram
-        scene={combine(diagram, snapGuides(guides))}
+        scene={diagram}
         viewBox={[-30, -10, 640, 340]}
         onDrag={(e) => {
           const id = (e.node.data as { state?: string })?.state;
           if (!id) return;
-          const p = snap(id, e);
-          setPos((ss) => ss.map((s) => (s.id === id ? { ...s, x: p.x, y: p.y } : s)));
+          setPos((ss) => ss.map((s) => (s.id === id ? { ...s, x: e.x, y: e.y } : s)));
         }}
-        onDragEnd={clear}
       />
       <div className="row">
         {events.map((ev) => (

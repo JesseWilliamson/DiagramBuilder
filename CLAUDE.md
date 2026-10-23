@@ -32,7 +32,7 @@ interaction. No 3D buttons, no lesson UI: this is a diagram library plus a docs/
    id move, new ids fade in, missing ids fade out; a single rAF loop; text crossfade; paths with different
    point counts are resampled by arc length); `fitViewBox`/`nextCamera`; `createPlayer`; `handle` (draggable
    dot with a big hit target, optional pulse hint); `connector` (line + end markers, straight/elbow/via
-   routes, `rectEdge`); `snapFrame`/`snapGuides` (grid + centre/edge alignment with guide lines); `toSVG`;
+   routes, `rectEdge`); `toSVG`;
    `describe`; TeX-lite `mathtext`; `styles.ts` (the one theme, `--dv-*` variables, dark via
    `[data-theme="dark"]`/`.dark`/OS). Parts carry a semantic `role`; the stylesheet decides looks.
    **Layouts never know about styling.** Drag handles pointer, touch (non-passive touchstart on draggables,
@@ -48,11 +48,11 @@ interaction. No 3D buttons, no lesson UI: this is a diagram library plus a docs/
    - `@figurae/uml` classDiagram, objectDiagram, packageDiagram, sequence, communication, stateMachine,
      activity (swimlanes, fork/join), useCase, component (lollipop/socket), deployment, er (crow's foot/Chen).
      All take ids, tones, `interactive`, `draggable`, `x`/`y` optional (layered layout places the rest), and
-     return `box(id): Frame` for snapping. objectDiagram reuses classDiagram's ids so the two views morph;
+     return `box(id): Frame`. objectDiagram reuses classDiagram's ids so the two views morph;
      communication shares `Message` with sequence so one list feeds both.
    - `@figurae/git` graph (lanes by first parent), gitLanes
    - `@figurae/react` `<Diagram>` (natural size, `viewBox`, `duration`; camera frozen and tween off while
-     dragging), `usePlayer`, `useTicker`, `useBurst`, `useSnap`, controls on Radix (`Slider`, `Segmented`,
+     dragging), `usePlayer`, `useTicker`, `useBurst`, controls on Radix (`Slider`, `Segmented`,
      `Select`, `Switch`, `NumberStepper`, `Button`, `TextInput`, `Transport`), `CodeTrace`, `MathText`.
    Exports are flat: `import { fn } from '@figurae/plot'`. Two packages may export the same name
    (`segment`, `circle`); alias on import. No umbrella package, no namespaces (so nothing to tree-shake away).
@@ -70,7 +70,7 @@ interaction. No 3D buttons, no lesson UI: this is a diagram library plus a docs/
   by family, live diagram beside editable source via sucrase + CodeMirror), guide (`#/guide`), API (`#/api`).
   `site/demos.ts` globs `../registry/*.tsx`. `site/live/compile.ts` maps every `@figurae/*` package for the
   in-page editor: add a package there when you add one.
-- `tests/` — vitest; maths per family, `render.test.ts` in happy-dom, `snap`, `uml-a/b/c`, `registry`, `cli`.
+- `tests/` — vitest; maths per family, `render.test.ts` in happy-dom, `uml-a/b/c`, `registry`, `cli`.
 - `.claude/skills/figurae/` — the Claude skill for USING the library (SKILL.md + references/api.md,
   recipes.md). `npm run sync:skill -- <repo>` copies it into another checkout. Keep `references/api.md` in
   step with the exports. Not shipped on npm.

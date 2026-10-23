@@ -32,7 +32,7 @@ One package per family, each exporting its functions flat (no namespaces: `fn`, 
 
 | Package | What is in it |
 |---|---|
-| `@dsviz/core` | `rect circle text arrow path`, `combine translate namespace`, `connector`, `createView`, `toSVG`, `fitViewBox`, `createPlayer`, `handle`, `burst`, `snapFrame` / `snapGuides` |
+| `@dsviz/core` | `rect circle text arrow path`, `combine translate namespace`, `connector`, `createView`, `toSVG`, `fitViewBox`, `createPlayer`, `handle`, `burst` |
 | `@dsviz/layout` | `layered` (DAG), `tidy` (trees): positions only, no drawing |
 | `@dsviz/ds` | `array pointer linkedList binaryTree tree graph grid stack queue hashMap` |
 | `@dsviz/plot` | `plane axes fn point segment vector tangent area riemann integrate label` |

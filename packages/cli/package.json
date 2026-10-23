@@ -1,0 +1,27 @@
+{
+  "name": "@figurae/cli",
+  "version": "3.0.0",
+  "description": "Copy figurae diagram components into your app: npx @figurae/cli add binary-search",
+  "author": "Jesse Williamson",
+  "homepage": "https://jessewilliamson.github.io/DiagramBuilder/",
+  "type": "module",
+  "bin": {
+    "figurae": "./bin/figurae.js"
+  },
+  "files": [
+    "bin",
+    "registry"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JesseWilliamson/DiagramBuilder.git",
+    "directory": "packages/cli"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

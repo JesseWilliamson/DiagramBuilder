@@ -1,3 +1,4 @@
+import registry from '../registry/index.json';
 import { demo } from './demos';
 import { groups } from './examples';
 import { LiveExample } from './LiveExample';
@@ -7,10 +8,10 @@ const featured = ['Pythagoras', 'BinarySearch', 'Riemann', 'Venn'];
 export function Home() {
   return (
     <div className="home">
-      <h1 className="home-title">dsviz</h1>
+      <h1 className="home-title">figurae</h1>
       <p className="home-lede">
-        A TypeScript library for <b>interactive, animated diagrams</b> for teaching: data structures and algorithms, plots,
-        probability, geometry, scheduling and memory. You describe the picture as data; it draws it in SVG and animates every change.
+        A TypeScript library for <b>interactive, animated diagrams</b> for teaching computer science: data structures and algorithms, UML and
+        system architecture, git, plots, probability, geometry, scheduling and memory. You describe the picture as data; it draws it in SVG and animates every change.
       </p>
       <div className="featured">
         {featured.map((name) => {
@@ -24,13 +25,19 @@ export function Home() {
       </div>
       <p className="home-more"><a href="#/examples">All examples, with code →</a></p>
       <h2>Usage</h2>
-      <pre className="code">{`npm install github:JesseWilliamson/DiagramBuilder   # builds dist/ on install
+      <pre className="code">{`// 1. Primitives: shapes with ids, drawn by <Diagram>.
+import { rect, combine } from '@figurae/core';
+import { Diagram } from '@figurae/react';
+<Diagram scene={combine(rect({ id: 'a', x: 0, y: 0, w: 40, h: 40 }))} />
 
-import { array, pointer, combine } from 'dsviz';
-import { Diagram } from 'dsviz/react';
-
+// 2. A family function: state in, scene out.
+import { array, pointer } from '@figurae/ds';
 const arr = array([3, 8, 12, 17], { tones: { 2: 'active' } });
-<Diagram scene={combine(arr, pointer({ id: 'i', at: arr.top(2), label: 'i' }))} />`}</pre>
+combine(arr, pointer({ id: 'i', at: arr.top(2), label: 'i' }))
+
+// 3. A whole component, copied into your app to edit.
+npx @figurae/cli add binary-search`}</pre>
+      <p>Layers 1 and 2 are libraries (<code>npm install @figurae/core @figurae/ds @figurae/react</code>). Layer 3 is source code: the CLI copies the file and prints the <code>npm install</code> line it needs. <code>npx @figurae/cli list</code> shows all {registry.length} components, the same ones as on the examples page.</p>
       <p>Read the <a href="#/guide">guide</a> for the ideas, or the <a href="#/api">API</a> for the full list.</p>
     </div>
   );

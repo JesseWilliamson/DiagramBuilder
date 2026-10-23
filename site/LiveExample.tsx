@@ -8,6 +8,13 @@ export function LiveExample({ name, title, desc }: { name: string; title: string
   const d = demo(name);
   const live = useLive(d.source, d.initial);
   const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const copy = () => {
+    navigator.clipboard?.writeText(d.command).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    }, () => {});
+  };
   return (
     <article className="example" id={name}>
       <div className="ex-head">
@@ -22,8 +29,12 @@ export function LiveExample({ name, title, desc }: { name: string; title: string
         </div>
         <div className={`ex-code ${open ? 'is-open' : ''}`}>
           <div className="ex-code-bar">
-            <span>{d.file}</span>
+            <span className="ex-code-file">
+              <span>{d.file}</span>
+              <code className="ex-cmd">{d.command}</code>
+            </span>
             <span className="ex-code-actions">
+              <button type="button" onClick={copy}>{copied ? 'Copied' : 'Copy command'}</button>
               {live.edited && <button type="button" onClick={live.reset}>Reset</button>}
               <button type="button" onClick={live.run} title="Ctrl/⌘ + Enter">Run</button>
             </span>

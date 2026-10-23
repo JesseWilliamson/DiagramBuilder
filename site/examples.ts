@@ -1,4 +1,4 @@
-/** The examples page, in order. `name` is the file in demos/. */
+/** The examples page, in order. `name` is the file in registry/ (registry/index.json is generated from this list: npm run registry). */
 export interface Example {
   name: string;
   title: string;
@@ -18,9 +18,6 @@ export const groups: Group[] = [
     intro: 'Primitives with stable ids. Change the state, render again, and everything that kept its id moves.',
     items: [
       { name: 'Scenes', title: 'Scenes and ids', desc: 'Shapes keyed by id. Shuffle moves them, Add fades one in, Remove fades one out. Colour is a CSS transition.' },
-      { name: 'Morph', title: 'Morphing paths', desc: 'Paths with different point counts are resampled by arc length, then tweened point to point.' },
-      { name: 'Spec', title: 'Diagrams as JSON', desc: 'A DiagramSpec is checked by validateSpec (every reference, every field), drawn by fromSpec and described by describeSpec. Edit it, or break it.' },
-      { name: 'GuessNumber', title: 'Dragging and clicking', desc: 'A draggable handle and a clickable track, driving plain React state.' },
     ],
   },
   {
@@ -29,7 +26,6 @@ export const groups: Group[] = [
     intro: 'Arrays, pointers, maps, lists, trees, graphs and grids. Algorithms are generators; usePlayer turns their frames into a timeline.',
     items: [
       { name: 'BinarySearch', title: 'Binary search', desc: 'Generator frames, a code trace, and pointers that slide.' },
-      { name: 'CodeBlock', title: 'Code in the diagram', desc: 'code.block: numbered lines and a highlight band that slides as you step, joined to the array by an arrow.' },
       { name: 'WhyFast', title: 'Halving', desc: 'Why binary search takes log₂ n steps.' },
       { name: 'BubbleSort', title: 'Keys decide what moves', desc: 'With keys, a swap slides two tiles past each other. Without, the numbers change in place.' },
       { name: 'HashMap', title: 'Hash map', desc: 'Two Sum with a map of values seen. Rows are keyed by the map key, so each entry drops in as its own row.' },
@@ -45,7 +41,7 @@ export const groups: Group[] = [
   {
     id: 'plot',
     title: 'Plots',
-    intro: 'plot.plane maps maths coordinates (y up) to pixels. Axes, curves, points, tangents, areas and Riemann sums all take the plane.',
+    intro: 'plane (@figurae/plot) maps maths coordinates (y up) to pixels. Axes, curves, points, tangents, areas and Riemann sums all take the plane.',
     items: [
       { name: 'Tangent', title: 'Tangent lines', desc: 'Drag along the curve. Switching functions morphs the curve.' },
       { name: 'Riemann', title: 'Riemann sums', desc: 'Drag a and b, change n and the rule.' },
@@ -80,7 +76,7 @@ export const groups: Group[] = [
     title: 'Systems',
     intro: 'CPU scheduling and memory.',
     items: [
-      { name: 'Scheduling', title: 'CPU scheduling', desc: 'sched.simulate plus a Gantt chart keyed by process and segment.' },
+      { name: 'Scheduling', title: 'CPU scheduling', desc: 'simulate (@figurae/os) plus a Gantt chart keyed by process and segment.' },
       { name: 'PythonMemory', title: 'Names and objects', desc: 'Frames, heap objects and reference arrows.' },
       { name: 'Pointers', title: 'Pointer arithmetic', desc: 'The same bytes as char, int or double.' },
     ],
@@ -88,7 +84,7 @@ export const groups: Group[] = [
   {
     id: 'design',
     title: 'Software design',
-    intro: 'UML (uml.classDiagram, uml.sequence, uml.stateMachine), system design (sys.architecture, sys.packet) and git history (git.graph). Lines and their end markers come from connector().',
+    intro: 'UML (classDiagram, sequence, stateMachine), system design (architecture, packet) and git history (graph from @figurae/git). Lines and their end markers come from connector().',
     items: [
       { name: 'UmlArrows', title: 'UML relationships', desc: 'The six arrows, each beside the code that creates it.' },
       { name: 'ClassDiagram', title: 'Class diagram', desc: 'Drag the classes; click one to see only its relationships.' },
@@ -99,8 +95,19 @@ export const groups: Group[] = [
       { name: 'LoadBalancer', title: 'Load balancing', desc: 'Round robin, least connections and random, with a slow server. Click a server to take it down.' },
       { name: 'ConsistentHashing', title: 'Consistent hashing', desc: 'Add or remove a server and count the keys that move, ring versus hash % N.' },
       { name: 'TrustZones', title: 'Trust boundaries', desc: 'Zones around machines and a sandbox. Step a job across and see which files may cross.' },
-      { name: 'GitGraph', title: 'Merge versus rebase', desc: 'git.graph: lanes by first parent, curved edges, branch pills. Commits are keyed by hash, so the switch animates.' },
+      { name: 'GitGraph', title: 'Merge versus rebase', desc: 'graph from @figurae/git: lanes by first parent, curved edges, branch pills. Commits are keyed by hash, so the switch animates.' },
       { name: 'Polling', title: 'Polling in a loop', desc: 'A sequence diagram with a loop fragment that grows as the polls come back.' },
+      // uml: deployment, object, package
+      { name: 'Deployment', title: 'Deployment diagram', desc: 'Machines with nested runtimes and the files they host. Add a second server and a load balancer; the layout rearranges.' },
+      { name: 'ObjectDiagram', title: 'Class view and object view', desc: 'The same ids drawn as classes or as live objects (name : Class, slots). Switch and the boxes morph.' },
+      { name: 'PackageDiagram', title: 'Package diagram', desc: 'Nested packages and import / access / merge relations at any depth. Click one to see what it uses.' },
+      // communication, er
+      { name: 'Communication', title: 'Communication diagram', desc: 'The login again, as links and numbered messages (1, 1.1, 1.1.1), stepped in step with the sequence view.' },
+      { name: 'Er', title: 'Entity–relationship', desc: "A shop schema in crow's-foot or Chen notation. Click an entity to see its relationships." },
+      // uml: use case, activity, component
+      { name: 'UseCase', title: 'Use case diagram', desc: 'A web shop: actors, ovals, «include» and «extend». Click an actor to see what they can do; toggle the system boundary.' },
+      { name: 'Activity', title: 'Activity diagram', desc: 'An order across three swimlanes: decision, fork and join, flow final. Step through, or switch the stock off for the other branch.' },
+      { name: 'Component', title: 'Component diagram', desc: 'Lollipops and sockets join into assemblies; a port delegates into a nested component. Click one to see its interfaces.' },
     ],
   },
 ];

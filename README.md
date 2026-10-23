@@ -1,55 +1,81 @@
-# dsviz
+# figurae
 
-A TypeScript library for interactive, animated SVG diagrams for teaching: data structures and algorithms,
-plots, probability, geometry, CPU scheduling and memory. You describe the picture as data; dsviz draws it
-and animates every change. Framework-free core, thin React layer.
+Interactive, animated SVG diagrams for teaching computer science. You describe the picture as data;
+figurae lays it out, draws it, and animates every change.
+
+It is built in three layers, like Radix and shadcn:
+
+- **Headless primitives** (`@figurae/core`): `rect`, `circle`, `text`, `arrow`, `path`, a keyed renderer that
+  tweens by id, a camera, a step player, connectors, snapping. No dependencies, no opinions about looks.
+- **Family layouts** (one package each): pure functions from your state to a scene, with anchors to attach
+  things to.
+- **Copyable components** (`registry/`): complete example diagrams as source files you take and own.
 
 ```
 state ──▶ layout functions ──▶ Scene (plain data, stable ids) ──▶ <Diagram> / createView / toSVG
 ```
 
-## Use it in a project
+What it draws: data structures (arrays, trees, hash maps, linked lists, graphs, grids), algorithms as
+step-throughs, UML (sequence, class, state, use case, activity, component, deployment, object, package,
+communication, ER), architecture diagrams, git graphs, plots, probability, geometry, and OS scheduling and
+memory.
+
+## Install
 
 ```sh
-npm install dsviz
+npm install @figurae/core @figurae/react @figurae/ds     # react >= 18 is a peer dependency
 ```
 
 ```tsx
-import { array, combine, pointer } from 'dsviz';
-import { Diagram } from 'dsviz/react';
+import { combine } from '@figurae/core';
+import { array, pointer } from '@figurae/ds';
+import { Diagram } from '@figurae/react';
 
-const arr = array([3, 8, 12, 17], { tones: { 2: 'active' } });
-<Diagram scene={combine(arr, pointer({ id: 'i', at: arr.top(2), label: 'i' }))} />
+export function Example() {
+  const arr = array([3, 8, 12, 17], { tones: { 2: 'active' } });
+  return <Diagram scene={combine(arr, pointer({ id: 'i', at: arr.top(2), label: 'i' }))} />;
+}
 ```
 
-Families: data structures at the top level (`array`, `pointer`, `linkedList`, `binaryTree`, `tree`, `graph`,
-`grid`, `stack`, `queue`, `hashMap`) and the namespaces `uml`, `sys`, `git`, `code`, `layout`, `plot`, `prob`,
-`geom`, `sched`, `mem`. Colours are CSS variables (`--dv-*`) you can override; dark mode via `.dark` or
-`[data-theme="dark"]`.
+Render a new scene and every node that kept its id slides to its new place. Colours are CSS variables
+(`--dv-*`) you can override; dark mode follows `.dark` or `[data-theme="dark"]`.
 
-### Diagrams as JSON
+To copy a ready-made diagram into your app instead: `npx @figurae/cli add binary-search`.
 
-```ts
-import { validateSpec, fromSpec, describeSpec } from 'dsviz';
+## Packages
 
-const r = validateSpec(JSON.parse(text));     // { ok, errors: [{ path: 'messages[3].to', message: 'unknown participant "dbb"…' }] }
-if (r.ok) <Diagram scene={fromSpec(r.spec)} label={describeSpec(r.spec)} />
-```
+All versioned together; each exports its functions flat (`import { fn } from '@figurae/plot'`).
 
-Types: `sequence`, `class`, `state`, `architecture`, `graph`, `git`, `array`, `table`, `code`. Nodes
-without coordinates are laid out for you (layered DAG layout, tidy trees).
+| Package | Contents |
+|---|---|
+| `@figurae/core` | scene primitives, renderer, camera, player, connectors, snapping, `toSVG` |
+| `@figurae/layout` | `layered` (DAG layout), `tidy` (tree layout) |
+| `@figurae/ds` | `array pointer linkedList binaryTree tree graph grid stack queue hashMap` |
+| `@figurae/plot` | `plane axes fn point segment vector tangent area riemann integrate label` |
+| `@figurae/prob` | `bars sampleSpace diePips probTree venn2` |
+| `@figurae/geom` | `polygon segment tickMarks angleMark circle pointLabel` and construction helpers |
+| `@figurae/os` | `simulate gantt stackHeap memory hex` |
+| `@figurae/arch` | `architecture component zone packet` |
+| `@figurae/uml` | `sequence communication classDiagram objectDiagram stateMachine useCase activity component deployment packageDiagram er` |
+| `@figurae/git` | `graph gitLanes` |
+| `@figurae/react` | `Diagram usePlayer useTicker useBurst useSnap`, controls, `Transport`, `CodeTrace`, `MathText` |
+
+A family depends on core (and layout, if it places boxes) and on nothing else.
 
 ### For coding agents
 
-The package ships a Claude skill (`.claude/skills/dsviz/`). Copy it into your repository with
-`npx dsviz-sync-skill .` and agents there will know how to draw with dsviz.
+This repo holds a Claude skill (`.claude/skills/figurae/`) that covers every package. Copy it into another
+repository with `npm run sync:skill -- <repo>` from a checkout and agents there will know how to draw with
+figurae.
 
 ## This repo
 
-- `npm run dev` — the docs and examples site (`site/`)
-- `npm test` — unit tests
-- `npm run build` — library build into `dist/`
-- `npm run build:site` — static site into `site-dist/` (deployed to GitHub Pages by CI)
-- `npm run sync:skill -- <repo>` — copy the skill into another repository
+- `npm run dev`: the docs and examples site (`site/`)
+- `npm test`: unit tests
+- `npm run typecheck`: `tsc --noEmit` over packages, site, tests and registry
+- `npm run build`: build every package in `packages/` into its own `dist/`
+- `npm run build:site`: static site into `site-dist/` (deployed to GitHub Pages by CI)
+- `npm run registry`: regenerate `registry/index.json` after adding or changing an example
+- `npm run sync:skill -- <repo>`: copy the skill into another repository
 
 See `CLAUDE.md` for design notes.

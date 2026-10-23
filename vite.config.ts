@@ -8,8 +8,8 @@ export default defineConfig({
   plugins: [react()],
   root: 'site',
   base: './', // relative asset URLs so it works under /<repo>/ on GitHub Pages
-  // demos import 'dsviz' exactly like an app would; point that at the source
-  resolve: { alias: [{ find: /^dsviz\/react$/, replacement: src('./src/react/index.ts') }, { find: /^dsviz$/, replacement: src('./src/index.ts') }] },
+  // demos import '@figurae/<pkg>' exactly like an app would; point that at the source
+  resolve: { alias: [{ find: /^@figurae\/(.*)$/, replacement: src('./packages/$1/src/index.ts') }] },
   build: { outDir: '../site-dist', emptyOutDir: true, chunkSizeWarningLimit: 2000 },
   test: { root: '.', include: ['tests/**/*.test.ts'] },
 });

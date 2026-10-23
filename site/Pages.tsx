@@ -10,8 +10,8 @@ export function Home() {
     <div className="home">
       <h1 className="home-title">figurae</h1>
       <p className="home-lede">
-        A TypeScript library for <b>interactive, animated diagrams</b> for teaching: data structures and algorithms, plots,
-        probability, geometry, scheduling and memory. You describe the picture as data; it draws it in SVG and animates every change.
+        A TypeScript library for <b>interactive, animated diagrams</b> for teaching computer science: data structures and algorithms, UML and
+        system architecture, git, plots, probability, geometry, scheduling and memory. You describe the picture as data; it draws it in SVG and animates every change.
       </p>
       <div className="featured">
         {featured.map((name) => {

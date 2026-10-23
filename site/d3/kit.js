@@ -60,14 +60,19 @@ ${TONES.map((t) => `.fig .tone-${t} { --c:var(--${t}); --cf:var(--${t}-fill); --
 .fig .btn-shape { cursor: pointer; }
 .fig .btn-shape:hover { filter: brightness(.96); }
 /* lines */
-.fig .line { fill: none; stroke: var(--c, var(--edge)); stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; transition: stroke .25s; }
+.fig .line { fill: none; stroke: var(--c, var(--edge)); stroke-linecap: round; stroke-linejoin: round; transition: stroke .25s; }
+.fig .line:not([stroke-width]) { stroke-width: 1.5px; }
 .fig .line.muted { stroke: var(--faint); }
 .fig .line.dashed, .fig .dashed { stroke-dasharray: 6 5; }
-.fig .grid { fill: none; stroke: var(--grid); stroke-width: 1.5px; }
-.fig .axis { fill: none; stroke: var(--fg); stroke-width: 1.5px; }
-.fig .curve { fill: none; stroke: var(--c, var(--curve)); stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; }
+.fig .grid { fill: none; stroke: var(--grid); }
+.fig .grid:not([stroke-width]) { stroke-width: 1.5px; }
+.fig .axis { fill: none; stroke: var(--fg); }
+.fig .axis:not([stroke-width]) { stroke-width: 1.5px; }
+.fig .curve { fill: none; stroke: var(--c, var(--curve)); stroke-linecap: round; stroke-linejoin: round; }
+.fig .curve:not([stroke-width]) { stroke-width: 3px; }
 .fig .area { fill: var(--cf, var(--area)); stroke: none; }
-.fig .guide { fill: none; stroke: var(--fg); stroke-width: 1.5px; stroke-dasharray: 4 4; }
+.fig .guide { fill: none; stroke: var(--fg); stroke-dasharray: 4 4; }
+.fig .guide:not([stroke-width]) { stroke-width: 1.5px; }
 .fig .band { fill: var(--band); stroke: none; }
 .fig .panel { fill: var(--muted-fill); stroke: none; }
 .fig .fill-ink { fill: var(--c, var(--edge)); stroke: none; }

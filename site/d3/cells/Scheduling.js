@@ -128,7 +128,7 @@ function chips(layer, ids, x) {
       return g;
     },
     (update) => update,
-    (exit) => moveTo(kit.tr(exit, 250).style('opacity', 0), (d) => `translate(${d.x - 40},0)`).remove(), // and out to the left
+    (exit) => moveTo(kit.tr(exit.interrupt(), 250).style('opacity', 0), (d) => `translate(${d.x - 40},0)`).remove(), // and out to the left
   ).call((g) => moveTo(kit.tr(g, 300).style('opacity', 1), (d) => `translate(${d.x},0)`));
 }
 
@@ -146,7 +146,7 @@ function draw(now) {
   bars.selectAll('rect').data(data, (d) => d.key).join(
     (enter) => enter.append('rect').attr('rx', 4).attr('height', LANE - 4).attr('y', (d) => laneY(d.id) + 2).attr('x', x).attr('width', 0),
     (update) => update,
-    (exit) => kit.tr(exit, 250).attr('width', 0).remove(),
+    (exit) => kit.tr(exit.interrupt(), 250).attr('width', 0).remove(), // interrupt(): a redraw's pending move must not keep it alive
   ).attr('class', (d) => `solid ${kit.tone(tones[d.id])}`)
     .call((r) => kit.tr(r, 300).attr('x', x).attr('width', w).attr('y', (d) => laneY(d.id) + 2));
 

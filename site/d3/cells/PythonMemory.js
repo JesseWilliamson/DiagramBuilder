@@ -95,10 +95,12 @@ const moveTo = (t, f) => t.attrTween('transform', function (d, i) { return d3.in
 // Every layer uses the same enter = fade in, exit = fade out.
 // The fade is a *named* transition ('fade'): a selection can run one transition per name at a
 // time, so the fade and the move (default name) don't cancel each other.
+// An exiting element is interrupt()ed first: d3 only removes it when no other transition is still
+// running on it, and a move started by a redraw a moment earlier would otherwise keep it alive.
 const fade = (enter, exit) => [
   (e) => enter(e).style('opacity', 0).call((n) => n.transition('fade').duration(350).style('opacity', 1)),
   (u) => u,
-  (x) => x.transition('fade').duration(250).style('opacity', 0).remove(),
+  (x) => x.interrupt().transition('fade').duration(250).style('opacity', 0).remove(),
 ];
 
 function draw(step) {
@@ -148,7 +150,7 @@ function draw(step) {
         return c;
       },
       (u) => u,
-      (x) => kit.tr(x, 250).style('opacity', 0).remove(),
+      (x) => x.interrupt().transition().duration(250).style('opacity', 0).remove(),
     ).call((c) => {
       c.select('.val').text((c) => show(c.v));
       moveTo(kit.tr(c, 350).style('opacity', 1), (c) => `translate(${c.i * CELL},0)`);

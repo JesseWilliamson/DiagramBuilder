@@ -22,9 +22,7 @@ change later.
 - Demos: `CodeBlock` (code inside the picture; `CodeTrace` beside the picture stays), `GuessNumber`,
   `Spec`, `Morph`.
 - The `code/` family (`code.block`): the only thing that used it was the CodeBlock demo.
-- The JSON spec leaves core and the site. It is NOT deleted: GitGoose emits and verifies it (see
-  the notes), so it becomes its own package `@figurae/spec` that depends on the families. Delete
-  the package if that dependency is gone.
+- The JSON spec (`DiagramSpec`, validateSpec, fromSpec, describeSpec) is deleted; GitGoose moves to Mermaid.
 
 ## 2. Monorepo: one package per family (npm workspaces, lockstep versions)
 
@@ -43,12 +41,11 @@ packages/
   uml/      class sequence state + useCase activity component deployment object package
             communication er, snapping guides
   git/      graph, gitLanes
-  spec/     DiagramSpec, validateSpec, fromSpec, describeSpec
   react/    Diagram, usePlayer, useTicker, useBurst, controls, Transport, CodeTrace, MathText
 ```
 
 Rules: a family depends on `core` (and `layout` where it needs a layout) and on nothing else.
-`react` depends on `core` only. `spec` depends on the families. `tsconfig` paths and the Vite alias
+`react` depends on `core` only. `tsconfig` paths and the Vite alias
 map `@figurae/<pkg>` → `packages/<pkg>/src/index.ts`, so the site and tests import exactly what an
 app would. `build.mjs` builds every package into its own `dist/` (one ES module per file, as now).
 `publish.yml` publishes all workspaces. Tests stay in `tests/`, one file per package.
@@ -83,7 +80,7 @@ app would. `build.mjs` builds every package into its own `dist/` (one ES module 
 - Nav: Examples, Guide, API, GitHub. Examples grouped by package. Each example is a registry
   component with its source beside it (as now).
 - `.claude/skills/figurae/` replaces the old skill folder; `references/api.md` is regenerated
-  from the package exports; `spec.md` moves under the spec package.
+  from the package exports; `spec.md` is gone.
 - CLAUDE.md rewritten for the new layout.
 
 ## Order

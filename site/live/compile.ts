@@ -19,7 +19,6 @@ import * as os from '@figurae/os';
 import * as arch from '@figurae/arch';
 import * as uml from '@figurae/uml';
 import * as git from '@figurae/git';
-import * as spec from '@figurae/spec';
 import * as figuraeReact from '@figurae/react';
 
 const modules: Record<string, unknown> = {
@@ -35,7 +34,6 @@ const modules: Record<string, unknown> = {
   '@figurae/arch': arch,
   '@figurae/uml': uml,
   '@figurae/git': git,
-  '@figurae/spec': spec,
   '@figurae/react': figuraeReact,
 };
 

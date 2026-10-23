@@ -26,20 +26,8 @@ const arr = array([3, 8, 12, 17], { tones: { 2: 'active' } });
 One package per family, each exporting its layouts flat: `@figurae/core` (scene, renderer, player),
 `@figurae/ds` (`array`, `pointer`, `linkedList`, `binaryTree`, `tree`, `graph`, `grid`, `stack`, `queue`, `hashMap`),
 `@figurae/uml`, `@figurae/arch`, `@figurae/git`, `@figurae/layout`, `@figurae/plot`, `@figurae/prob`,
-`@figurae/geom`, `@figurae/os`, `@figurae/spec`, `@figurae/react`. Colours are CSS variables (`--dv-*`) you can override; dark mode via `.dark` or
+`@figurae/geom`, `@figurae/os`, `@figurae/react`. Colours are CSS variables (`--dv-*`) you can override; dark mode via `.dark` or
 `[data-theme="dark"]`.
-
-### Diagrams as JSON
-
-```ts
-import { validateSpec, fromSpec, describeSpec } from '@figurae/spec';
-
-const r = validateSpec(JSON.parse(text));     // { ok, errors: [{ path: 'messages[3].to', message: 'unknown participant "dbb"…' }] }
-if (r.ok) <Diagram scene={fromSpec(r.spec)} label={describeSpec(r.spec)} />
-```
-
-Types: `sequence`, `class`, `state`, `architecture`, `graph`, `git`, `array`, `table`, `code`. Nodes
-without coordinates are laid out for you (layered DAG layout, tidy trees).
 
 ### For coding agents
 

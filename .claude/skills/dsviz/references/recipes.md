@@ -1,4 +1,4 @@
-# figurae recipes
+# dsviz recipes
 
 Each recipe is complete: copy, then change the data. Imports show which package owns each symbol.
 
@@ -8,7 +8,7 @@ A trace is a list of calls with depths (from logs, a profiler, or a debugger). T
 `call` message and each finished call into a `return`, so the activation bars come out right.
 
 ```ts
-import { Message, sequence } from '@figurae/uml';
+import { Message, sequence } from '@dsviz/uml';
 
 type Call = { caller: string; callee: string; fn: string; result?: string; children?: Call[] };
 
@@ -34,7 +34,7 @@ To step through it, pass `upTo: i` and keep the camera fixed: `fitViewBox(sequen
 ## 2. Architecture with zones
 
 ```ts
-import { Component, Link, Zone, architecture } from '@figurae/arch';
+import { Component, Link, Zone, architecture } from '@dsviz/arch';
 
 const parts: Component[] = [
   { id: 'user', kind: 'user', label: 'Customer' },
@@ -60,7 +60,7 @@ Animate a request: keep a packet's id and move it with `a.along('lb', 'api', t)`
 ## 3. A layered DAG (dependencies, blast radius)
 
 ```ts
-import { graph } from '@figurae/ds';
+import { graph } from '@dsviz/ds';
 
 const nodes = [
   { id: 'parseConfig', kind: 'changed' }, { id: 'loadSettings', kind: 'downstream' },
@@ -81,7 +81,7 @@ Need only positions (to draw something else)? `layered(nodes, edges).pos(id)`.
 ## 4. A git graph: what a rebase does
 
 ```ts
-import { Commit, Ref, graph as gitGraph } from '@figurae/git';
+import { Commit, Ref, graph as gitGraph } from '@dsviz/git';
 
 const before: Commit[] = [
   { hash: 'c3', parents: ['c2'], label: 'Fix login redirect' },
@@ -108,8 +108,8 @@ Two copies of one family in one scene need different ids; keys that follow the v
 readable, and the same `draw` for both keeps the layout identical.
 
 ```ts
-import { combine, text, translate } from '@figurae/core';
-import { array } from '@figurae/ds';
+import { combine, text, translate } from '@dsviz/core';
+import { array } from '@dsviz/ds';
 
 const draw = (id: string, values: number[], keys: string[], y: number, title: string, lit: number[]) =>
   combine(
@@ -125,62 +125,17 @@ const scene = combine(
 For a single array that changes in place (one diagram, two states), render the same `id` with new
 values and the same `keys`: cells slide to their new places.
 
-## 6. Draggable boxes that snap
 
-Drag a class box and it pulls to a 10-unit grid and to the edges and centres of the other boxes, with a
-faint guide where it caught. Positions live in state and are fed back as `x`/`y`.
-
-```tsx
-import { useState } from 'react';
-import { combine, fitViewBox, snapGuides } from '@figurae/core';
-import { Diagram, useSnap } from '@figurae/react';
-import { Relation, UmlClass, classDiagram } from '@figurae/uml';
-
-const classes: UmlClass[] = [
-  { id: 'Shape', name: 'Shape', stereotype: 'interface', x: 200, y: 50, methods: ['+ area(): number'] },
-  { id: 'Circle', name: 'Circle', x: 70, y: 220, attributes: ['- r: number'] },
-  { id: 'Square', name: 'Square', x: 330, y: 220, attributes: ['- side: number'] },
-];
-const relations: Relation[] = [
-  { from: 'Circle', to: 'Shape', kind: 'implements' },
-  { from: 'Square', to: 'Shape', kind: 'implements' },
-];
-const viewBox = fitViewBox(classDiagram(classes, relations), 40);       // fixed camera: the dragged box must not move the frame
-
-export function Draggable() {
-  const [where, setWhere] = useState(Object.fromEntries(classes.map((c) => [c.id, { x: c.x!, y: c.y! }])));
-  const diagram = classDiagram(classes.map((c) => ({ ...c, ...where[c.id] })), relations, { draggable: true });
-  // the frames of the boxes as drawn NOW; snap() leaves the moving one out of its own candidates
-  const { guides, snap, clear } = useSnap(Object.fromEntries(classes.map((c) => [c.id, diagram.box(c.id)])), { grid: 10 });
-  return (
-    <Diagram
-      scene={combine(diagram, snapGuides(guides))}
-      viewBox={viewBox}
-      onDrag={(e) => {
-        const id = (e.node.data as { class?: string })?.class;
-        if (id) setWhere((w) => ({ ...w, [id]: snap(id, e) }));      // e carries x, y: a Vec
-      }}
-      onDragEnd={clear}
-    />
-  );
-}
-```
-
-Without React, call `snapFrame(diagram.box(id) moved to the pointer, otherFrames, { grid: 10 })` from
-`@figurae/core` and draw `snapGuides(result.guides)`. For nested things (deployment nodes, packages) pass
-only the top-level boxes: the children travel with their parent. Other diagrams use the same code with a
-different `e.node.data` key (`node`, `object`, `package`, `component`).
-
-## 7. A step-through activity diagram
+## 6. A step-through activity diagram
 
 The walk is data: each step names the current node(s) and the flows taken so far. The layout never
 changes, so one fixed camera fits every step.
 
 ```tsx
 import { useMemo } from 'react';
-import { fitViewBox } from '@figurae/core';
-import { Diagram, Transport, usePlayer } from '@figurae/react';
-import { ActivityFlow, ActivityNode, activity } from '@figurae/uml';
+import { fitViewBox } from '@dsviz/core';
+import { Diagram, Transport, usePlayer } from '@dsviz/react';
+import { ActivityFlow, ActivityNode, activity } from '@dsviz/uml';
 
 const nodes: ActivityNode[] = [
   { id: 'start', kind: 'start' }, { id: 'read', label: 'Read request' }, { id: 'ok', kind: 'decision' },
@@ -215,16 +170,16 @@ Parallel branches: `current` takes a `Set` of ids. Swimlanes: pass `swimlanes: [
 id on each node. A generator that yields `{ current, taken, say }` (as `Step`) works the same way and
 lets one `if` pick the branch.
 
-## 8. Same ids, two views: class diagram to object diagram
+## 7. Same ids, two views: class diagram to object diagram
 
 Give each object the id of its class and the boxes morph in place: the title gains an underline and
 `name : Class`, attributes become `attr = value` slots. Interfaces have no instance, so they fade away.
 
 ```tsx
 import { useState } from 'react';
-import { fitViewBox } from '@figurae/core';
-import { Diagram, Segmented } from '@figurae/react';
-import { ObjectLink, Relation, UmlClass, UmlObject, classDiagram, objectDiagram } from '@figurae/uml';
+import { fitViewBox } from '@dsviz/core';
+import { Diagram, Segmented } from '@dsviz/react';
+import { ObjectLink, Relation, UmlClass, UmlObject, classDiagram, objectDiagram } from '@dsviz/uml';
 
 const classes: UmlClass[] = [
   { id: 'Shape', name: 'Shape', stereotype: 'interface', x: 120, y: 40 },
@@ -257,7 +212,7 @@ Both layouts name a box `<id option>:<box id>:box` (and its title `…:name`), s
 and matching box ids are what make the morph. Same idea for any pair: sequence and communication,
 `graph` shown as a list and as a tree, an array before and after sorting (keep the `keys`).
 
-## 9. Communication and sequence from one message list
+## 8. Communication and sequence from one message list
 
 One `Message[]` and one player drive both views. The sequence diagram shows order by going down the page;
 the communication diagram has no "down", so it carries order in Dewey numbers taken from `parent` (the
@@ -265,9 +220,9 @@ index of the message this one happens inside; `sequence` ignores it).
 
 ```tsx
 import { useMemo } from 'react';
-import { fitViewBox } from '@figurae/core';
-import { Diagram, Transport, usePlayer } from '@figurae/react';
-import { CommunicationParticipant, Message, communication, sequence } from '@figurae/uml';
+import { fitViewBox } from '@dsviz/core';
+import { Diagram, Transport, usePlayer } from '@dsviz/react';
+import { CommunicationParticipant, Message, communication, sequence } from '@dsviz/uml';
 
 const people: CommunicationParticipant[] = [
   { id: 'user', label: 'User', kind: 'actor' }, { id: 'web', label: ':Browser' }, { id: 'api', label: ':API' }, { id: 'db', label: ':Database' },
@@ -306,13 +261,13 @@ Note `fitViewBox` takes the union over every step: pass it the nodes of all fram
 (`messages.flatMap((_, i) => comm(i).nodes)`), not just one. In `communication`, the links (structure)
 always show; only messages are revealed by `upTo`.
 
-## 10. Embedding in React with a dark theme mapped from app tokens
+## 9. Embedding in React with a dark theme mapped from app tokens
 
 ```tsx
-import { Diagram } from '@figurae/react';
-import { Scene, toSVG } from '@figurae/core';
+import { Diagram } from '@dsviz/react';
+import { Scene, toSVG } from '@dsviz/core';
 
-// once, in the app's CSS: figurae reads only these variables
+// once, in the app's CSS: dsviz reads only these variables
 // .app .dv-root, .app .dvc { --dv-surface: var(--bg-panel); --dv-fg: var(--text); --dv-muted: var(--text-muted);
 //   --dv-font: var(--font-sans); --dv-mono: var(--font-mono); }
 // dark mode follows `.dark` on any ancestor (or [data-theme="dark"]).

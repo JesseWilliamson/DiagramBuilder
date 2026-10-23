@@ -2,7 +2,7 @@
  * Things you draw ON a plane. Each takes the plane first and works in world
  * coordinates, so `point(p, 2, 4)` means the point (2, 4), wherever that lands.
  */
-import { Scene, SceneNode, Tone, V2, Vec, arrow, handle, path, text } from '@figurae/core';
+import { Scene, SceneNode, Tone, V2, Vec, arrow, handle, path, text } from '@dsviz/core';
 import { Plane, niceTicks } from './plane';
 
 type Pt = [number, number];

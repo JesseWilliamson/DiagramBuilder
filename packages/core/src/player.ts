@@ -63,7 +63,7 @@ export function createPlayer<S>(source: Iterable<S>, o: PlayerOptions<S> = {}): 
     for (const f of src) {
       out.push(f);
       if (out.length >= max) {
-        console.warn(`[figurae] player stopped collecting at ${max} frames`);
+        console.warn(`[dsviz] player stopped collecting at ${max} frames`);
         break;
       }
     }

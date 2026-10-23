@@ -4,7 +4,7 @@
  * moves 4 bytes, on a `char*` 1 byte, on a `double*` 8, because the compiler
  * multiplies by the size of what `p` points at.
  */
-import { Scene, SceneNode, Tone, V2, Vec, path, rect, text } from '@figurae/core';
+import { Scene, SceneNode, Tone, V2, Vec, path, rect, text } from '@dsviz/core';
 
 export interface MemoryGroup {
   /** Stable identity (e.g. 'a[2]'): resizing a group tweens it. */

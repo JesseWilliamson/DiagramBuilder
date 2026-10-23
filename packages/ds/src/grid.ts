@@ -3,7 +3,7 @@
  * Cells are identified by (row, col), with optional row/column headers
  * (e.g. the two strings of an LCS / edit-distance table).
  */
-import { Scene, SceneNode, Tone, V2, Vec, rect, text } from '@figurae/core';
+import { Scene, SceneNode, Tone, V2, Vec, rect, text } from '@dsviz/core';
 import { show } from './common';
 
 export interface GridOptions<T = unknown> {

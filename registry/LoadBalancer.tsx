@@ -2,9 +2,9 @@
 // round robin keeps handing it work anyway, least connections notices the pile-up.
 // Click a server to take it down (its in-flight requests fail) or bring it back.
 import { useEffect, useRef, useState } from 'react';
-import { combine, fitViewBox, Tone } from '@figurae/core';
-import { architecture, Component, Link, packet } from '@figurae/arch';
-import { Button, Diagram, Segmented, Slider, Switch, useTicker } from '@figurae/react';
+import { combine, fitViewBox, Tone } from '@dsviz/core';
+import { architecture, Component, Link, packet } from '@dsviz/arch';
+import { Button, Diagram, Segmented, Slider, Switch, useTicker } from '@dsviz/react';
 
 type Policy = 'rr' | 'least' | 'random';
 type Req = { id: number; phase: 'new' | 'lb' | 'srv' | 'work' | 'failed'; server?: string; left: number };

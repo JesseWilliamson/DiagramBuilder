@@ -1,12 +1,12 @@
-# figurae
+# dsviz
 
 Interactive, animated SVG diagrams for teaching computer science. You describe the picture as data;
-figurae lays it out, draws it, and animates every change.
+dsviz lays it out, draws it, and animates every change.
 
 It is built in three layers, like Radix and shadcn:
 
-- **Headless primitives** (`@figurae/core`): `rect`, `circle`, `text`, `arrow`, `path`, a keyed renderer that
-  tweens by id, a camera, a step player, connectors, snapping. No dependencies, no opinions about looks.
+- **Headless primitives** (`@dsviz/core`): `rect`, `circle`, `text`, `arrow`, `path`, a keyed renderer that
+  tweens by id, a camera, a step player, connectors. No dependencies, no opinions about looks.
 - **Family layouts** (one package each): pure functions from your state to a scene, with anchors to attach
   things to.
 - **Copyable components** (`registry/`): complete example diagrams as source files you take and own.
@@ -23,13 +23,13 @@ memory.
 ## Install
 
 ```sh
-npm install @figurae/core @figurae/react @figurae/ds     # react >= 18 is a peer dependency
+npm install @dsviz/core @dsviz/react @dsviz/ds     # react >= 18 is a peer dependency
 ```
 
 ```tsx
-import { combine } from '@figurae/core';
-import { array, pointer } from '@figurae/ds';
-import { Diagram } from '@figurae/react';
+import { combine } from '@dsviz/core';
+import { array, pointer } from '@dsviz/ds';
+import { Diagram } from '@dsviz/react';
 
 export function Example() {
   const arr = array([3, 8, 12, 17], { tones: { 2: 'active' } });
@@ -40,33 +40,33 @@ export function Example() {
 Render a new scene and every node that kept its id slides to its new place. Colours are CSS variables
 (`--dv-*`) you can override; dark mode follows `.dark` or `[data-theme="dark"]`.
 
-To copy a ready-made diagram into your app instead: `npx @figurae/cli add binary-search`.
+To copy a ready-made diagram into your app instead: `npx @dsviz/cli add binary-search`.
 
 ## Packages
 
-All versioned together; each exports its functions flat (`import { fn } from '@figurae/plot'`).
+All versioned together; each exports its functions flat (`import { fn } from '@dsviz/plot'`).
 
 | Package | Contents |
 |---|---|
-| `@figurae/core` | scene primitives, renderer, camera, player, connectors, snapping, `toSVG` |
-| `@figurae/layout` | `layered` (DAG layout), `tidy` (tree layout) |
-| `@figurae/ds` | `array pointer linkedList binaryTree tree graph grid stack queue hashMap` |
-| `@figurae/plot` | `plane axes fn point segment vector tangent area riemann integrate label` |
-| `@figurae/prob` | `bars sampleSpace diePips probTree venn2` |
-| `@figurae/geom` | `polygon segment tickMarks angleMark circle pointLabel` and construction helpers |
-| `@figurae/os` | `simulate gantt stackHeap memory hex` |
-| `@figurae/arch` | `architecture component zone packet` |
-| `@figurae/uml` | `sequence communication classDiagram objectDiagram stateMachine useCase activity component deployment packageDiagram er` |
-| `@figurae/git` | `graph gitLanes` |
-| `@figurae/react` | `Diagram usePlayer useTicker useBurst useSnap`, controls, `Transport`, `CodeTrace`, `MathText` |
+| `@dsviz/core` | scene primitives, renderer, camera, player, connectors, `toSVG` |
+| `@dsviz/layout` | `layered` (DAG layout), `tidy` (tree layout) |
+| `@dsviz/ds` | `array pointer linkedList binaryTree tree graph grid stack queue hashMap` |
+| `@dsviz/plot` | `plane axes fn point segment vector tangent area riemann integrate label` |
+| `@dsviz/prob` | `bars sampleSpace diePips probTree venn2` |
+| `@dsviz/geom` | `polygon segment tickMarks angleMark circle pointLabel` and construction helpers |
+| `@dsviz/os` | `simulate gantt stackHeap memory hex` |
+| `@dsviz/arch` | `architecture component zone packet` |
+| `@dsviz/uml` | `sequence communication classDiagram objectDiagram stateMachine useCase activity component deployment packageDiagram er` |
+| `@dsviz/git` | `graph gitLanes` |
+| `@dsviz/react` | `Diagram usePlayer useTicker useBurst`, controls, `Transport`, `CodeTrace`, `MathText` |
 
 A family depends on core (and layout, if it places boxes) and on nothing else.
 
 ### For coding agents
 
-This repo holds a Claude skill (`.claude/skills/figurae/`) that covers every package. Copy it into another
+This repo holds a Claude skill (`.claude/skills/dsviz/`) that covers every package. Copy it into another
 repository with `npm run sync:skill -- <repo>` from a checkout and agents there will know how to draw with
-figurae.
+dsviz.
 
 ## This repo
 

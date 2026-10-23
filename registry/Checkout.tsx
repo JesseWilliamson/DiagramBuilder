@@ -3,9 +3,9 @@
 // 'danger' message by message; notes take a row of their own. Turn off the
 // activation bars for a lighter, overview-style diagram.
 import { useState } from 'react';
-import { fitViewBox } from '@figurae/core';
-import { Diagram, Switch } from '@figurae/react';
-import { Fragment, Message, Note, Participant, sequence } from '@figurae/uml';
+import { fitViewBox } from '@dsviz/core';
+import { Diagram, Switch } from '@dsviz/react';
+import { Fragment, Message, Note, Participant, sequence } from '@dsviz/uml';
 
 const people: Participant[] = [
   { id: 'user', label: 'Shopper', kind: 'actor' },

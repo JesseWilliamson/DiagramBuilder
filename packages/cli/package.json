@@ -1,12 +1,12 @@
 {
-  "name": "@figurae/cli",
+  "name": "@dsviz/cli",
   "version": "3.0.0",
-  "description": "Copy figurae diagram components into your app: npx @figurae/cli add binary-search",
+  "description": "Copy dsviz diagram components into your app: npx @dsviz/cli add binary-search",
   "author": "Jesse Williamson",
   "homepage": "https://jessewilliamson.github.io/DiagramBuilder/",
   "type": "module",
   "bin": {
-    "figurae": "./bin/figurae.js"
+    "dsviz": "./bin/dsviz.js"
   },
   "files": [
     "bin",

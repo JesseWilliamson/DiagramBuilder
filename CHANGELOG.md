@@ -2,18 +2,18 @@
 
 ## 3.0.0
 
-The project is renamed **figurae** (formerly dsviz) and split into an npm-workspaces monorepo of
-`@figurae/*` packages, versioned together. Existing 2.x code needs its imports rewritten; the pictures
+The project is renamed **dsviz** (formerly dsviz) and split into an npm-workspaces monorepo of
+`@dsviz/*` packages, versioned together. Existing 2.x code needs its imports rewritten; the pictures
 it draws are unchanged.
 
 ### Breaking
 
-- **Package split.** One package per family: `@figurae/core` (scene, renderer, camera, player,
-  connectors, snapping), `layout` (`layered`, `tidy`), `ds`, `plot`, `prob`, `geom`, `os`, `arch`, `uml`,
-  `git`, `react`. A family depends on core (and layout) only. `npm install @figurae/core @figurae/react
-  @figurae/ds` and add what you draw.
-- **No namespaces.** `plot.fn` is `import { fn } from '@figurae/plot'`; `sched` and `mem` are together
-  `@figurae/os`; `sys` is `@figurae/arch`; `git.graph` is `graph` from `@figurae/git` (alias it next to
+- **Package split.** One package per family: `@dsviz/core` (scene, renderer, camera, player,
+  connectors), `layout` (`layered`, `tidy`), `ds`, `plot`, `prob`, `geom`, `os`, `arch`, `uml`,
+  `git`, `react`. A family depends on core (and layout) only. `npm install @dsviz/core @dsviz/react
+  @dsviz/ds` and add what you draw.
+- **No namespaces.** `plot.fn` is `import { fn } from '@dsviz/plot'`; `sched` and `mem` are together
+  `@dsviz/os`; `sys` is `@dsviz/arch`; `git.graph` is `graph` from `@dsviz/git` (alias it next to
   the ds `graph`). Names that two packages share: `graph`, `component`, `segment`, `circle`.
 - **The JSON spec is gone**: `DiagramSpec`, `validateSpec`, `fromSpec`, `describeSpec`,
   `formatSpecErrors`. Call the layout functions directly and pass `label` to `<Diagram>` for alt text.
@@ -24,12 +24,8 @@ it draws are unchanged.
 
 ### Added
 
-- **Snapping.** `snapFrame(moving, others, { grid, threshold, margin })` in core: a dragged box pulls to
-  the edges and centres of the other boxes (per axis, closest within `threshold`), else to a grid, and
-  reports the guides that fired. `snapGuides(guides)` draws them (`role: 'snap-guide'`, dashed, faint).
-  React: `useSnap(frames, opts)` → `{ guides, snap(id, point), clear() }`. Keyboard drags snap too.
   The class, object, package, component, deployment, state and use case examples all use it.
-- **Eight more UML diagrams** in `@figurae/uml`, all with stable ids, tones, `interactive` / `draggable`,
+- **Eight more UML diagrams** in `@dsviz/uml`, all with stable ids, tones, `interactive` / `draggable`,
   the layered layout when x/y are absent, and an example each:
   - `useCase`: actors, ovals, system boundary; association, include, extend, generalization.
   - `activity`: actions, decisions and merges, fork and join bars, start / end / flow final, guards,
@@ -47,10 +43,10 @@ it draws are unchanged.
   - `stickFigure` (the actor) is exported for hand-built scenes.
 - **Registry and CLI.** `registry/` holds every example as a standalone component with
   `registry/index.json` (name, title, description, group, file, packages it imports); the examples page shows
-  each with its source. `npx @figurae/cli add <name>` copies one into an app, shadcn style. `npm run registry`
+  each with its source. `npx @dsviz/cli add <name>` copies one into an app, shadcn style. `npm run registry`
   regenerates the index.
-- **Claude skill** rewritten for the package split, the new UML diagrams and snapping, with recipes for
-  snapping draggable boxes, a step-through activity diagram, class-to-object morphing, and communication
+- **Claude skill** rewritten for the package split, the new UML diagrams, with recipes for
+  a step-through activity diagram, class-to-object morphing, and communication
   plus sequence from one message list.
 
 ### Changed
@@ -84,7 +80,7 @@ Everything is additive: existing calls draw what they drew before, with the exce
 - **Renderer**: text crossfade when a label's words change (`crossfade: false` to turn off);
   `<Diagram injectStyles crossfade>`; `toSVG(scene, { theme: 'light' | 'dark', background })`;
   `THEME_VARS`.
-- **Claude skill** in `.claude/skills/figurae/`, and `npm run sync:skill -- <repo>` to copy it into another repository.
+- **Claude skill** in `.claude/skills/dsviz/`, and `npm run sync:skill -- <repo>` to copy it into another repository.
 
 ### Changed
 

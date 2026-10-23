@@ -10,7 +10,7 @@
  *    change `a.next` from b to z the arrow swings over instead of popping.
  *  - Arrows pointing backwards curve underneath the row.
  */
-import { Scene, SceneNode, Tone, V2, Vec, arrow, circle, rect, text } from '@figurae/core';
+import { Scene, SceneNode, Tone, V2, Vec, arrow, circle, rect, text } from '@dsviz/core';
 import { Key, show } from './common';
 
 export interface ListNodeSpec {

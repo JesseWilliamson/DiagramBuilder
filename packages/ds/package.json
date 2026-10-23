@@ -1,5 +1,5 @@
 {
-  "name": "@figurae/ds",
+  "name": "@dsviz/ds",
   "version": "3.0.0",
   "description": "Data-structure diagrams: arrays, trees, graphs, hash maps, linked lists, stacks, queues",
   "author": "Jesse Williamson",
@@ -19,8 +19,8 @@
     "src"
   ],
   "dependencies": {
-    "@figurae/core": "^3.0.0",
-    "@figurae/layout": "^3.0.0"
+    "@dsviz/core": "^3.0.0",
+    "@dsviz/layout": "^3.0.0"
   },
   "repository": {
     "type": "git",

@@ -7,7 +7,7 @@
     "outDir": "dist",
     "rootDir": "src",
     "paths": {
-      "@figurae/*": [
+      "@dsviz/*": [
         "../*/dist/index.d.ts"
       ]
     }

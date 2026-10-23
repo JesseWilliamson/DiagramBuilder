@@ -3,7 +3,7 @@
  * the same in pixel or world coordinates (nothing here assumes y up or down,
  * except `signedArea`'s sign).
  */
-import { V2, Vec, vadd, vdist, vscale, vsub } from '@figurae/core';
+import { V2, Vec, vadd, vdist, vscale, vsub } from '@dsviz/core';
 
 export const dot = (a: Vec, b: Vec) => a.x * b.x + a.y * b.y;
 export const cross = (a: Vec, b: Vec) => a.x * b.y - a.y * b.x;

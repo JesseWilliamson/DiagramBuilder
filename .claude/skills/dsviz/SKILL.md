@@ -1,22 +1,22 @@
 ---
-name: figurae
-description: Draw diagrams with the figurae library (npm packages `@figurae/*`), as SVG in a React app, in plain DOM, or as a standalone SVG string. Use this whenever a task asks for a diagram, figure or visual explanation in a project that depends on figurae: UML (sequence, class, state machine, use case, activity, component, deployment, object, package, communication), entity-relationship diagrams, architecture/system diagrams, dependency or call graphs (DAGs), git commit graphs, data-structure figures (arrays, trees, hash maps, linked lists, grids, stacks, queues), plots (functions, tangents, Riemann sums), probability (bars, trees, Venn), geometry, OS scheduling (Gantt) and memory, step-through algorithm animations, and draggable boxes that snap to a grid and to each other. Also use it to export a diagram with toSVG.
+name: dsviz
+description: Draw diagrams with the dsviz library (npm packages `@dsviz/*`), as SVG in a React app, in plain DOM, or as a standalone SVG string. Use this whenever a task asks for a diagram, figure or visual explanation in a project that depends on dsviz: UML (sequence, class, state machine, use case, activity, component, deployment, object, package, communication), entity-relationship diagrams, architecture/system diagrams, dependency or call graphs (DAGs), git commit graphs, data-structure figures (arrays, trees, hash maps, linked lists, grids, stacks, queues), plots (functions, tangents, Riemann sums), probability (bars, trees, Venn), geometry, OS scheduling (Gantt) and memory, step-through algorithm animations. Also use it to export a diagram with toSVG.
 ---
 
-# figurae
+# dsviz
 
-figurae turns data into an SVG **scene**: a flat list of plain nodes (`rect`, `circle`, `text`, `arrow`,
+dsviz turns data into an SVG **scene**: a flat list of plain nodes (`rect`, `circle`, `text`, `arrow`,
 `path`), each with a stable `id`. A renderer draws the scene and, when you render a new one, tweens every
-node that kept its id. Layout functions build scenes from your data. `@figurae/core` has no runtime
-dependencies; `@figurae/react` is a thin wrapper.
+node that kept its id. Layout functions build scenes from your data. `@dsviz/core` has no runtime
+dependencies; `@dsviz/react` is a thin wrapper.
 
 ```
 your data ──layout()──▶ Scene { nodes } ──▶ <Diagram scene> │ createView(svg).render(scene) │ toSVG(scene)
 ```
 
-Three layers, like Radix and shadcn: **core** is headless (primitives, renderer, camera, player, snapping;
+Three layers, like Radix and shadcn: **core** is headless (primitives, renderer, camera, player;
 parts carry `role`s and the stylesheet decides looks); **family packages** are pure `state → Scene`
-functions; a **registry** of copyable example components (`npx @figurae/cli add <name>`) shows them put to use.
+functions; a **registry** of copyable example components (`npx @dsviz/cli add <name>`) shows them put to use.
 
 ## Step 1: pick how to draw
 
@@ -32,26 +32,26 @@ One package per family, each exporting its functions flat (no namespaces: `fn`, 
 
 | Package | What is in it |
 |---|---|
-| `@figurae/core` | `rect circle text arrow path`, `combine translate namespace`, `connector`, `createView`, `toSVG`, `fitViewBox`, `createPlayer`, `handle`, `burst`, `snapFrame` / `snapGuides` |
-| `@figurae/layout` | `layered` (DAG), `tidy` (trees): positions only, no drawing |
-| `@figurae/ds` | `array pointer linkedList binaryTree tree graph grid stack queue hashMap` |
-| `@figurae/plot` | `plane axes fn point segment vector tangent area riemann integrate label` |
-| `@figurae/prob` | `bars sampleSpace diePips probTree venn2` |
-| `@figurae/geom` | `polygon segment tickMarks angleMark circle pointLabel` + construction helpers |
-| `@figurae/os` | `simulate gantt stackHeap memory hex` |
-| `@figurae/arch` | `architecture component zone packet` |
-| `@figurae/uml` | `sequence classDiagram stateMachine useCase activity component deployment objectDiagram packageDiagram communication er` |
-| `@figurae/git` | `graph` (commit graph), `gitLanes` |
-| `@figurae/react` | `Diagram usePlayer useTicker useBurst useSnap`, controls, `Transport`, `CodeTrace`, `MathText` |
+| `@dsviz/core` | `rect circle text arrow path`, `combine translate namespace`, `connector`, `createView`, `toSVG`, `fitViewBox`, `createPlayer`, `handle`, `burst`, `snapFrame` / `snapGuides` |
+| `@dsviz/layout` | `layered` (DAG), `tidy` (trees): positions only, no drawing |
+| `@dsviz/ds` | `array pointer linkedList binaryTree tree graph grid stack queue hashMap` |
+| `@dsviz/plot` | `plane axes fn point segment vector tangent area riemann integrate label` |
+| `@dsviz/prob` | `bars sampleSpace diePips probTree venn2` |
+| `@dsviz/geom` | `polygon segment tickMarks angleMark circle pointLabel` + construction helpers |
+| `@dsviz/os` | `simulate gantt stackHeap memory hex` |
+| `@dsviz/arch` | `architecture component zone packet` |
+| `@dsviz/uml` | `sequence classDiagram stateMachine useCase activity component deployment objectDiagram packageDiagram communication er` |
+| `@dsviz/git` | `graph` (commit graph), `gitLanes` |
+| `@dsviz/react` | `Diagram usePlayer useTicker useBurst`, controls, `Transport`, `CodeTrace`, `MathText` |
 
 Imports:
 
 ```ts
-import { combine, fitViewBox, connector, text, toSVG } from '@figurae/core';
-import { array, pointer, graph, tree } from '@figurae/ds';
-import { sequence, classDiagram } from '@figurae/uml';
-import { graph as gitGraph } from '@figurae/git';          // git and ds both export `graph`: alias one
-import { Diagram, usePlayer, Transport, Slider, Segmented } from '@figurae/react';
+import { combine, fitViewBox, connector, text, toSVG } from '@dsviz/core';
+import { array, pointer, graph, tree } from '@dsviz/ds';
+import { sequence, classDiagram } from '@dsviz/uml';
+import { graph as gitGraph } from '@dsviz/git';          // git and ds both export `graph`: alias one
+import { Diagram, usePlayer, Transport, Slider, Segmented } from '@dsviz/react';
 ```
 
 Same names exist in two packages: `graph` (ds, git), `component` (uml diagram, arch single box),
@@ -76,7 +76,7 @@ Without React: `const view = createView(svgEl); view.render(scene);` Static: `to
   warns. Families derive ids from your keys (`array` cells from `keys`, git commits from `hash`, tree
   nodes from `key`, UML boxes from their `id`); give keys that follow the *item*, not its position. Two
   copies of a family in one scene need different `id` options (or `namespace(part, 'left')`).
-- **Estimate text, never measure it.** Nothing in figurae reads the DOM for sizes: boxes are sized from
+- **Estimate text, never measure it.** Nothing in dsviz reads the DOM for sizes: boxes are sized from
   `estimateTextWidth(s, size)` (0.6 em per character). Do the same in your own layout code; don't call
   `getBBox` or `measureText`.
 - **No `window`/`document` at import time.** Scenes are pure data and can be built on a server; only
@@ -89,7 +89,7 @@ Without React: `const view = createView(svgEl); view.render(scene);` Static: `to
   Families already order their own parts (fragment boxes under messages, edges under nodes).
 - **Place or don't.** `x`/`y` are optional on every graph-like diagram (architecture, class, state, object,
   package, component, deployment, use case, activity, ER, communication, `graph` with
-  `layout: 'layered'`): leave them out and `@figurae/layout` places the boxes. Give them for boxes the user
+  `layout: 'layered'`): leave them out and `@dsviz/layout` places the boxes. Give them for boxes the user
   has dragged.
 
 ## Theme contract
@@ -115,7 +115,7 @@ injected styles. `toSVG(scene, { theme: 'light' | 'dark' })` pins a palette insi
 | Diagram | Call | Notes |
 |---|---|---|
 | Sequence | `sequence(participants, messages, { upTo, fragments, notes, activations, highlight, numbered })` | kinds `call`/`return`/`async`; `upTo` reveals step by step; `highlight: false` for static |
-| Communication | `communication(participants, messages, { upTo, ring, numbered })` | the SAME participants and messages as `sequence`; `parent` (a message index) nests the Dewey numbers |
+| Communication | `communication(participants, messages, { upTo, ring, radius, numbering, maxLabel })` | the SAME participants and messages as `sequence`; numbers 1, 2, 3… by default; `numbering: 'dewey'` nests them by `parent` (a message index) |
 | Class | `classDiagram(classes, relations, { route, collapsed })` | relations `inherits`, `implements`, `composition`, `aggregation`, `association`, `dependency` |
 | Object | `objectDiagram(objects, links, { collapsed })` | `name : Class` boxes with `slots`; give an object its class's `id` and the two views morph |
 | State | `stateMachine(states, transitions, { current, fired })` | kinds `initial`, `final`, `choice` |
@@ -124,7 +124,7 @@ injected styles. `toSVG(scene, { theme: 'light' | 'dark' })` pins a palette insi
 | Component | `component(components, connections, { direction })` | `provides` / `requires` interfaces, `ports`, `parent` nesting; connections `assembly`, `dependency`, `delegate` |
 | Deployment | `deployment(nodes, artifacts, links)` | nodes with `stereotype` and `parent`; artifacts sit in a `node`; links `protocol`, `kind: 'deploy'` |
 | Package | `packageDiagram(packages, relations)` | nest through `children`; relations `import access merge dependency` at any depth |
-| ER | `er(entities, relationships, { notation })` | cardinalities `one many zero-one zero-many one-many`; `'crows-foot'` (default) or `'chen'` |
+| ER | `er(entities, relationships, { collapsed })` | crow's foot; cardinalities `one many zero-one zero-many one-many` at each end, `identifying: false` dashed |
 | Architecture | `architecture(components, links, { zones, direction, route })` | kinds `client user lb gateway service cache db queue cdn storage file` |
 | Graph / DAG | `graph(nodes, edges, { layout: 'layered', shape: 'rect', directed, route: 'elbow' })` | node `kind` → role `node-<kind>` (`changed`, `upstream`, `downstream`, `test`) |
 | Git | `gitGraph(commits, refs, { highlight })` | commits newest first, `parents` first-parent first |
@@ -132,7 +132,7 @@ injected styles. `toSVG(scene, { theme: 'light' | 'dark' })` pins a palette insi
 | Trees | `tree(root, { layout: 'tidy', shape: 'rect' })`, `binaryTree(root, { layout: 'tidy' })` | n-ary `{ key, label, children }` |
 | Maps, lists, grids | `hashMap(entries)`, `linkedList(nodes)`, `grid(rows, { colLabels, cellWidth })`, `stack`, `queue` | |
 | Layout only | `layered(nodes, edges)`, `tidy(root, children)` | positions without drawing |
-| Other | `@figurae/plot` (functions, tangents, areas), `@figurae/prob`, `@figurae/geom`, `@figurae/os` | see `references/api.md` |
+| Other | `@dsviz/plot` (functions, tangents, areas), `@dsviz/prob`, `@dsviz/geom`, `@dsviz/os` | see `references/api.md` |
 
 Layouts return the scene plus **anchors** (`arr.top(i)`, `seq.rowY(i)`, `g.pos(id)`, `a.frame(id)`,
 `d.box(id)`, `a.along(from, to, t)`). Use anchors to attach pointers, arrows and labels instead of
@@ -143,23 +143,9 @@ The box-and-line diagrams take `interactive` (clicks report which box), `draggab
 (a `Set` of ids to fade) and `rankGap` / `nodeGap` (spacing for unplaced boxes). `e.node.data` says what
 was hit, and the key names the kind of thing: `{ class }`, `{ object }`, `{ state }`, `{ actor }` /
 `{ case }`, `{ node }` (activity, deployment) / `{ artifact }`, `{ component }` (uml and arch),
-`{ package }`, `{ entity }` (ER; `{ relationship }` on a Chen diamond), `{ participant }`. Each value is
+`{ package }`, `{ entity }` (ER), `{ participant }`. Each value is
 the id you gave it.
 
-## Snapping draggable boxes
-
-Dragging a box in a design tool pulls it to the grid and to the edges and centres of the other boxes,
-and draws a faint guide where it caught. That is `snapFrame` (pure maths, core) + `snapGuides` (guide
-paths, role `snap-guide`) + `useSnap` (React). Recipe 6 in `references/recipes.md` is complete.
-
-- Keep each box's position in state; pass it back as `x`/`y` on the next render.
-- `useSnap(frames, { grid, threshold, margin })` takes the **current** frames by id (`diagram.box(id)`),
-  and returns `{ guides, snap(id, point), clear() }`. Call `snap(id, e)` in `onDrag` (an event has `x`,
-  `y`), store the result, `clear()` in `onDragEnd`.
-- Draw `combine(diagram, snapGuides(guides))`. Guides span both boxes, not the canvas.
-- Keyboard drags (arrow keys) send the same events, so snapping works for them too.
-- Nested things (a node's artifacts, a package's children) move with their parent: snap only top-level
-  boxes.
 
 ## Sequence diagrams: exact behaviour
 

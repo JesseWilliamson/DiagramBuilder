@@ -1,8 +1,8 @@
 // Why binary search is fast: every step halves what's left, so n values need
 // about log₂ n steps. The slider moves the exponent, so each notch doubles n.
 import { useState } from 'react';
-import { combine, rect, text } from '@figurae/core';
-import { Diagram, Slider } from '@figurae/react';
+import { combine, rect, text } from '@dsviz/core';
+import { Diagram, Slider } from '@dsviz/react';
 
 const steps = (n: number) => Math.floor(Math.log2(n)) + 1;
 const short = (v: number) => (v >= 2 ** 20 ? `${v / 2 ** 20}M` : v >= 1024 ? `${v / 1024}k` : String(v));

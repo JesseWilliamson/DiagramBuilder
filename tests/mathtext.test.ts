@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { mathTspans, parseMath } from '@figurae/core';
+import { mathTspans, parseMath } from '@dsviz/core';
 
 const flat = (tex: string) => parseMath(tex).map((s) => `${s.italic ? 'i' : 'u'}${s.shift === 1 ? '^' : s.shift === -1 ? '_' : ''}:${s.text}`);
 

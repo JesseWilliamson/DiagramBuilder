@@ -2,7 +2,7 @@
  * Bar charts for distributions. Bars grow from a baseline, keyed by index, so
  * changing the data makes each bar grow or shrink in place.
  */
-import { Scene, SceneNode, Tone, V2, Vec, path, rect, text } from '@figurae/core';
+import { Scene, SceneNode, Tone, V2, Vec, path, rect, text } from '@dsviz/core';
 import { ToneSpec, resolveTone } from './common';
 
 export interface BarsOptions {

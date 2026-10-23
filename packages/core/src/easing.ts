@@ -13,7 +13,7 @@ export const easeOutBack: Easing = (t) => {
 
 /**
  * A soft settle: overshoots by ~4% and comes back. Enough to feel physical
- * and a little playful, not enough to look bouncy. The default feel of figurae.
+ * and a little playful, not enough to look bouncy. The default feel of dsviz.
  */
 export const easeOutSoft: Easing = (t) => {
   const c1 = 0.9, c3 = c1 + 1;

@@ -28,9 +28,9 @@
  * lays out the same way and ids keep their positions across renders.
  *
  * Sizes are inputs: the layout never measures anything. Callers pass the box
- * size they will draw (estimated from the label, as everywhere in figurae).
+ * size they will draw (estimated from the label, as everywhere in dsviz).
  */
-import { Box, V2, Vec } from '@figurae/core';
+import { Box, V2, Vec } from '@dsviz/core';
 
 export interface LayeredNode {
   id: string;

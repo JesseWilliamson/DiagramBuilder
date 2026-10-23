@@ -1,9 +1,9 @@
 // Drag the point along the curve. The yellow line is the tangent; its slope is
 // the derivative. "Show f′" plots every slope as a height, as its own curve.
 import { useState } from 'react';
-import { combine } from '@figurae/core';
-import { axes, fn, plane, point, segment, tangent } from '@figurae/plot';
-import { Diagram, MathText, Segmented, Switch } from '@figurae/react';
+import { combine } from '@dsviz/core';
+import { axes, fn, plane, point, segment, tangent } from '@dsviz/plot';
+import { Diagram, MathText, Segmented, Switch } from '@dsviz/react';
 
 const fns = {
   'sin x': { f: Math.sin, df: Math.cos },

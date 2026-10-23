@@ -1,9 +1,9 @@
 // The inscribed angle theorem: wherever P sits on the circle, ∠APB is half the arc AB
 // that P doesn't sit on. Drag P (and A, B) around the circle.
 import { useState } from 'react';
-import { combine, path, Vec } from '@figurae/core';
-import { angleAt, angleMark, arcPoints, circle, pointLabel, segment, toDegrees } from '@figurae/geom';
-import { Diagram, MathText } from '@figurae/react';
+import { combine, path, Vec } from '@dsviz/core';
+import { angleAt, angleMark, arcPoints, circle, pointLabel, segment, toDegrees } from '@dsviz/geom';
+import { Diagram, MathText } from '@dsviz/react';
 
 const O = { x: 220, y: 155 }, R = 115;
 const TAU = 2 * Math.PI;

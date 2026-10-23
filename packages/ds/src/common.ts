@@ -1,4 +1,4 @@
-import { Tone } from '@figurae/core';
+import { Tone } from '@dsviz/core';
 
 export type Key = string | number;
 

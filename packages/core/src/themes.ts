@@ -1,5 +1,5 @@
 /**
- * The look of figurae, split by *where* it can be expressed:
+ * The look of dsviz, split by *where* it can be expressed:
  *
  *  1. COLOUR / TYPE – CSS variables (see styles.ts). Apps override these.
  *  2. GEOMETRY      – things CSS can't change on SVG: corner radius scale, line

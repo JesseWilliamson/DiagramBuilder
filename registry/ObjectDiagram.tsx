@@ -3,18 +3,20 @@
 // names gain an underline and a `name : Class` title, attributes become `attr = value` slots, and
 // the interfaces (which have no instances) fade away. Drag to rearrange; both views share positions.
 import { useState } from 'react';
-import { fitViewBox } from '@figurae/core';
-import { Diagram, Segmented, Switch } from '@figurae/react';
-import { classDiagram, ObjectLink, objectDiagram, Relation, UmlClass, UmlObject } from '@figurae/uml';
+import { fitViewBox } from '@dsviz/core';
+import { Diagram, Segmented, Switch } from '@dsviz/react';
+import { classDiagram, ObjectLink, objectDiagram, Relation, UmlClass, UmlObject } from '@dsviz/uml';
 
 const classes: UmlClass[] = [
-  { id: 'Shape', name: 'Shape', stereotype: 'interface', x: 250, y: 50, methods: ['+ area(): number'] },
+  // Two rows: the interfaces and the Drawing above, the concrete classes below, so that in the object view
+  // every link drops from `poster` straight down into its parts with nothing in between.
+  { id: 'Shape', name: 'Shape', stereotype: 'interface', x: 180, y: 50, methods: ['+ area(): number'] },
   { id: 'Circle', name: 'Circle', x: 70, y: 250, attributes: ['- r: number'], methods: ['+ area(): number'] },
-  { id: 'Rectangle', name: 'Rectangle', x: 270, y: 250, attributes: ['# w: number', '# h: number'], methods: ['+ area(): number'] },
-  { id: 'Square', name: 'Square', x: 270, y: 420, methods: ['+ setSide(s): void'] },
-  { id: 'Drawing', name: 'Drawing', x: 530, y: 50, attributes: ['- title: string'], methods: ['+ add(s: Shape): void'] },
-  { id: 'Renderer', name: 'Renderer', stereotype: 'interface', x: 530, y: 250, methods: ['+ draw(s: Shape): void'] },
-  { id: 'SvgRenderer', name: 'SvgRenderer', x: 530, y: 420, attributes: ['- width: number'], methods: ['+ draw(s: Shape): void'] },
+  { id: 'Rectangle', name: 'Rectangle', x: 250, y: 250, attributes: ['# w: number', '# h: number'], methods: ['+ area(): number'] },
+  { id: 'Square', name: 'Square', x: 430, y: 250, methods: ['+ setSide(s): void'] },
+  { id: 'Drawing', name: 'Drawing', x: 460, y: 50, attributes: ['- title: string'], methods: ['+ add(s: Shape): void'] },
+  { id: 'Renderer', name: 'Renderer', stereotype: 'interface', x: 660, y: 50, methods: ['+ draw(s: Shape): void'] },
+  { id: 'SvgRenderer', name: 'SvgRenderer', x: 660, y: 250, attributes: ['- width: number'], methods: ['+ draw(s: Shape): void'] },
 ];
 const relations: Relation[] = [
   { from: 'Circle', to: 'Shape', kind: 'implements' },
@@ -25,7 +27,8 @@ const relations: Relation[] = [
   { from: 'SvgRenderer', to: 'Renderer', kind: 'implements' },
 ];
 
-// One object per concrete class, with the same id as its class. Positions come from `where`.
+// One object per concrete class, with the same id as its class. Positions come from `where`, which starts
+// as the class positions (classDiagram's box(id) for each class), so each instance sits where its class was.
 const objects: UmlObject[] = [
   { id: 'Circle', name: 'c1', class: 'Circle', slots: { r: 5 } },
   { id: 'Rectangle', name: 'r1', class: 'Rectangle', slots: { w: 4, h: 3 } },
@@ -45,13 +48,13 @@ const viewBox = fitViewBox(classDiagram(classes, relations), 40);
 export default function ObjectDiagram() {
   const [view, setView] = useState<'class' | 'object'>('class');
   const [slots, setSlots] = useState(true);
-  const [where, setWhere] = useState(Object.fromEntries(classes.map((c) => [c.id, { x: c.x!, y: c.y! }])));
+  const [where, setWhere] = useState(() => { const d = classDiagram(classes, relations); return Object.fromEntries(classes.map((c) => [c.id, { x: d.box(c.id).x, y: d.box(c.id).y }])); });
   const [note, setNote] = useState('');
 
   const diagram =
     view === 'class'
       ? classDiagram(classes.map((c) => ({ ...c, ...where[c.id] })), relations, { id: 'uml', collapsed: !slots, interactive: true, draggable: true })
-      : objectDiagram(objects.map((u) => ({ ...u, ...where[u.id] })), links, { id: 'uml', collapsed: !slots, interactive: true, draggable: true, route: 'straight' });
+      : objectDiagram(objects.map((u) => ({ ...u, ...where[u.id] })), links, { id: 'uml', collapsed: !slots, interactive: true, draggable: true });
 
   return (
     <>

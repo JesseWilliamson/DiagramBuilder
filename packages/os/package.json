@@ -1,5 +1,5 @@
 {
-  "name": "@figurae/os",
+  "name": "@dsviz/os",
   "version": "3.0.0",
   "description": "Operating-systems diagrams: scheduling Gantt charts, stack and heap, raw memory",
   "author": "Jesse Williamson",
@@ -19,7 +19,7 @@
     "src"
   ],
   "dependencies": {
-    "@figurae/core": "^3.0.0"
+    "@dsviz/core": "^3.0.0"
   },
   "repository": {
     "type": "git",

@@ -1,8 +1,8 @@
 // Names, objects and aliasing, Python-Tutor style. `b = a` doesn't copy the list:
 // it draws a second arrow to the same object. Step through and watch what changes.
-import { fitViewBox } from '@figurae/core';
-import { HeapObject, StackFrame, stackHeap } from '@figurae/os';
-import { CodeTrace, Diagram, Transport, usePlayer } from '@figurae/react';
+import { fitViewBox } from '@dsviz/core';
+import { HeapObject, StackFrame, stackHeap } from '@dsviz/os';
+import { CodeTrace, Diagram, Transport, usePlayer } from '@dsviz/react';
 
 const code = [
   'a = [1, 2]',

@@ -7,7 +7,7 @@
  * "the last cell faded out", which happens to be right for a stack but is
  * wrong for a queue (dequeue removes index 0, and every key shifts).
  */
-import { V2 } from '@figurae/core';
+import { V2 } from '@dsviz/core';
 import { ArrayDiagram, ArrayOptions, array } from './array';
 import { resolveTone } from './common';
 

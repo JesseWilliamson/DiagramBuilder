@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { Scene, View, ViewEvent, createView } from '@figurae/core';
-import type { Easing } from '@figurae/core';
+import { Scene, View, ViewEvent, createView } from '@dsviz/core';
+import type { Easing } from '@dsviz/core';
 
 export interface DiagramProps {
   scene: Scene;
@@ -35,7 +35,7 @@ export interface DiagramProps {
   /** Accessible description of what the diagram shows. */
   label?: string;
   /**
-   * Add figurae's stylesheet to <head> (default true). Pass false when the app
+   * Add dsviz's stylesheet to <head> (default true). Pass false when the app
    * ships the CSS itself (e.g. DEFAULT_CSS in its own bundle, or a strict
    * Content-Security-Policy that forbids injected <style> tags).
    */

@@ -1,11 +1,11 @@
 /**
- * @figurae/uml — UML and ER diagrams, each a pure function from your data to a scene.
+ * @dsviz/uml — UML and ER diagrams, each a pure function from your data to a scene.
  *
  *   behaviour:  sequence, communication, stateMachine, activity, useCase
  *   structure:  classDiagram, objectDiagram, component, deployment, packageDiagram, er
  *
  * Boxes carry stable ids, so a box that keeps its id moves instead of redrawing. Boxes without x/y are
- * placed by @figurae/layout.
+ * placed by @dsviz/layout.
  */
 export * from './classDiagram';
 export * from './sequence';

@@ -1,6 +1,6 @@
-// A copy of the tiny tone helpers in @figurae/ds (ds/common.ts): prob may
+// A copy of the tiny tone helpers in @dsviz/ds (ds/common.ts): prob may
 // depend only on core and layout, and these are ten lines.
-import { Tone } from '@figurae/core';
+import { Tone } from '@dsviz/core';
 
 export type ToneSpec<K, V = unknown> = Partial<Record<string, Tone>> | ((key: K, value: V) => Tone | undefined);
 

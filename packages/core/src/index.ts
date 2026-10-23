@@ -1,13 +1,13 @@
 /**
- * @figurae/core — the headless layer: scene primitives, renderer, camera, player.
+ * @dsviz/core — the headless layer: scene primitives, renderer, camera, player.
  *
  *   state ──▶ layout functions ──▶ Scene (plain data, stable ids) ──▶ renderer
  *
  * The families (ds, plot, prob, geom, os, arch, uml, git) are separate packages
  * that depend on this one; each exports its layouts flat:
  *
- *   import { fn, plane } from '@figurae/plot';
- *   import { angleMark } from '@figurae/geom';
+ *   import { fn, plane } from '@dsviz/plot';
+ *   import { angleMark } from '@dsviz/geom';
  */
 export * from './vec';
 export * from './easing';

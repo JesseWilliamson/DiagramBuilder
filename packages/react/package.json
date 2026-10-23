@@ -1,7 +1,7 @@
 {
-  "name": "@figurae/react",
+  "name": "@dsviz/react",
   "version": "3.0.0",
-  "description": "React bindings for figurae: Diagram, usePlayer and small controls",
+  "description": "React bindings for dsviz: Diagram, usePlayer and small controls",
   "author": "Jesse Williamson",
   "homepage": "https://jessewilliamson.github.io/DiagramBuilder/",
   "type": "module",
@@ -19,7 +19,7 @@
     "src"
   ],
   "dependencies": {
-    "@figurae/core": "^3.0.0",
+    "@dsviz/core": "^3.0.0",
     "@radix-ui/react-select": "^2.4.1",
     "@radix-ui/react-slider": "^1.6.1",
     "@radix-ui/react-switch": "^1.4.1",

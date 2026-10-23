@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { fitViewBox, nextCamera, rect, V2 } from '@figurae/core';
-import { grid, hashMap } from '@figurae/ds';
-import { angleAt, circleIntersections, circumcircle, footOfPerpendicular, lineIntersection } from '@figurae/geom';
-import { gantt, hex, simulate, stackHeap } from '@figurae/os';
-import { clipToPlane, fn, integrate, niceTicks, plane, riemann } from '@figurae/plot';
-import { probTree, vennAreas, vennRegionAt, vennRegions } from '@figurae/prob';
+import { fitViewBox, nextCamera, rect, V2 } from '@dsviz/core';
+import { grid, hashMap } from '@dsviz/ds';
+import { angleAt, circleIntersections, circumcircle, footOfPerpendicular, lineIntersection } from '@dsviz/geom';
+import { gantt, hex, simulate, stackHeap } from '@dsviz/os';
+import { clipToPlane, fn, integrate, niceTicks, plane, riemann } from '@dsviz/plot';
+import { probTree, vennAreas, vennRegionAt, vennRegions } from '@dsviz/prob';
 
 const close = (a: number, b: number, eps = 1e-6) => expect(Math.abs(a - b)).toBeLessThan(eps);
 

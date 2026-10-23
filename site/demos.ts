@@ -11,5 +11,5 @@ const sources = import.meta.glob<string>('../registry/*.tsx', { eager: true, que
 export function demo(name: string): { initial: ComponentType; source: string; file: string; command: string } {
   const key = `../registry/${name}.tsx`;
   if (!modules[key]) throw new Error(`no demo ${name}`);
-  return { initial: modules[key].default, source: sources[key], file: `${name}.tsx`, command: `npx @figurae/cli add ${index.find((e) => e.file === `${name}.tsx`)?.name}` };
+  return { initial: modules[key].default, source: sources[key], file: `${name}.tsx`, command: `npx @dsviz/cli add ${index.find((e) => e.file === `${name}.tsx`)?.name}` };
 }

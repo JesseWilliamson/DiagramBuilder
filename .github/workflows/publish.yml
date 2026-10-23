@@ -8,7 +8,7 @@ name: Publish to npm
 # It authenticates with npm Trusted Publishing: npm is told (on the package's
 # settings page) to trust this workflow in this repository, and GitHub hands
 # each run a short-lived OIDC token that npm exchanges for permission to
-# publish. Each @figurae/* package needs its own trusted-publisher entry.
+# publish. Each @dsviz/* package needs its own trusted-publisher entry.
 # There is no npm token stored anywhere to leak. npm can only trust
 # a publisher for a package that exists, so the very first version of each
 # package is published by hand.

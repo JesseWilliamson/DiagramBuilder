@@ -1,9 +1,9 @@
 // Two events as regions of a sample space. Drag a circle by its centre dot; click regions to shade them.
 // P(region) is its area as a fraction of the rectangle U.
 import { useState } from 'react';
-import { Vec } from '@figurae/core';
-import { venn2, vennAreas, VennRegion } from '@figurae/prob';
-import { Button, Diagram, MathText } from '@figurae/react';
+import { Vec } from '@dsviz/core';
+import { venn2, vennAreas, VennRegion } from '@dsviz/prob';
+import { Button, Diagram, MathText } from '@dsviz/react';
 
 type Region = VennRegion;
 const U: [number, number, number, number] = [0, 0, 440, 250];

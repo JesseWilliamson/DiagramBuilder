@@ -13,7 +13,7 @@
  * Each region is a closed `path` with a fixed number of points, so when you
  * drag a circle the regions morph smoothly.
  */
-import { Scene, SceneNode, Tone, V2, Vec, circle, handle, path, text, vdist } from '@figurae/core';
+import { Scene, SceneNode, Tone, V2, Vec, circle, handle, path, text, vdist } from '@dsviz/core';
 
 export interface Disc {
   x: number;

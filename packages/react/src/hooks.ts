@@ -1,5 +1,5 @@
 import { DependencyList, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { Player, PlayerOptions, SceneNode, burst, createPlayer } from '@figurae/core';
+import { Player, PlayerOptions, SceneNode, burst, createPlayer } from '@dsviz/core';
 
 export interface PlayerState<S> {
   frame: S | undefined;

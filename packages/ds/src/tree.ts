@@ -17,8 +17,8 @@
  * node has exactly one parent edge), so after a rotation the edge re-attaches.
  * New nodes grow out of their parent via `enter`.
  */
-import { Scene, SceneNode, V2, Vec, arrow, circle, circleEdge, estimateTextWidth, rect, rectEdge, text } from '@figurae/core';
-import { tidy } from '@figurae/layout';
+import { Scene, SceneNode, V2, Vec, arrow, circle, circleEdge, estimateTextWidth, rect, rectEdge, text } from '@dsviz/core';
+import { tidy } from '@dsviz/layout';
 import { Key, ToneSpec, resolveTone, show } from './common';
 
 export interface BinaryTreeNode {

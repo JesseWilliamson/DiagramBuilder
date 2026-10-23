@@ -4,12 +4,12 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 
-const bin = path.resolve('packages/cli/bin/figurae.js');
-const tmp = mkdtempSync(path.join(tmpdir(), 'figurae-cli-'));
+const bin = path.resolve('packages/cli/bin/dsviz.js');
+const tmp = mkdtempSync(path.join(tmpdir(), 'dsviz-cli-'));
 afterAll(() => rmSync(tmp, { recursive: true, force: true }));
 const run = (...a: string[]) => spawnSync('node', [bin, ...a], { cwd: tmp, encoding: 'utf8' });
 
-describe('figurae CLI', () => {
+describe('dsviz CLI', () => {
   it('lists the registry', () => {
     const r = run('list');
     expect(r.status).toBe(0);
@@ -20,7 +20,7 @@ describe('figurae CLI', () => {
     const r = run('add', 'binary-search', '--dir', 'out');
     expect(r.status).toBe(0);
     expect(readFileSync(path.join(tmp, 'out/BinarySearch.tsx'), 'utf8')).toBe(readFileSync('registry/BinarySearch.tsx', 'utf8'));
-    expect(r.stdout).toContain('npm install @figurae/core @figurae/ds @figurae/react');
+    expect(r.stdout).toContain('npm install @dsviz/core @dsviz/ds @dsviz/react');
   });
   it('refuses to overwrite, then overwrites with --force', () => {
     writeFileSync(path.join(tmp, 'out/BinarySearch.tsx'), 'mine');

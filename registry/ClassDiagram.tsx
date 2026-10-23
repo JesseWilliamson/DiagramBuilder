@@ -1,9 +1,9 @@
 // A class diagram you can rearrange. Drag the boxes; click one to see only its relationships.
 // Positions are plain state, so the lines re-route as you drag.
 import { useState } from 'react';
-import { fitViewBox } from '@figurae/core';
-import { Diagram, Switch } from '@figurae/react';
-import { classDiagram, Relation, RelationKind, UmlClass } from '@figurae/uml';
+import { fitViewBox } from '@dsviz/core';
+import { Diagram, Switch } from '@dsviz/react';
+import { classDiagram, Relation, RelationKind, UmlClass } from '@dsviz/uml';
 
 const start: UmlClass[] = [
   { id: 'Shape', name: 'Shape', stereotype: 'interface', x: 250, y: 50, methods: ['+ area(): number', '+ perimeter(): number'] },

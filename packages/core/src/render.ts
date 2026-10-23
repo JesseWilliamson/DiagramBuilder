@@ -220,7 +220,7 @@ export function createView(svg: SVGSVGElement, options: ViewOptions = {}): View 
     // Dedupe ids (and warn: duplicate ids are the #1 bug with keyed rendering).
     const next = new Map<string, SceneNode>();
     for (const n of scene.nodes) {
-      if (next.has(n.id)) console.warn(`[figurae] duplicate node id "${n.id}" — only the first is drawn`);
+      if (next.has(n.id)) console.warn(`[dsviz] duplicate node id "${n.id}" — only the first is drawn`);
       else next.set(n.id, n);
     }
 

@@ -11,7 +11,7 @@
  *   - ^ and _ make super- and subscripts, {…} groups them
  *
  * parseMath() turns the string into spans; describe() turns spans into SVG
- * <tspan>s, and <MathText> in @figurae/react turns the same spans into HTML.
+ * <tspan>s, and <MathText> in @dsviz/react turns the same spans into HTML.
  */
 export interface MathSpan {
   text: string;

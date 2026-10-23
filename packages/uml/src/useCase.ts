@@ -12,14 +12,17 @@
  * «extend» points from the extension back to the base case it adds to.
  *
  * You place things (x, y = centre), or leave x/y out. Cases without a place go
- * through the layered layout (layout/layered.ts) when cases are related to each
- * other (a base case, then what it includes or extends, one column to its
- * right); with no case-to-case relations they go in a plain grid. Actors then
- * stand in a column on the left of the boundary (or on the right, `side:
- * 'right'`), each level with the cases it is linked to.
+ * through the layered layout (layout/layered.ts): a base case, then what it
+ * includes or extends, one column to its right. The actors take part in that
+ * layout too (left-side actors as the first column, right-side ones as the
+ * last), so the cases of one actor end up next to each other and the
+ * association lines cross as little as possible; the actors are then drawn in
+ * a column outside the boundary (left, or right for `side: 'right'`), each
+ * level with the cases it is linked to. With no relations at all the cases go
+ * in a plain grid.
  */
-import { Frame, Scene, SceneNode, Tone, V2, Vec, connector, estimateTextWidth, path, rect, rectEdge, text } from '@figurae/core';
-import { layered, pack } from '@figurae/layout';
+import { Frame, Scene, SceneNode, Tone, V2, Vec, connector, estimateTextWidth, path, rect, rectEdge, text } from '@dsviz/core';
+import { layered, pack } from '@dsviz/layout';
 import { FIGURE, figureFrame, stickFigure } from './figure';
 
 export interface UseCaseActor {
@@ -60,7 +63,7 @@ export interface UseCaseOptions {
   draggable?: boolean;
   /** Ids to fade (e.g. everything not linked to the selected actor). Their lines fade too. */
   dim?: ReadonlySet<string>;
-  /** Space between the columns of cases and between rows. Defaults 110 and 26. */
+  /** Space between the columns of cases and between rows. Defaults 64 and 22. */
   rankGap?: number;
   nodeGap?: number;
 }
@@ -82,9 +85,9 @@ export const USE_CASE_STYLE: Record<UseCaseRelationKind, { dashed: boolean; end:
   generalization: { dashed: false, end: 'triangle' },
 };
 
-const PAD = 28, TITLE = 32, ACTOR_GAP = 84, ACTOR_SEP = 96;
+const PAD = 18, TITLE = 28, ACTOR_GAP = 48, ACTOR_SEP = 92, LABEL = 11, LABEL_OFF = 9;
 
-export const caseSize = (c: UseCaseOval) => ({ w: Math.max(120, Math.ceil(estimateTextWidth(c.name, 13) + 48)), h: 58 });
+export const caseSize = (c: UseCaseOval) => ({ w: Math.max(100, Math.ceil(estimateTextWidth(c.name, 13) * 0.9 + 28)), h: 54 });
 
 /** Points around an ellipse: a closed `path` is the only way to draw one. */
 export function ellipsePoints(cx: number, cy: number, a: number, b: number, n = 40): [number, number][] {
@@ -109,18 +112,27 @@ export function useCase(actorsIn: readonly UseCaseActor[], casesIn: readonly Use
   // 1. cases: the ones without a place
   const pos = new Map<string, Vec>();
   const free = casesIn.filter((c) => c.x == null || c.y == null);
+  const freeIds = new Set(free.map((c) => c.id));
   const among = relations.filter((r) => isCase.has(r.from) && isCase.has(r.to) && r.kind !== 'association');
-  if (free.length && among.length) {
+  // left-side actors come before their cases, right-side ones after; both only to order the cases
+  const sideOf = (a: UseCaseActor) => a.side ?? 'left';
+  const actorEdges = relations.filter((r) => r.kind === 'association' && (freeIds.has(r.to) || freeIds.has(r.from))).flatMap((r) => {
+    const a = actorsIn.find((x) => x.id === r.from || x.id === r.to);
+    if (!a) return [];
+    const c = a.id === r.from ? r.to : r.from;
+    return sideOf(a) === 'left' ? [{ from: a.id, to: c }] : [{ from: c, to: a.id }];
+  });
+  if (free.length && (among.length || actorEdges.length)) {
     // base before what it uses: include flows from → to, the others from the base (`to`) to the child
     const L = layered(
-      free.map((c) => ({ id: c.id, ...caseSize(c) })),
-      among.map((r) => (r.kind === 'include' ? { from: r.from, to: r.to } : { from: r.to, to: r.from })),
-      { direction: 'right', rankGap: o.rankGap ?? 110, nodeGap: o.nodeGap ?? 26 },
+      [...free.map((c) => ({ id: c.id, ...caseSize(c) })), ...actorsIn.map((a) => ({ id: a.id, ...FIGURE }))],
+      [...among.map((r) => (r.kind === 'include' ? { from: r.from, to: r.to } : { from: r.to, to: r.from })), ...actorEdges],
+      { direction: 'right', rankGap: o.rankGap ?? 64, nodeGap: o.nodeGap ?? 22 },
     );
     for (const c of free) pos.set(c.id, L.pos(c.id));
   } else {
     const cols = free.length > 4 ? 2 : 1, wMax = Math.max(0, ...free.map((c) => caseSize(c).w));
-    free.forEach((c, i) => pos.set(c.id, V2((i % cols) * (wMax + 40), Math.floor(i / cols) * (58 + (o.nodeGap ?? 26)))));
+    free.forEach((c, i) => pos.set(c.id, V2((i % cols) * (wMax + 40), Math.floor(i / cols) * (54 + (o.nodeGap ?? 22)))));
   }
   const frames: Record<string, Frame> = {};
   for (const c of casesIn) {
@@ -158,8 +170,8 @@ export function useCase(actorsIn: readonly UseCaseActor[], casesIn: readonly Use
   const nodes: SceneNode[] = [];
   if (boundary && o.system) {
     nodes.push(
-      rect({ id: `${id}:system`, ...boundary, rx: 4, role: 'boundary', tone: o.system.tone }),
-      text({ id: `${id}:system:title`, x: boundary.x, y: boundary.y - boundary.h / 2 + 18, text: o.system.name, size: 14, role: 'boundary-title', tone: o.system.tone }),
+      rect({ id: `${id}:system`, ...boundary, rx: 6, role: 'boundary', tone: o.system.tone }),
+      text({ id: `${id}:system:title`, x: boundary.x - boundary.w / 2 + 12, y: boundary.y - boundary.h / 2 + 16, text: o.system.name, size: 12, anchor: 'start', role: 'boundary-title', tone: o.system.tone }),
     );
   }
   for (const r of relations) {
@@ -168,14 +180,16 @@ export function useCase(actorsIn: readonly UseCaseActor[], casesIn: readonly Use
     const s = USE_CASE_STYLE[r.kind];
     // ovals leave along the ellipse, figures along their box
     const edge = (f: Frame, k: string, toward: Vec) => (isCase.has(k) ? ellipseEdge(f, toward) : rectEdge({ x: f.x, y: f.y, ...FIGURE }, toward));
-    nodes.push(
-      ...connector({
-        id: `${id}:rel:${r.from}-${r.kind}-${r.to}`,
-        from: edge(a, r.from, b), to: edge(b, r.to, a), gap: 0,
-        end: s.end, dashed: s.dashed, label: s.label, tone: r.tone,
-        opacity: o.dim?.has(r.from) || o.dim?.has(r.to) ? 0.25 : 1,
-      }).nodes,
-    );
+    const k = `${id}:rel:${r.from}-${r.kind}-${r.to}`, opacity = o.dim?.has(r.from) || o.dim?.has(r.to) ? 0.25 : 1;
+    const c = connector({ id: k, from: edge(a, r.from, b), to: edge(b, r.to, a), gap: 0, end: s.end, dashed: s.dashed, tone: r.tone, opacity });
+    nodes.push(...c.nodes);
+    if (s.label) {
+      // the stereotype sits just off the middle of the line, on its upper side
+      const [p, q] = c.points, d = Math.hypot(q.x - p.x, q.y - p.y) || 1;
+      let nx = (q.y - p.y) / d, ny = -(q.x - p.x) / d;
+      if (ny > 0) (nx = -nx), (ny = -ny);
+      nodes.push(text({ id: `${k}:label`, x: (p.x + q.x) / 2 + nx * LABEL_OFF, y: (p.y + q.y) / 2 + ny * LABEL_OFF, text: s.label, size: LABEL, role: 'usecase-rel-label', tone: r.tone, opacity }));
+    }
   }
   for (const c of casesIn) {
     const f = frames[c.id], k = `${id}:case:${c.id}`;

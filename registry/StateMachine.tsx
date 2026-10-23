@@ -1,8 +1,8 @@
 // An order's lifecycle as a state machine. Only the events that are legal in the
 // current state are enabled: that list IS the state machine.
 import { useState } from 'react';
-import { Button, Diagram } from '@figurae/react';
-import { stateMachine, Transition, UmlState } from '@figurae/uml';
+import { Button, Diagram } from '@dsviz/react';
+import { stateMachine, Transition, UmlState } from '@dsviz/uml';
 
 const states: UmlState[] = [
   { id: 'start', kind: 'initial', x: 0, y: 60 },

@@ -3,7 +3,7 @@
  * of taking it; a leaf's probability is the product along its path (that's
  * the multiplication rule, and seeing it laid out is the point of the diagram).
  */
-import { Scene, SceneNode, Tone, V2, Vec, arrow, estimateTextWidth, rect, text } from '@figurae/core';
+import { Scene, SceneNode, Tone, V2, Vec, arrow, estimateTextWidth, rect, text } from '@dsviz/core';
 
 export interface ProbNode {
   /** Unique among siblings; the path of keys is the node's id. */

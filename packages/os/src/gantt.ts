@@ -9,7 +9,7 @@
  * `label` drawn on the bar, and a `tone` of its own (say, which version of
  * something that request saw).
  */
-import { Scene, SceneNode, Tone, estimateTextWidth, path, rect, text } from '@figurae/core';
+import { Scene, SceneNode, Tone, estimateTextWidth, path, rect, text } from '@dsviz/core';
 import { Segment } from './simulate';
 
 /** A bar: a scheduler's Segment, or one with its own lane, label and tone. */

@@ -1,7 +1,7 @@
 {
-  "name": "@figurae/core",
+  "name": "@dsviz/core",
   "version": "3.0.0",
-  "description": "Headless core of figurae: scene primitives, SVG renderer, camera, player",
+  "description": "Headless core of dsviz: scene primitives, SVG renderer, camera, player",
   "author": "Jesse Williamson",
   "homepage": "https://jessewilliamson.github.io/DiagramBuilder/",
   "type": "module",

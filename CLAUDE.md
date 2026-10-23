@@ -74,6 +74,14 @@ Motion, a real bundler) instead of hand-rolling substitutes.
   (`#/examples`: 36 examples grouped by family, each the live diagram beside its editable source), guide
   (`#/guide`), API (`#/api`). Every `site/demos/*.tsx` is a real module importing from `dsviz` / `dsviz/react`;
   `site/live/useLive.tsx` + sucrase `compile.ts` + CodeMirror make the source editable in the page.
+- `site/d3/` — the same 42 examples redrawn in plain d3, on the `#/examples-d3` page (`site/D3Examples.tsx`), to test whether
+  dsviz could be d3 instead of a custom engine, usable in Observable. Each `site/d3/cells/<Name>.js` is the BODY of an Observable
+  `{ ... }` cell (free variables `d3`, `kit`, `invalidation`; ends with `return fig.el`), editable on the page, with a "Copy for
+  Observable" button. `site/d3/kit.js` is the shared plumbing (stylesheet, controls, step player, arrow markers, drag helper) and is
+  itself a cell body (`kit = { ... }`). `tests/d3cells.test.ts` runs every cell headlessly (run vitest with `--fsModuleCache=false`
+  after adding a cell, or its `import.meta.glob` is stale). d3 gave scales, axes, shapes, hierarchy/tree, drag, joins and
+  transitions; it has no layered DAG layout, connectors/UML, or path morph between different point counts, so those are hand-written
+  in the cells (see the header comments).
 - Install in another project: `npm install dsviz`. Published to npm by `.github/workflows/publish.yml` when a GitHub
   release is published (tag `v<version>`, matching package.json), authenticated by npm Trusted Publishing (OIDC: no
   npm token stored anywhere; the first version is published by hand, since npm only trusts publishers of existing packages). The repository is

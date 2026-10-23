@@ -13,6 +13,7 @@ function Section({ id, title, children }: { id: string; title: string; children:
 
 const toc = [
   ['start', 'First diagram'],
+  ['packages', 'Packages'],
   ['scenes', 'Scenes and ids'],
   ['layouts', 'Layouts and anchors'],
   ['style', 'Tones, roles and theming'],
@@ -22,7 +23,9 @@ const toc = [
   ['camera', 'The camera'],
   ['math', 'Maths labels'],
   ['sizing', 'Sizing'],
-  ['design', 'Software design'],
+  ['design', 'Architecture and layout'],
+  ['uml', 'UML diagrams'],
+  ['snapping', 'Snapping'],
   ['git', 'Git history'],
   ['vanilla', 'Without React'],
   ['exercises', 'Exercises'],
@@ -36,7 +39,7 @@ export function Guide() {
       </nav>
       <div className="doc-main">
         <h1>Guide</h1>
-        <p className="lede">figurae draws interactive, animated SVG diagrams for teaching: data structures, plots, probability, geometry, scheduling and memory. The core has no dependencies; <code>@figurae/react</code> is a thin wrapper.</p>
+        <p className="lede">figurae draws interactive, animated SVG diagrams for teaching computer science: data structures and algorithms, UML, software architecture, git history, plots, probability, geometry, scheduling and memory. It is three layers: a headless core (primitives, renderer, camera, player), one package per family of diagrams (pure functions from your state to a scene), and copyable example components. The core has no dependencies; <code>@figurae/react</code> is a thin wrapper.</p>
 
         <Section id="start" title="First diagram">
           <Code>{`npm install @figurae/core @figurae/ds @figurae/react   # react >= 18 as a peer dependency`}</Code>
@@ -60,6 +63,21 @@ export function Example() {
           <p>Every example on the <a href="#/examples">examples page</a> is a component like this, and you can edit it there.</p>
         </Section>
 
+        <Section id="packages" title="Packages">
+          <p>Each family is its own package and exports its functions flat, with no namespaces: <code>{"import { fn } from '@figurae/plot'"}</code>. A family depends on <code>@figurae/core</code> (and <code>@figurae/layout</code> if it places boxes for you) and on nothing else, so an app installs only what it draws.</p>
+          <ul>
+            <li><code>@figurae/core</code>: <code>rect circle text arrow path</code>, <code>combine</code>, <code>connector</code>, <code>createView</code>, <code>toSVG</code>, <code>fitViewBox</code>, <code>createPlayer</code>, <code>handle</code>, <code>snapFrame</code>.</li>
+            <li><code>@figurae/layout</code>: <code>layered</code> (DAGs) and <code>tidy</code> (trees); positions only.</li>
+            <li><code>@figurae/ds</code>: <code>array pointer linkedList binaryTree tree graph grid stack queue hashMap</code>.</li>
+            <li><code>@figurae/plot</code>, <code>@figurae/prob</code>, <code>@figurae/geom</code>: maths on a plane, probability, geometry.</li>
+            <li><code>@figurae/os</code>: CPU scheduling (<code>simulate</code>, <code>gantt</code>) and memory (<code>stackHeap</code>, <code>memory</code>).</li>
+            <li><code>@figurae/arch</code>: architecture diagrams. <code>@figurae/git</code>: commit graphs.</li>
+            <li><code>@figurae/uml</code>: eleven UML and ER diagrams (below).</li>
+            <li><code>@figurae/react</code>: <code>&lt;Diagram&gt;</code>, <code>usePlayer</code>, <code>useSnap</code>, controls.</li>
+          </ul>
+          <p>Two packages sometimes use one name (<code>graph</code> in ds and git, <code>segment</code> in plot and geom): alias on import, <code>{"import { graph as gitGraph } from '@figurae/git'"}</code>.</p>
+        </Section>
+
         <Section id="scenes" title="Scenes and ids">
           <p>A <code>Scene</code> is <code>{'{ nodes: SceneNode[] }'}</code>: a flat list of plain objects. There are five primitives: <code>rect</code> and <code>circle</code> (centred on x, y), <code>text</code>, <code>arrow</code> (with optional <code>bend</code> and head) and <code>path</code> (polyline, polygon or smooth curve). Array order is paint order.</p>
           <p>Every node has an <code>id</code>. When you render a new scene the renderer matches nodes by id: a node that kept its id <em>tweens</em> from wherever it is on screen to its new props, a new id fades in, a missing id fades out. That one rule is all the animation. It's the same idea as React's <code>key</code>.</p>
@@ -76,7 +94,7 @@ arr.window(lo, hi);                                         // a band behind cel
 const p = plane({ x: [-4, 4], y: [-3, 3], width: 440, height: 300 });
 fn(p, Math.sin);                                       // world units, y up
 p.toWorld(e.x, e.y);                                        // drag position → maths coordinates`}</Code>
-          <p>The families: top-level data structures (<code>array, pointer, linkedList, binaryTree, tree, graph, grid, stack, queue</code>) and the family packages <code>@figurae/plot</code>, <code>@figurae/prob</code>, <code>@figurae/geom</code> and <code>@figurae/os</code>. See the <a href="#/api">API</a> for the full list.</p>
+          <p>The families are the packages above: data structures (<code>array, pointer, linkedList, binaryTree, tree, graph, grid, stack, queue, hashMap</code> in <code>@figurae/ds</code>), then <code>@figurae/plot</code>, <code>prob</code>, <code>geom</code>, <code>os</code>, <code>arch</code>, <code>uml</code> and <code>git</code>. See the <a href="#/api">API</a> for the full list.</p>
           <p>Ids inside a layout come from your data. <code>array</code> keys cells by index unless you pass <code>keys</code>; give each element a stable key and a swap becomes two tiles sliding past each other instead of two numbers changing in place.</p>
         </Section>
 
@@ -104,7 +122,7 @@ p.toWorld(e.x, e.y);                                        // drag position →
 
         <Section id="interaction" title="Interaction">
           <p><code>&lt;Diagram onClick onDrag&gt;</code> report the node (with its <code>data</code>) and the pointer position in scene coordinates. Mark nodes <code>interactive</code> for a pointer cursor, <code>draggable</code> to receive drags.</p>
-          <p>For small things you drag, use <code>handle({'{ id, x, y }'})</code>: a visible dot plus a large invisible hit target (small targets are the main reason drag interactions feel bad). <code>plot.point(..., {'{ draggable: true }'})</code> and <code>geom.polygon(..., {'{ draggable: true }'})</code> use it for you, and <code>hint: true</code> pulses a ring until the first touch.</p>
+          <p>For small things you drag, use <code>handle({'{ id, x, y }'})</code>: a visible dot plus a large invisible hit target (small targets are the main reason drag interactions feel bad). <code>point(p, x, y, {'{ id, draggable: true }'})</code> from plot and <code>polygon(points, {'{ draggable: true }'})</code> from geom use it for you, and <code>hint: true</code> pulses a ring until the first touch.</p>
           <p>Everything draggable is also reachable with Tab and movable with the arrow keys (Shift for bigger steps). The keys drive a virtual pointer and send the same <code>dragstart / drag / dragend</code> events, so your <code>onDrag</code> handler works unchanged, snapping included. <code>e.keyboard</code> tells you which it was.</p>
         </Section>
 
@@ -153,17 +171,62 @@ vector(p, O, proj, { id: 'r', label: 'proj_v u' })      // labels on marks are m
           <p>By default diagrams are drawn at their natural size: one scene unit is one CSS pixel, centred, and scaled down only when the container is narrower. That keeps text and line weights identical across every diagram. Pass <code>scale</code> to draw bigger, or <code>size="fill"</code> with a <code>height</code> to stretch to the container instead.</p>
         </Section>
 
-        <Section id="design" title="Software design diagrams">
-          <p>Two packages draw software: <code>@figurae/uml</code> (class, sequence and state diagrams) and <code>@figurae/arch</code> (architecture: clients, load balancers, services, caches, databases, queues). Both are built on <code>connector()</code>, a line with a marker at either end. Each marker is a small shape with its own role (<code>end-solid</code>, <code>end-hollow</code>, <code>end-open</code>), and the line stops where the marker starts, so it never shows through a hollow triangle.</p>
+        <Section id="design" title="Architecture and layout">
+          <p><code>@figurae/arch</code> draws system architecture (clients, load balancers, services, caches, databases, queues) and <code>@figurae/uml</code> draws UML. Both are built on <code>connector()</code> from core, a line with a marker at either end. Each marker is a small shape with its own role (<code>end-solid</code>, <code>end-hollow</code>, <code>end-open</code>), and the line stops where the marker starts, so it never shows through a hollow triangle.</p>
           <Code>{`
+import { combine } from '@figurae/core';
+import { architecture, packet } from '@figurae/arch';
+
+const a = architecture(components, links, { zones });
+combine(a, packet({ id: 'req', ...a.along('lb', 'app', 1) }));  // same id → it glides`}</Code>
+          <p>You place things (x, y), or leave x and y out: <code>graph(…, {"{ layout: 'layered' }"})</code>, <code>architecture</code> and every UML diagram that has boxes then use <code>layered</code> from <code>@figurae/layout</code>, which puts each node one layer past everything that points at it, orders each layer to avoid crossings and bends long edges around the boxes in between. The layouts size boxes from their text and route the lines. Component colours come from the stylesheet by kind (<code>.dv-role-sys-db</code>), so a host app can restyle every database in one rule.</p>
+        </Section>
+
+        <Section id="uml" title="UML diagrams">
+          <p><code>@figurae/uml</code> has eleven diagram functions. Every one takes your data plus options, returns a scene, and returns <code>box(id)</code> or <code>frame(id)</code> so you can attach things to its boxes. Boxes without x and y are placed by <code>layered</code>. Ids come from your data, so a box that keeps its id moves instead of redrawing.</p>
+          <ul>
+            <li><code>sequence</code>: lifelines and call / return / async messages; activation bars from the call stack; <code>fragments</code> (loop, alt, opt), <code>notes</code>; <code>upTo</code> reveals one message per step.</li>
+            <li><code>communication</code>: the same participants and messages as a graph, one link per pair, messages numbered 1, 1.1, 1.2 from their <code>parent</code>.</li>
+            <li><code>classDiagram</code>: classes with attributes and methods; inherits, implements, composition, aggregation, association, dependency.</li>
+            <li><code>objectDiagram</code>: instances <code>name : Class</code> with slot values; give an object its class's id and the two views morph.</li>
+            <li><code>stateMachine</code>: states, initial / final / choice pseudostates, labelled transitions; <code>current</code> highlights the live state.</li>
+            <li><code>useCase</code>: actors, ovals, a system boundary, and include / extend / generalization.</li>
+            <li><code>activity</code>: actions, decisions and merges, fork and join bars, swimlanes; <code>current</code> and <code>taken</code> highlight a walk through the flow.</li>
+            <li><code>component</code>: components with provided (lollipop) and required (socket) interfaces, ports and nesting.</li>
+            <li><code>deployment</code>: nodes with a top and right face, artifacts inside them, communication and deploy links.</li>
+            <li><code>packageDiagram</code>: tabbed packages nested to any depth; import, access, merge and dependency arrows.</li>
+            <li><code>er</code>: entity-relationship diagrams in crow's-foot or Chen notation, with primary and foreign keys and weak entities.</li>
+          </ul>
+          <Code>{`
+import { classDiagram, objectDiagram, communication, sequence } from '@figurae/uml';
+
 classDiagram(
   [{ id: 'Square', name: 'Square', x: 0, y: 200 }, { id: 'Rect', name: 'Rectangle', x: 0, y: 0, attributes: ['# w: number'] }],
   [{ from: 'Square', to: 'Rect', kind: 'inherits' }],
 );
-sequence(people, messages, { upTo: player.frame });   // reveal one message per step
-const a = architecture(components, links);
-combine(a, packet({ id: 'req', ...a.along('lb', 'app', 1) }));  // same id → it glides`}</Code>
-          <p>You place things (x, y), or leave x and y out: <code>graph(…, {"{ layout: 'layered' }"})</code>, <code>architecture</code> and <code>classDiagram</code> then use <code>layered</code>, which puts each node one layer past everything that points at it, orders each layer to avoid crossings and bends long edges around the boxes in between. The layouts size boxes from their text and route the lines. Sequence diagrams compute their activation bars from the calls and returns, the same stack a running program keeps (<code>activations: false</code> hides them). <code>fragments</code> box loops and alternatives (an <code>alt</code> with <code>sections</code> gets an <code>[else]</code> divider), <code>notes</code> take a row of their own, and each message can carry a <code>tone</code>. Component colours come from the stylesheet by kind (<code>.dv-role-sys-db</code>), so a host app can restyle every database in one rule.</p>
+sequence(people, messages, { upTo: player.frame });          // reveal one message per step
+communication(people, messages, { upTo: player.frame });     // the same list, drawn as a graph`}</Code>
+          <p>Sequence diagrams compute their activation bars from the calls and returns, the same stack a running program keeps (<code>activations: false</code> hides them). An <code>alt</code> with <code>sections</code> gets an <code>[else]</code> divider, and each message can carry a <code>tone</code>. The class and object diagrams share box sizes, and the sequence and communication diagrams share a message type, so a pair of views of one thing can morph into each other instead of cutting.</p>
+        </Section>
+
+        <Section id="snapping" title="Snapping">
+          <p>Drag a box in a design tool and it pulls to the other boxes: its centre and two edges match theirs on each axis, the closest pair within a few pixels wins, and a faint guide shows what lined up. With no alignment it falls back to a grid. That is <code>snapFrame(moving, others, {'{ grid, threshold }'})</code> in core, which returns the corrected centre and the guides, and <code>snapGuides(guides)</code>, which turns the guides into dashed scene paths (<code>role: 'snap-guide'</code>) spanning the two boxes.</p>
+          <p>In React, <code>useSnap</code> keeps the guides in state and looks the moving box up among the others by id:</p>
+          <Code>{`
+const diagram = classDiagram(classes.map((c) => ({ ...c, ...where[c.id] })), relations, { draggable: true });
+const { guides, snap, clear } = useSnap(
+  Object.fromEntries(classes.map((c) => [c.id, diagram.box(c.id)])),
+  { grid: 10 },
+);
+<Diagram
+  scene={combine(diagram, snapGuides(guides))}
+  onDrag={(e) => {
+    const id = (e.node.data as { class: string }).class;
+    setWhere((w) => ({ ...w, [id]: snap(id, e) }));      // e has x, y: a point in scene units
+  }}
+  onDragEnd={clear}
+/>`}</Code>
+          <p>The diagram does not know about snapping: it draws wherever you tell it, and your state is the only place a position lives. The snapping is a function from a pointer position and the other frames to a better position. Keyboard drags go through the same events, so they snap too. Class, object, state, component, package and deployment diagrams all have a demo on the examples page.</p>
         </Section>
 
         <Section id="git" title="Git history">
@@ -193,11 +256,12 @@ toSVG(scene, { theme: 'dark' });           // pinned palette + background, for a
 
         <Section id="exercises" title="Exercises">
           <ol className="exercises">
-            <li><b>Add a <code>warning</code> tone.</b> Pure CSS: find how tones become <code>--dv-c / --dv-cf / --dv-cs</code> in <code>styles.ts</code>.</li>
+            <li><b>Add a <code>warning</code> tone.</b> Pure CSS: find how tones become <code>--dv-c / --dv-cf / --dv-cs</code> in <code>packages/core/src/styles.ts</code>.</li>
             <li><b>A <code>heap()</code> layout.</b> Build the implicit tree (children of i are 2i+1 and 2i+2), reuse <code>binaryTree()</code>, and draw the array underneath with matching keys.</li>
             <li><b>Three-set Venn.</b> Generalise <code>vennRegions</code>: each of the 7 regions is bounded by arcs between pairwise intersection points.</li>
-            <li><b>Reingold–Tilford.</b> <code>layout/tidy.ts</code> now does it (<code>tree()</code>, and <code>binaryTree</code> with <code>layout: 'tidy'</code>). Delete it and rebuild it from <code>tests/tidy.test.ts</code>; then try Walker's fix, which spreads small subtrees evenly between big ones.</li>
-            <li><b>Text crossfade.</b> Done in <code>render.ts</code> with a fading ghost copy. Try the other approach: keep two text elements per id and swap which one is live. What does each do when a label changes twice inside one animation?</li>
+            <li><b>Reingold–Tilford.</b> <code>packages/layout/src/tidy.ts</code> does it (<code>tree()</code>, and <code>binaryTree</code> with <code>layout: 'tidy'</code>). Delete it and rebuild it from <code>tests/tidy.test.ts</code>; then try Walker's fix, which spreads small subtrees evenly between big ones.</li>
+            <li><b>Text crossfade.</b> Done in <code>packages/core/src/render.ts</code> with a fading ghost copy. Try the other approach: keep two text elements per id and swap which one is live. What does each do when a label changes twice inside one animation?</li>
+            <li><b>Equal-spacing snaps.</b> <code>snapFrame</code> only matches edges and centres. Add the rule design tools have: when the moving box would sit the same distance from its neighbour as two other boxes sit from each other, pull it there and draw a guide for the gap. Start from <code>packages/core/src/snap.ts</code> and <code>tests/snap.test.ts</code>.</li>
           </ol>
         </Section>
       </div>

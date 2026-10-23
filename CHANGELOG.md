@@ -2,11 +2,61 @@
 
 ## 3.0.0
 
-The single package is now an npm-workspaces monorepo of `@figurae/*` packages (core, layout, ds, plot,
-prob, geom, os, arch, uml, git, spec, react), versioned together. Nothing else changes: namespaces are
-gone (`plot.fn` is `import { fn } from '@figurae/plot'`), `sched` and `mem` are one package (`os`), `sys`
-is `arch`, and the npm package no longer ships the Claude skill (`npm run sync:skill -- <repo>` copies it
-from a checkout).
+The project is renamed **figurae** (formerly dsviz) and split into an npm-workspaces monorepo of
+`@figurae/*` packages, versioned together. Existing 2.x code needs its imports rewritten; the pictures
+it draws are unchanged.
+
+### Breaking
+
+- **Package split.** One package per family: `@figurae/core` (scene, renderer, camera, player,
+  connectors, snapping), `layout` (`layered`, `tidy`), `ds`, `plot`, `prob`, `geom`, `os`, `arch`, `uml`,
+  `git`, `react`. A family depends on core (and layout) only. `npm install @figurae/core @figurae/react
+  @figurae/ds` and add what you draw.
+- **No namespaces.** `plot.fn` is `import { fn } from '@figurae/plot'`; `sched` and `mem` are together
+  `@figurae/os`; `sys` is `@figurae/arch`; `git.graph` is `graph` from `@figurae/git` (alias it next to
+  the ds `graph`). Names that two packages share: `graph`, `component`, `segment`, `circle`.
+- **The JSON spec is gone**: `DiagramSpec`, `validateSpec`, `fromSpec`, `describeSpec`,
+  `formatSpecErrors`. Call the layout functions directly and pass `label` to `<Diagram>` for alt text.
+- **`code.block` is gone** (code inside the picture). `CodeTrace` beside the picture stays.
+- The npm package no longer ships the Claude skill; `npm run sync:skill -- <repo>` copies it from a
+  checkout. The skill is rewritten for 3.0 and has no spec reference.
+- The d3 experiment (`site/d3`, `#/examples-d3`) is removed, and with it the `d3` dev dependencies.
+
+### Added
+
+- **Snapping.** `snapFrame(moving, others, { grid, threshold, margin })` in core: a dragged box pulls to
+  the edges and centres of the other boxes (per axis, closest within `threshold`), else to a grid, and
+  reports the guides that fired. `snapGuides(guides)` draws them (`role: 'snap-guide'`, dashed, faint).
+  React: `useSnap(frames, opts)` → `{ guides, snap(id, point), clear() }`. Keyboard drags snap too.
+  The class, object, package, component, deployment, state and use case examples all use it.
+- **Eight more UML diagrams** in `@figurae/uml`, all with stable ids, tones, `interactive` / `draggable`,
+  the layered layout when x/y are absent, and an example each:
+  - `useCase`: actors, ovals, system boundary; association, include, extend, generalization.
+  - `activity`: actions, decisions and merges, fork and join bars, start / end / flow final, guards,
+    swimlanes; `current` and `taken` highlight a walk.
+  - `component`: provided (lollipop) and required (socket) interfaces, ports, nesting;
+    assembly, dependency, delegate connections.
+  - `deployment`: nodes with top and right faces, nesting, artifacts, communication and deploy links.
+  - `objectDiagram`: `name : Class` instances with slots; shares ids and box sizes with `classDiagram`,
+    so the two views morph.
+  - `packageDiagram`: tabbed packages nested to any depth; import, access, merge, dependency.
+  - `communication`: the sequence diagram as a graph, with Dewey-numbered messages from `parent`;
+    `Message.parent` is new and ignored by `sequence`. `deweyNumbers()`.
+  - `er`: entity-relationship diagrams in crow's-foot or Chen notation; keys, nullable attributes, weak
+    entities.
+  - `stickFigure` (the actor) is exported for hand-built scenes.
+- **Registry and CLI.** `registry/` holds every example as a standalone component with
+  `registry/index.json` (name, title, description, group, file, packages it imports); the examples page shows
+  each with its source. `npx @figurae/cli add <name>` copies one into an app, shadcn style. `npm run registry`
+  regenerates the index.
+- **Claude skill** rewritten for the package split, the new UML diagrams and snapping, with recipes for
+  snapping draggable boxes, a step-through activity diagram, class-to-object morphing, and communication
+  plus sequence from one message list.
+
+### Changed
+
+- The guide, API page and README describe the packages and imports above; `references/api.md` in the
+  skill lists every export per package.
 
 ## 2.2.0
 

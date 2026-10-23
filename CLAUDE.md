@@ -101,4 +101,7 @@ interaction. No 3D buttons, no lesson UI: this is a diagram library plus a docs/
 - Known gaps from the UML batch: activity fork/join bars can overlap a node in the same layer; component
   containers must have all children placed or all free; ER Chen notation draws no attribute ovals; interface
   labels have no collision check. Three-set Venn. d3-hierarchy for tidy trees.
+- Tighten the export surface: core re-exports renderer internals (`tagFor`, `classFor`, `numericProps`, `feel`…),
+  ds exports `show`, `useScene` is `useMemo` renamed. Make `packages/core/src/index.ts` an explicit list.
+- `sequence` lacks `interactive`/`draggable`; `stateMachine` lacks `dim`.
 - getbetter: move its fifteen course figures and the editorial figures from `dsviz` to `@figurae/*` imports.

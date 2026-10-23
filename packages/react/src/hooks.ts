@@ -1,5 +1,5 @@
 import { DependencyList, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { Player, PlayerOptions, SceneNode, burst, createPlayer } from '@figurae/core';
+import { Frame, Player, PlayerOptions, SceneNode, SnapGuide, SnapOptions, Vec, burst, createPlayer, snapFrame } from '@figurae/core';
 
 export interface PlayerState<S> {
   frame: S | undefined;
@@ -107,4 +107,31 @@ export function useBurst(lifetime = 650): [SceneNode[], (x: number, y: number, o
     timers.current.push(window.setTimeout(() => setNodes((cur) => cur.filter((p) => !p.id.startsWith(`${id}:`))), lifetime));
   }, [lifetime]);
   return [nodes, fire];
+}
+
+/**
+ * Snap a dragged box to a grid and to the other boxes (see snapFrame), and keep the guides to draw.
+ *
+ *   const { guides, snap, clear } = useSnap(frames, { grid: 10 });
+ *   onDrag: const p = snap(id, e); move(id, p)
+ *   onDragEnd: clear()
+ *   <Diagram scene={combine(diagram, snapGuides(guides))} />
+ *
+ * `frames` are the boxes by id (centre + size); `snap` looks the moving one up by id.
+ */
+export function useSnap(frames: Readonly<Record<string, Frame>>, opts: SnapOptions = {}) {
+  const [guides, setGuides] = useState<SnapGuide[]>([]);
+  const latest = useRef({ frames, opts });
+  latest.current = { frames, opts };
+  const snap = useCallback((id: string, point: Vec): Vec => {
+    const { frames, opts } = latest.current;
+    const me = frames[id];
+    if (!me) return point;
+    const others = Object.entries(frames).filter(([k]) => k !== id).map(([, f]) => f);
+    const r = snapFrame({ ...me, x: point.x, y: point.y }, others, opts);
+    setGuides(r.guides);
+    return { x: r.x, y: r.y };
+  }, []);
+  const clear = useCallback(() => setGuides([]), []);
+  return { guides, snap, clear };
 }

@@ -173,6 +173,7 @@ ${TONES.map(toneVars).join('\n')}
 .dv-path.dv-role-region${anyTone} { fill: var(--dv-cf); }
 .dv-path.dv-role-region.dv-tone-muted { fill: transparent; }
 .dv-path.dv-role-guide { fill: none; stroke: var(--dv-fg); stroke-dasharray: 4 4; stroke-width: 1.5; }
+.dv-path.dv-role-snap-guide { fill: none; stroke: var(--dv-accent); stroke-dasharray: 4 3; stroke-width: 1; opacity: 0.7; pointer-events: none; }
 .dv-path.dv-role-glow { fill: none; stroke: var(--dv-fg); stroke-dasharray: 5 5; stroke-width: 2; filter: drop-shadow(0 0 3px #5cf0b6) drop-shadow(0 0 7px #5cf0b6); }
 .dv-path.dv-role-marker { fill: var(--dv-c, var(--dv-muted)); stroke: none; }
 .dv-path.dv-role-bar, .dv-rect.dv-role-bar { stroke: var(--dv-stroke); stroke-width: 1.5px; }
@@ -240,6 +241,70 @@ ${TONES.map(toneVars).join('\n')}
 /* notes: a pale card with a folded corner; a tone tints it */
 .dv-path.dv-role-note { fill: var(--dv-cf, var(--dv-band)); stroke: var(--dv-co, var(--dv-active-outline)); stroke-width: 1.5px; }
 .dv-text.dv-role-note-text { font-weight: 500; }
+
+/* uml: deployment, object, package */
+/* deployment: a node's top and right faces are its fill shaded toward ink; artifacts are small tinted tiles with a folded-page icon */
+.dv-path:is(.dv-role-node-face-top, .dv-role-node-face-side) { stroke: var(--dv-co, var(--dv-outline)); stroke-width: 2px; stroke-linejoin: round; }
+.dv-path.dv-role-node-face-top { fill: color-mix(in srgb, var(--dv-fg) 8%, color-mix(in srgb, var(--dv-cf, var(--dv-surface)) 55%, var(--dv-surface))); }
+.dv-path.dv-role-node-face-side { fill: color-mix(in srgb, var(--dv-fg) 16%, color-mix(in srgb, var(--dv-cf, var(--dv-surface)) 55%, var(--dv-surface))); }
+.dv-rect.dv-role-artifact { fill: var(--dv-cf, var(--dv-muted-fill)); stroke: var(--dv-co, var(--dv-outline)); stroke-width: 2px; }
+.dv-path.dv-role-artifact-icon { fill: var(--dv-surface); stroke: var(--dv-stroke); stroke-width: 1.5px; stroke-linejoin: round; pointer-events: none; }
+.dv-path.dv-role-artifact-icon-fold { fill: none; stroke: var(--dv-stroke); stroke-width: 1.5px; stroke-linejoin: round; pointer-events: none; }
+.dv-text.dv-role-artifact-name { font-weight: 500; }
+/* object diagrams reuse the class card; the underline is what says "instance" */
+.dv-path.dv-role-object-name-underline { fill: none; stroke: var(--dv-fg); stroke-width: 1.5px; pointer-events: none; }
+/* packages: a body with a tab, outlined like the cards */
+.dv-rect.dv-role-package { fill: color-mix(in srgb, var(--dv-cf, var(--dv-surface)) 55%, var(--dv-surface)); stroke: var(--dv-co, var(--dv-outline)); stroke-width: 2px; }
+.dv-path.dv-role-package-tab { fill: color-mix(in srgb, var(--dv-fg) 6%, color-mix(in srgb, var(--dv-cf, var(--dv-surface)) 55%, var(--dv-surface))); stroke: var(--dv-co, var(--dv-outline)); stroke-width: 2px; stroke-linejoin: round; }
+.dv-text:is(.dv-role-node-name, .dv-role-object-name, .dv-role-package-name) { font-weight: 700; }
+:is(.dv-rect.dv-role-artifact, .dv-rect.dv-role-package, .dv-path.dv-role-package-tab).dv-interactive:hover { filter: brightness(.97); }
+
+/* uml: communication, er */
+.dv-text.dv-role-er-entity-name { font-weight: 700; }
+.dv-text:is(.dv-role-er-attr, .dv-role-er-attr-key, .dv-role-er-attr-null) { font-weight: 400; }
+.dv-text.dv-role-er-attr-key { font-weight: 700; }
+.dv-text.dv-role-er-attr-null { font-style: italic; fill: var(--dv-muted); }
+.dv-text.dv-role-er-key { font-family: var(--dv-mono); font-weight: 700; fill: var(--dv-muted); }
+.dv-text.dv-role-er-type { font-family: var(--dv-mono); font-weight: 400; fill: var(--dv-muted); }
+.dv-rect.dv-role-er-weak { fill: none; stroke: var(--dv-co, var(--dv-outline)); stroke-width: 2px; pointer-events: none; }
+.dv-path[class*="dv-role-er-card-"], .dv-circle[class*="dv-role-er-card-"] { fill: none; stroke: var(--dv-edge); stroke-width: 1.5px; pointer-events: none; }
+.dv-circle[class*="dv-role-er-card-"] { fill: var(--dv-surface); }
+:is(.dv-path, .dv-circle)[class*="dv-role-er-card-"]${anyTone} { stroke: var(--dv-c); }
+.dv-text.dv-role-er-card-label { fill: var(--dv-muted); font-family: var(--dv-mono); font-weight: 600; }
+.dv-path.dv-role-er-diamond { fill: color-mix(in srgb, var(--dv-muted-fill) 70%, var(--dv-surface)); stroke: var(--dv-edge); stroke-width: 1.5px; }
+.dv-path.dv-role-er-diamond${anyTone} { fill: color-mix(in srgb, var(--dv-cf) 55%, var(--dv-surface)); stroke: var(--dv-c); }
+.dv-path.dv-role-er-diamond-inner { fill: none; stroke: var(--dv-edge); stroke-width: 1.5px; pointer-events: none; }
+.dv-path.dv-role-er-diamond-inner${anyTone} { stroke: var(--dv-c); }
+.dv-text.dv-role-er-rel-name { font-weight: 500; pointer-events: none; }
+
+/* uml: use case, activity, component */
+.dv-path:is(.dv-role-usecase, .dv-role-decision) { fill: var(--dv-surface); stroke: var(--dv-co, var(--dv-outline)); stroke-width: 2px; }
+.dv-path:is(.dv-role-usecase, .dv-role-decision)${anyTone} { fill: color-mix(in srgb, var(--dv-cf) 55%, var(--dv-surface)); }
+.dv-path:is(.dv-role-usecase, .dv-role-decision).dv-interactive:hover { filter: brightness(.96); }
+:is(:root[data-theme="dark"], .dark) .dv-path:is(.dv-role-usecase, .dv-role-decision).dv-interactive:hover { filter: brightness(1.15); }
+.dv-rect.dv-role-boundary { fill: none; stroke: var(--dv-stroke); stroke-width: 1.5px; pointer-events: none; }
+.dv-rect.dv-role-boundary${anyTone} { fill: color-mix(in srgb, var(--dv-cf) 12%, transparent); stroke: var(--dv-c); }
+.dv-text.dv-role-boundary-title, .dv-text.dv-role-lane-name { font-weight: 700; }
+.dv-circle.dv-role-figure${anyTone} { fill: color-mix(in srgb, var(--dv-cf) 55%, var(--dv-surface)); stroke: var(--dv-co); }
+.dv-path.dv-role-figure-line${anyTone} { stroke: var(--dv-co); }
+/* activity: swimlanes (a frame and its title band), fork / join bars, the flow-final circle */
+.dv-rect.dv-role-lane { fill: none; stroke: var(--dv-muted); stroke-width: 1.5px; pointer-events: none; }
+.dv-rect.dv-role-lane-title { fill: var(--dv-muted-fill); stroke: var(--dv-muted); stroke-width: 1.5px; pointer-events: none; }
+.dv-rect.dv-role-lane-title${anyTone} { fill: color-mix(in srgb, var(--dv-cf) 55%, var(--dv-surface)); stroke: var(--dv-co); }
+.dv-rect.dv-role-fork-bar { fill: var(--dv-fg); stroke: var(--dv-fg); stroke-width: 1px; }
+.dv-rect.dv-role-fork-bar${anyTone} { fill: var(--dv-c); stroke: var(--dv-c); }
+.dv-circle.dv-role-flow-final { fill: var(--dv-surface); stroke: var(--dv-fg); stroke-width: 1.5px; }
+.dv-circle.dv-role-flow-final${anyTone} { fill: color-mix(in srgb, var(--dv-cf) 55%, var(--dv-surface)); stroke: var(--dv-co); }
+/* component: the corner icon, a frame around nested components, lollipops, sockets and ports */
+.dv-path.dv-role-comp-icon { fill: var(--dv-surface); stroke: var(--dv-fg); stroke-width: 1.5px; pointer-events: none; }
+.dv-rect.dv-role-component-frame { fill: color-mix(in srgb, var(--dv-muted-fill) 40%, var(--dv-surface)); stroke: var(--dv-co, var(--dv-outline)); stroke-width: 2px; }
+.dv-rect.dv-role-component-frame${anyTone} { fill: color-mix(in srgb, var(--dv-cf) 22%, var(--dv-surface)); }
+.dv-circle.dv-role-iface { fill: var(--dv-surface); stroke: var(--dv-edge); stroke-width: 1.5px; pointer-events: none; }
+.dv-circle.dv-role-iface${anyTone} { fill: var(--dv-surface); stroke: var(--dv-c); }
+.dv-path:is(.dv-role-iface-line, .dv-role-socket) { fill: none; stroke: var(--dv-edge); stroke-width: 1.5px; pointer-events: none; }
+.dv-path:is(.dv-role-iface-line, .dv-role-socket)${anyTone} { stroke: var(--dv-c); }
+.dv-rect.dv-role-port { fill: var(--dv-surface); stroke: var(--dv-outline); stroke-width: 2px; }
+.dv-text.dv-role-iface-label { fill: var(--dv-muted); font-family: var(--dv-mono); font-weight: 500; paint-order: stroke; stroke: var(--dv-halo); stroke-width: 3px; stroke-linejoin: round; }
 
 /* system design: each kind sets its colour (--dv-k) and outline (--dv-ko); fills are a tint of it */
 .dv-role-sys-lb, .dv-role-sys-gateway { --dv-k: var(--dv-accent-fill); --dv-ko: var(--dv-accent-outline); }

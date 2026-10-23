@@ -1,7 +1,8 @@
 // An order's lifecycle as a state machine. Only the events that are legal in the
 // current state are enabled: that list IS the state machine.
 import { useState } from 'react';
-import { Button, Diagram } from '@figurae/react';
+import { combine, snapGuides } from '@figurae/core';
+import { Button, Diagram, useSnap } from '@figurae/react';
 import { stateMachine, Transition, UmlState } from '@figurae/uml';
 
 const states: UmlState[] = [
@@ -31,6 +32,7 @@ const eventOf = (t: Transition) => t.label?.split(/\s*[[/]/)[0] ?? '';
 const events = [...new Set(transitions.map(eventOf).filter(Boolean))];
 
 export default function StateMachine() {
+  const [pos, setPos] = useState(states);
   const [current, setCurrent] = useState('Pending');
   const [fired, setFired] = useState<number | undefined>(0);
   const [log, setLog] = useState<string[]>(['created → Pending']);
@@ -45,9 +47,23 @@ export default function StateMachine() {
   };
   const legal = new Set(transitions.filter((t) => t.from === current).map(eventOf));
 
+  // Drag a state: it snaps to the others' centres and edges, with a guide while it does.
+  const diagram = stateMachine(pos, transitions, { current, fired, draggable: true });
+  const { guides, snap, clear } = useSnap(Object.fromEntries(pos.map((s) => [s.id, diagram.frame(s.id)])), { grid: 10 });
+
   return (
     <>
-      <Diagram scene={stateMachine(states, transitions, { current, fired })} viewBox={[-30, -10, 640, 340]} />
+      <Diagram
+        scene={combine(diagram, snapGuides(guides))}
+        viewBox={[-30, -10, 640, 340]}
+        onDrag={(e) => {
+          const id = (e.node.data as { state?: string })?.state;
+          if (!id) return;
+          const p = snap(id, e);
+          setPos((ss) => ss.map((s) => (s.id === id ? { ...s, x: p.x, y: p.y } : s)));
+        }}
+        onDragEnd={clear}
+      />
       <div className="row">
         {events.map((ev) => (
           <Button key={ev} variant={legal.has(ev) ? 'primary' : undefined} disabled={!legal.has(ev)} onClick={() => fire(ev)}>{ev}</Button>

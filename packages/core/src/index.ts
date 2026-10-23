@@ -3,6 +3,8 @@
  *
  *   state ──▶ layout functions ──▶ Scene (plain data, stable ids) ──▶ renderer
  *
+ * Also: snap.ts (box snapping + guides).
+ *
  * The families (ds, plot, prob, geom, os, arch, uml, git) are separate packages
  * that depend on this one; each exports its layouts flat:
  *
@@ -22,5 +24,6 @@ export * from './styles';
 export * from './render';
 export * from './camera';
 export * from './connector';
+export * from './snap';
 export * from './static';
 export * from './player';

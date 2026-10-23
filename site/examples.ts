@@ -97,6 +97,17 @@ export const groups: Group[] = [
       { name: 'TrustZones', title: 'Trust boundaries', desc: 'Zones around machines and a sandbox. Step a job across and see which files may cross.' },
       { name: 'GitGraph', title: 'Merge versus rebase', desc: 'graph from @figurae/git: lanes by first parent, curved edges, branch pills. Commits are keyed by hash, so the switch animates.' },
       { name: 'Polling', title: 'Polling in a loop', desc: 'A sequence diagram with a loop fragment that grows as the polls come back.' },
+      // uml: deployment, object, package
+      { name: 'Deployment', title: 'Deployment diagram', desc: 'Machines with nested runtimes and the files they host. Add a second server and a load balancer; the layout rearranges.' },
+      { name: 'ObjectDiagram', title: 'Class view and object view', desc: 'The same ids drawn as classes or as live objects (name : Class, slots). Switch and the boxes morph.' },
+      { name: 'PackageDiagram', title: 'Package diagram', desc: 'Nested packages and import / access / merge relations at any depth. Click one to see what it uses.' },
+      // communication, er
+      { name: 'Communication', title: 'Communication diagram', desc: 'The login again, as links and numbered messages (1, 1.1, 1.1.1), stepped in step with the sequence view.' },
+      { name: 'Er', title: 'Entity–relationship', desc: "A shop schema in crow's-foot or Chen notation. Click an entity to see its relationships." },
+      // uml: use case, activity, component
+      { name: 'UseCase', title: 'Use case diagram', desc: 'A web shop: actors, ovals, «include» and «extend». Click an actor to see what they can do; toggle the system boundary.' },
+      { name: 'Activity', title: 'Activity diagram', desc: 'An order across three swimlanes: decision, fork and join, flow final. Step through, or switch the stock off for the other branch.' },
+      { name: 'Component', title: 'Component diagram', desc: 'Lollipops and sockets join into assemblies; a port delegates into a nested component. Click one to see its interfaces.' },
     ],
   },
 ];

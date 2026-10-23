@@ -38,6 +38,8 @@ export interface StateMachineOptions {
   fired?: number;
   /** States emit clicks with `{ state: id }`. */
   interactive?: boolean;
+  /** States can be dragged (emits drag events with `{ state: id }`). */
+  draggable?: boolean;
   /** For states without x/y: the flow's direction ('down' default) and the gaps. */
   direction?: 'down' | 'right';
   rankGap?: number;
@@ -145,7 +147,7 @@ export function stateMachine(input: readonly UmlState[], transitions: readonly T
       default:
         // the box first, the name right after it (a label always follows its shape)
         shapes.push(
-          rect({ id: k, x: x, y: y, w: f.w, h: f.h, rx: f.h / 2, tone, interactive: o.interactive, data }),
+          rect({ id: k, x: x, y: y, w: f.w, h: f.h, rx: f.h / 2, tone, interactive: o.interactive, draggable: o.draggable, data }),
           text({ id: `${k}:label`, x: x, y: y, text: s.label ?? s.id, size: 13, role: 'value', tone }),
         );
     }

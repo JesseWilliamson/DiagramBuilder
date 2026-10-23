@@ -1,8 +1,8 @@
 // A class diagram you can rearrange. Drag the boxes; click one to see only its relationships.
 // Positions are plain state, so the lines re-route as you drag.
 import { useState } from 'react';
-import { fitViewBox } from '@figurae/core';
-import { Diagram, Switch } from '@figurae/react';
+import { combine, fitViewBox, snapGuides } from '@figurae/core';
+import { Diagram, Switch, useSnap } from '@figurae/react';
 import { classDiagram, Relation, RelationKind, UmlClass } from '@figurae/uml';
 
 const start: UmlClass[] = [
@@ -45,11 +45,14 @@ export default function ClassDiagram() {
   const mine = relations.filter((r) => r.from === sel || r.to === sel);
   const related = new Set(mine.flatMap((r) => [r.from, r.to]));
   const dim = sel ? new Set(classes.map((c) => c.id).filter((c) => !related.has(c))) : undefined;
-  const scene = classDiagram(
+  const diagram = classDiagram(
     classes.map((c) => ({ ...c, tone: c.id === sel ? 'active' : undefined })),
     relations.map((r) => ({ ...r, tone: sel && (r.from === sel || r.to === sel) ? 'active' : undefined })),
     { collapsed: !members, interactive: true, draggable: true, dim },
   );
+  // Snapping: the dragged box's centre/edges pull toward the others' (and a 10px grid); the guides are scene parts.
+  const { guides, snap, clear } = useSnap(Object.fromEntries(classes.map((c) => [c.id, diagram.box(c.id)])), { grid: 10 });
+  const scene = combine(diagram, snapGuides(guides));
 
   return (
     <>
@@ -58,8 +61,10 @@ export default function ClassDiagram() {
         viewBox={viewBox}
         onDrag={(e) => {
           const id = (e.node.data as { class: string }).class;
-          setClasses((cs) => cs.map((c) => (c.id === id ? { ...c, x: Math.round(e.x), y: Math.round(e.y) } : c)));
+          const p = snap(id, e);
+          setClasses((cs) => cs.map((c) => (c.id === id ? { ...c, x: p.x, y: p.y } : c)));
         }}
+        onDragEnd={clear}
         onClick={(e) => { const id = (e.node.data as { class?: string })?.class; if (id) setSel((s) => (s === id ? null : id)); }}
       />
       <p className="status">

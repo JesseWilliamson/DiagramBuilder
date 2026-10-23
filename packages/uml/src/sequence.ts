@@ -43,6 +43,8 @@ export interface Message {
   kind?: 'call' | 'return' | 'async';
   /** Colour this message (an error path, the interesting call). The step highlight still wins. */
   tone?: Tone;
+  /** Index of the message this one happens inside (a nested call). Sequence ignores it; `communication` numbers by it (1, 1.1, 1.2, 2…). */
+  parent?: number;
 }
 
 /** A note card. It sits in its own row, just before message `at` (messages.length = after the last). */
@@ -160,6 +162,48 @@ export interface SequenceDiagram extends Scene {
 }
 
 const HEAD = 34, BAR = 10, NOTE_LINE = 15;
+
+export interface HeadOptions {
+  tone?: Tone;
+  opacity?: number;
+  interactive?: boolean;
+  draggable?: boolean;
+  /** Click / drag payload. */
+  data?: unknown;
+}
+
+/** Size of a participant's head and where its centre sits below the anchor y (an actor's figure hangs below it). */
+export function headSize(p: Participant): { w: number; h: number; dy: number } {
+  if (p.kind === 'actor') return { w: Math.max(34, estimateTextWidth(p.label, 12) + 8), h: 62, dy: 13 };
+  return { w: Math.max(84, estimateTextWidth(p.label, 13) + 22), h: HEAD, dy: 0 };
+}
+
+/**
+ * The head of a participant: a stick figure for an actor, a box otherwise.
+ * (x, y) is the box centre, or the actor's head-and-shoulders anchor. Shared by
+ * sequence and communication diagrams. Parts get ids `${k}:box|head|body|arms|legs|label|hit`.
+ */
+export function participantHead(p: Participant, x: number, y: number, k: string, o: HeadOptions = {}): SceneNode[] {
+  const common = { opacity: o.opacity };
+  const grab = { interactive: o.interactive, draggable: o.draggable, data: o.data };
+  const { w, h, dy } = headSize(p);
+  if (p.kind === 'actor') {
+    // a stick figure: head, body, arms, legs
+    const nodes: SceneNode[] = [
+      circle({ id: `${k}:head`, x, y: y - 10, r: 7, role: 'figure', tone: o.tone, ...common }),
+      path({ id: `${k}:body`, points: [[x, y - 3], [x, y + 12]], role: 'figure-line', ...common }),
+      path({ id: `${k}:arms`, points: [[x - 10, y + 3], [x + 10, y + 3]], role: 'figure-line', ...common }),
+      path({ id: `${k}:legs`, points: [[x - 8, y + 24], [x, y + 12], [x + 8, y + 24]], role: 'figure-line', ...common }),
+      text({ id: `${k}:label`, x, y: y + 36, text: p.label, size: 12, role: 'value', tone: o.tone, ...common }),
+    ];
+    if (o.interactive || o.draggable) nodes.push(rect({ id: `${k}:hit`, x, y: y + dy, w, h, role: 'hit', ...grab }));
+    return nodes;
+  }
+  return [
+    rect({ id: `${k}:box`, x, y, w, h, rx: 6, role: 'card', tone: o.tone, ...common, ...grab }),
+    text({ id: `${k}:label`, x, y, text: p.label, size: 13, role: 'value', tone: o.tone, ...common }),
+  ];
+}
 
 export function sequence(participants: readonly Participant[], messages: readonly Message[], o: SequenceOptions = {}): SequenceDiagram {
   const id = o.id ?? 'seq';
@@ -282,24 +326,6 @@ export function sequence(participants: readonly Participant[], messages: readonl
   }
   nodes.push(...fragmentLabels);
   // participant heads last, on top of the lifelines
-  for (const p of participants) {
-    const x = X(p.id), k = `${id}:head:${p.id}`;
-    if (p.kind === 'actor') {
-      // a stick figure: head, body, arms, legs
-      nodes.push(
-        circle({ id: `${k}:head`, x, y: -10, r: 7, role: 'figure' }),
-        path({ id: `${k}:body`, points: [[x, -3], [x, 12]], role: 'figure-line' }),
-        path({ id: `${k}:arms`, points: [[x - 10, 3], [x + 10, 3]], role: 'figure-line' }),
-        path({ id: `${k}:legs`, points: [[x - 8, 24], [x, 12], [x + 8, 24]], role: 'figure-line' }),
-        text({ id: `${k}:label`, x, y: 36, text: p.label, size: 12, role: 'value' }),
-      );
-    } else {
-      const w = Math.max(84, estimateTextWidth(p.label, 13) + 22);
-      nodes.push(
-        rect({ id: `${k}:box`, x, y: 0, w, h: HEAD, rx: 6, role: 'card' }),
-        text({ id: `${k}:label`, x, y: 0, text: p.label, size: 13, role: 'value' }),
-      );
-    }
-  }
+  for (const p of participants) nodes.push(...participantHead(p, X(p.id), 0, `${id}:head:${p.id}`));
   return { nodes, x: X, rowY };
 }

@@ -1,8 +1,9 @@
 // A test that is "99% accurate" can still be wrong most of the time it says yes.
 // The tree multiplies along each path; Bayes' rule is just "of the + leaves, how much is sick?"
 import { useState } from 'react';
-import { combine, prob, rect, text } from 'dsviz';
-import { Diagram, MathText, Slider } from 'dsviz/react';
+import { combine, rect, text } from '@figurae/core';
+import { probTree } from '@figurae/prob';
+import { Diagram, MathText, Slider } from '@figurae/react';
 
 const pct = (p: number) => `${+(p * 100).toFixed(p < 0.01 ? 2 : 1)}%`;
 
@@ -12,7 +13,7 @@ export default function Bayes() {
   const [spec, setSpec] = useState(95); // P(− | healthy)
   const p = prior / 100, se = sens / 100, sp = spec / 100;
 
-  const tree = prob.probTree(
+  const tree = probTree(
     {
       key: 'all', label: 'person', children: [
         { key: 'sick', label: 'sick', p, children: [{ key: 'pos', label: '+', p: se }, { key: 'neg', label: '−', p: 1 - se }] },

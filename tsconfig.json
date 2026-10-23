@@ -16,16 +16,13 @@
       "vite/client"
     ],
     "paths": {
-      "dsviz": [
-        "./src/index.ts"
-      ],
-      "dsviz/react": [
-        "./src/react/index.ts"
+      "@figurae/*": [
+        "./packages/*/src/index.ts"
       ]
     }
   },
   "include": [
-    "src",
+    "packages/*/src",
     "site",
     "tests"
   ]

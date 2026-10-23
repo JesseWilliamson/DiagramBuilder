@@ -1,10 +1,12 @@
 // CPU scheduling. Same five processes, four policies: watch the bars rearrange,
 // and the average waiting time change, as you switch.
 import { useState } from 'react';
-import { array, combine, sched, text, Tone } from 'dsviz';
-import { Diagram, NumberStepper, Segmented, Transport, usePlayer } from 'dsviz/react';
+import { combine, text, Tone } from '@figurae/core';
+import { array } from '@figurae/ds';
+import { gantt, Policy, Process, simulate } from '@figurae/os';
+import { Diagram, NumberStepper, Segmented, Transport, usePlayer } from '@figurae/react';
 
-const procs: sched.Process[] = [
+const procs: Process[] = [
   { id: 'P1', arrival: 0, burst: 6 },
   { id: 'P2', arrival: 1, burst: 3 },
   { id: 'P3', arrival: 2, burst: 1 },
@@ -15,16 +17,16 @@ const tones: Record<string, Tone> = { P1: 'accent', P2: 'active', P3: 'success',
 const policies = [{ value: 'fcfs', label: 'FCFS' }, { value: 'sjf', label: 'SJF' }, { value: 'srtf', label: 'SRTF' }, { value: 'rr', label: 'Round robin' }] as const;
 
 export default function Scheduling() {
-  const [policy, setPolicy] = useState<sched.Policy>('fcfs');
+  const [policy, setPolicy] = useState<Policy>('fcfs');
   const [quantum, setQuantum] = useState(2);
-  const s = sched.simulate(procs, policy, quantum);
+  const s = simulate(procs, policy, quantum);
   // one frame per time unit: the "now" cursor sweeps across
   const player = usePlayer(function* () { for (let t = 0; t <= s.end; t++) yield t; }, [policy, quantum], { interval: 450, start: 'end' });
   const now = player.frame ?? 0;
   const tick = s.ticks[Math.min(now, s.end - 1)];
   const ready = now < s.end ? tick.queue : [];
 
-  const chart = sched.gantt(s.segments, {
+  const chart = gantt(s.segments, {
     lanes: procs.map((p) => p.id), unit: 21, end: s.end, now, tones,
     arrivals: Object.fromEntries(procs.map((p) => [p.id, p.arrival])),
   });

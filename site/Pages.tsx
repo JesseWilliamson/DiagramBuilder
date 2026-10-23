@@ -7,7 +7,7 @@ const featured = ['Pythagoras', 'BinarySearch', 'Riemann', 'Venn'];
 export function Home() {
   return (
     <div className="home">
-      <h1 className="home-title">dsviz</h1>
+      <h1 className="home-title">figurae</h1>
       <p className="home-lede">
         A TypeScript library for <b>interactive, animated diagrams</b> for teaching: data structures and algorithms, plots,
         probability, geometry, scheduling and memory. You describe the picture as data; it draws it in SVG and animates every change.
@@ -26,8 +26,9 @@ export function Home() {
       <h2>Usage</h2>
       <pre className="code">{`npm install github:JesseWilliamson/DiagramBuilder   # builds dist/ on install
 
-import { array, pointer, combine } from 'dsviz';
-import { Diagram } from 'dsviz/react';
+import { combine } from '@figurae/core';
+import { array, pointer } from '@figurae/ds';
+import { Diagram } from '@figurae/react';
 
 const arr = array([3, 8, 12, 17], { tones: { 2: 'active' } });
 <Diagram scene={combine(arr, pointer({ id: 'i', at: arr.top(2), label: 'i' }))} />`}</pre>

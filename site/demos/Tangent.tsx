@@ -1,8 +1,9 @@
 // Drag the point along the curve. The yellow line is the tangent; its slope is
 // the derivative. "Show f′" plots every slope as a height, as its own curve.
 import { useState } from 'react';
-import { combine, plot } from 'dsviz';
-import { Diagram, MathText, Segmented, Switch } from 'dsviz/react';
+import { combine } from '@figurae/core';
+import { axes, fn, plane, point, segment, tangent } from '@figurae/plot';
+import { Diagram, MathText, Segmented, Switch } from '@figurae/react';
 
 const fns = {
   'sin x': { f: Math.sin, df: Math.cos },
@@ -11,7 +12,7 @@ const fns = {
 };
 type Name = keyof typeof fns;
 
-const p = plot.plane({ x: [-4, 4], y: [-3, 3], width: 400, height: 300 });
+const p = plane({ x: [-4, 4], y: [-3, 3], width: 400, height: 300 });
 
 export default function Tangent() {
   const [name, setName] = useState<Name>('sin x');
@@ -19,17 +20,17 @@ export default function Tangent() {
   const [showDf, setShowDf] = useState(false);
   const [touched, setTouched] = useState(false);
   const { f, df } = fns[name];
-  const t = plot.tangent(p, f, x0, { id: 'tangent', span: 1.4 });
+  const t = tangent(p, f, x0, { id: 'tangent', span: 1.4 });
 
   const scene = combine(
-    plot.axes(p, { xLabel: 'x', yLabel: 'y' }),
+    axes(p, { xLabel: 'x', yLabel: 'y' }),
     // every curve has the same number of samples, so switching functions morphs point for point
-    showDf && plot.fn(p, df, { id: 'df', tone: 'visited', dashed: true, width: 2 }),
-    plot.fn(p, f, { id: 'f' }),
-    showDf && plot.segment(p, { x: x0, y: f(x0) }, { x: x0, y: df(x0) }, { id: 'link', role: 'guide' }),
+    showDf && fn(p, df, { id: 'df', tone: 'visited', dashed: true, width: 2 }),
+    fn(p, f, { id: 'f' }),
+    showDf && segment(p, { x: x0, y: f(x0) }, { x: x0, y: df(x0) }, { id: 'link', role: 'guide' }),
     t,
-    showDf && plot.point(p, x0, df(x0), { id: 'Q', tone: 'visited' }),
-    plot.point(p, x0, f(x0), { id: 'P', draggable: true, hint: !touched }),
+    showDf && point(p, x0, df(x0), { id: 'Q', tone: 'visited' }),
+    point(p, x0, f(x0), { id: 'P', draggable: true, hint: !touched }),
   );
 
   return (

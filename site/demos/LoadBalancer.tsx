@@ -2,15 +2,16 @@
 // round robin keeps handing it work anyway, least connections notices the pile-up.
 // Click a server to take it down (its in-flight requests fail) or bring it back.
 import { useEffect, useRef, useState } from 'react';
-import { combine, fitViewBox, sys, Tone } from 'dsviz';
-import { Button, Diagram, Segmented, Slider, Switch, useTicker } from 'dsviz/react';
+import { combine, fitViewBox, Tone } from '@figurae/core';
+import { architecture, Component, Link, packet } from '@figurae/arch';
+import { Button, Diagram, Segmented, Slider, Switch, useTicker } from '@figurae/react';
 
 type Policy = 'rr' | 'least' | 'random';
 type Req = { id: number; phase: 'new' | 'lb' | 'srv' | 'work' | 'failed'; server?: string; left: number };
 const SERVERS = ['s1', 's2', 's3'];
 const SLOW: Record<string, number> = { s1: 1, s2: 1, s3: 2 };
 
-const layout = (down: ReadonlySet<string>, load: Record<string, number>, served: Record<string, number>): sys.Component[] => [
+const layout = (down: ReadonlySet<string>, load: Record<string, number>, served: Record<string, number>): Component[] => [
   { id: 'clients', kind: 'user', label: 'Users', x: 0, y: 150 },
   { id: 'lb', kind: 'lb', label: 'Load balancer', x: 190, y: 150 },
   ...SERVERS.map((s, i) => ({
@@ -19,8 +20,8 @@ const layout = (down: ReadonlySet<string>, load: Record<string, number>, served:
     tone: (down.has(s) ? 'danger' : undefined) as Tone | undefined, opacity: down.has(s) ? 0.55 : 1,
   })),
 ];
-const links: sys.Link[] = [{ from: 'clients', to: 'lb' }, ...SERVERS.map((s) => ({ from: 'lb', to: s }))];
-const viewBox = fitViewBox(sys.architecture(layout(new Set(), {}, {}), links), 24);
+const links: Link[] = [{ from: 'clients', to: 'lb' }, ...SERVERS.map((s) => ({ from: 'lb', to: s }))];
+const viewBox = fitViewBox(architecture(layout(new Set(), {}, {}), links), 24);
 
 export default function LoadBalancer() {
   const [policy, setPolicy] = useState<Policy>('rr');
@@ -73,7 +74,7 @@ export default function LoadBalancer() {
 
   const load: Record<string, number> = {};
   for (const r of reqs) if (r.server && (r.phase === 'srv' || r.phase === 'work')) load[r.server] = (load[r.server] ?? 0) + 1;
-  const arch = sys.architecture(layout(down, load, served), links, { interactive: true });
+  const arch = architecture(layout(down, load, served), links, { interactive: true });
 
   // where each request is drawn
   const slot: Record<string, number> = {};
@@ -87,7 +88,7 @@ export default function LoadBalancer() {
     }
     if (r.phase === 'failed' && !r.server) p = arch.along('clients', 'lb', 0.9);
     const tone: Tone = r.phase === 'failed' ? 'danger' : r.phase === 'work' ? 'success' : 'accent';
-    return sys.packet({ id: `r${r.id}`, ...p, tone, r: r.phase === 'work' ? 4.5 : 6 });
+    return packet({ id: `r${r.id}`, ...p, tone, r: r.phase === 'work' ? 4.5 : 6 });
   });
 
   return (

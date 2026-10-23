@@ -6,8 +6,8 @@
 // upstream, downstream, test) and the stylesheet picks the colours, so an app
 // can restyle a blast-radius picture without touching this code.
 import { useState } from 'react';
-import { graph } from 'dsviz';
-import { Diagram, Segmented } from 'dsviz/react';
+import { graph } from '@figurae/ds';
+import { Diagram, Segmented } from '@figurae/react';
 
 const tasks = ['fetch deps', 'lint', 'typecheck', 'compile', 'unit tests', 'bundle', 'docs', 'e2e tests', 'deploy'];
 const deps: [string, string][] = [

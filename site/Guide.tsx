@@ -36,15 +36,16 @@ export function Guide() {
       </nav>
       <div className="doc-main">
         <h1>Guide</h1>
-        <p className="lede">dsviz draws interactive, animated SVG diagrams for teaching: data structures, plots, probability, geometry, scheduling and memory. The core has no dependencies; <code>dsviz/react</code> is a thin wrapper.</p>
+        <p className="lede">figurae draws interactive, animated SVG diagrams for teaching: data structures, plots, probability, geometry, scheduling and memory. The core has no dependencies; <code>@figurae/react</code> is a thin wrapper.</p>
 
         <Section id="start" title="First diagram">
-          <Code>{`npm install github:JesseWilliamson/DiagramBuilder   # react >= 18 as a peer dependency`}</Code>
+          <Code>{`npm install @figurae/core @figurae/ds @figurae/react   # react >= 18 as a peer dependency`}</Code>
           <p>A diagram is a function from your state to a scene. Render it with <code>&lt;Diagram&gt;</code>; when the state changes, render again.</p>
           <Code>{`
 import { useState } from 'react';
-import { array, combine, pointer } from 'dsviz';
-import { Diagram, Slider } from 'dsviz/react';
+import { combine } from '@figurae/core';
+import { array, pointer } from '@figurae/ds';
+import { Diagram, Slider } from '@figurae/react';
 
 export function Example() {
   const [i, setI] = useState(2);
@@ -72,10 +73,10 @@ const arr = array(nums, { cell: 36 });
 pointer({ id: 'mid', at: arr.top(mid), label: 'mid' });   // arrow onto cell mid
 arr.window(lo, hi);                                         // a band behind cells lo..hi
 
-const p = plot.plane({ x: [-4, 4], y: [-3, 3], width: 440, height: 300 });
-plot.fn(p, Math.sin);                                       // world units, y up
+const p = plane({ x: [-4, 4], y: [-3, 3], width: 440, height: 300 });
+fn(p, Math.sin);                                       // world units, y up
 p.toWorld(e.x, e.y);                                        // drag position → maths coordinates`}</Code>
-          <p>The families: top-level data structures (<code>array, pointer, linkedList, binaryTree, tree, graph, grid, stack, queue</code>) and the namespaces <code>plot</code>, <code>prob</code>, <code>geom</code>, <code>sched</code> and <code>mem</code>. See the <a href="#/api">API</a> for the full list.</p>
+          <p>The families: top-level data structures (<code>array, pointer, linkedList, binaryTree, tree, graph, grid, stack, queue</code>) and the family packages <code>@figurae/plot</code>, <code>@figurae/prob</code>, <code>@figurae/geom</code> and <code>@figurae/os</code>. See the <a href="#/api">API</a> for the full list.</p>
           <p>Ids inside a layout come from your data. <code>array</code> keys cells by index unless you pass <code>keys</code>; give each element a stable key and a swap becomes two tiles sliding past each other instead of two numbers changing in place.</p>
         </Section>
 
@@ -143,7 +144,7 @@ const viewBox = useMemo(() => fitViewBox(player.frames.map(draw)), [player.frame
           <p>Text with <code>role: 'math'</code> is typeset with textbook conventions: single-letter variables italic, numbers and brackets upright, function names upright (<code>sin</code>, <code>log</code>, <code>proj</code>), a real minus sign, medium spaces around <code>+ −</code> and thicker ones around <code>= ≤ ∈</code>. <code>^</code> and <code>_</code> make super- and subscripts, <code>{'{…}'}</code> groups and a few commands work (<code>{String.raw`\theta \cap \le \angle \text{…}`}</code>).</p>
           <Code>{`
 text({ id: 'eq', x, y, text: 'a^2 + b^2 = c^2', role: 'math' })
-plot.vector(p, O, proj, { id: 'r', label: 'proj_v u' })      // labels on marks are maths already
+vector(p, O, proj, { id: 'r', label: 'proj_v u' })      // labels on marks are maths already
 <MathText tex="P(A \\mid B) =" /> {p.toFixed(3)}            // the same typesetting in HTML`}</Code>
           <p>Axis tick numbers use the maths font upright; identifiers from code (<code>lo</code>, <code>mid</code>, <code>curr</code>) stay monospace, because they are code, not maths.</p>
         </Section>
@@ -153,22 +154,22 @@ plot.vector(p, O, proj, { id: 'r', label: 'proj_v u' })      // labels on marks 
         </Section>
 
         <Section id="design" title="Software design diagrams">
-          <p>Two families draw software: <code>uml</code> (class, sequence and state diagrams) and <code>sys</code> (architecture: clients, load balancers, services, caches, databases, queues). Both are built on <code>connector()</code>, a line with a marker at either end. Each marker is a small shape with its own role (<code>end-solid</code>, <code>end-hollow</code>, <code>end-open</code>), and the line stops where the marker starts, so it never shows through a hollow triangle.</p>
+          <p>Two packages draw software: <code>@figurae/uml</code> (class, sequence and state diagrams) and <code>@figurae/arch</code> (architecture: clients, load balancers, services, caches, databases, queues). Both are built on <code>connector()</code>, a line with a marker at either end. Each marker is a small shape with its own role (<code>end-solid</code>, <code>end-hollow</code>, <code>end-open</code>), and the line stops where the marker starts, so it never shows through a hollow triangle.</p>
           <Code>{`
-uml.classDiagram(
+classDiagram(
   [{ id: 'Square', name: 'Square', x: 0, y: 200 }, { id: 'Rect', name: 'Rectangle', x: 0, y: 0, attributes: ['# w: number'] }],
   [{ from: 'Square', to: 'Rect', kind: 'inherits' }],
 );
-uml.sequence(people, messages, { upTo: player.frame });   // reveal one message per step
-const a = sys.architecture(components, links);
-combine(a, sys.packet({ id: 'req', ...a.along('lb', 'app', 1) }));  // same id → it glides`}</Code>
-          <p>You place things (x, y), or leave x and y out: <code>graph(…, {"{ layout: 'layered' }"})</code>, <code>sys.architecture</code> and <code>uml.classDiagram</code> then use <code>layout.layered</code>, which puts each node one layer past everything that points at it, orders each layer to avoid crossings and bends long edges around the boxes in between. The layouts size boxes from their text and route the lines. Sequence diagrams compute their activation bars from the calls and returns, the same stack a running program keeps (<code>activations: false</code> hides them). <code>fragments</code> box loops and alternatives (an <code>alt</code> with <code>sections</code> gets an <code>[else]</code> divider), <code>notes</code> take a row of their own, and each message can carry a <code>tone</code>. Component colours come from the stylesheet by kind (<code>.dv-role-sys-db</code>), so a host app can restyle every database in one rule.</p>
+sequence(people, messages, { upTo: player.frame });   // reveal one message per step
+const a = architecture(components, links);
+combine(a, packet({ id: 'req', ...a.along('lb', 'app', 1) }));  // same id → it glides`}</Code>
+          <p>You place things (x, y), or leave x and y out: <code>graph(…, {"{ layout: 'layered' }"})</code>, <code>architecture</code> and <code>classDiagram</code> then use <code>layered</code>, which puts each node one layer past everything that points at it, orders each layer to avoid crossings and bends long edges around the boxes in between. The layouts size boxes from their text and route the lines. Sequence diagrams compute their activation bars from the calls and returns, the same stack a running program keeps (<code>activations: false</code> hides them). <code>fragments</code> box loops and alternatives (an <code>alt</code> with <code>sections</code> gets an <code>[else]</code> divider), <code>notes</code> take a row of their own, and each message can carry a <code>tone</code>. Component colours come from the stylesheet by kind (<code>.dv-role-sys-db</code>), so a host app can restyle every database in one rule.</p>
         </Section>
 
         <Section id="git" title="Git history">
-          <p><code>git.graph(commits, refs)</code> draws a commit graph from <code>{'{ hash, parents, label }'}</code>, newest first, the order <code>git log</code> prints. Lanes follow the first-parent rule: a commit's first parent inherits its column, so a branch runs straight down and a branch on top of another continues its line; a merge's other parents open or join lanes. Commits are keyed by hash, so a before / after pair animates: a merge adds one dot, a rebase replaces dots.</p>
+          <p><code>graph(commits, refs)</code> from <code>@figurae/git</code> draws a commit graph from <code>{'{ hash, parents, label }'}</code>, newest first, the order <code>git log</code> prints. Lanes follow the first-parent rule: a commit's first parent inherits its column, so a branch runs straight down and a branch on top of another continues its line; a merge's other parents open or join lanes. Commits are keyed by hash, so a before / after pair animates: a merge adds one dot, a rebase replaces dots.</p>
           <Code>{`
-git.graph(
+graph(
   [{ hash: 'm', parents: ['c', 'f'], label: 'Merge feature' }, { hash: 'c', parents: ['b'] }, { hash: 'f', parents: ['b'] }, { hash: 'b', parents: [] }],
   [{ name: 'main', hash: 'm', kind: 'branch' }],
   { highlight: ['m'] },
@@ -178,7 +179,8 @@ git.graph(
 
         <Section id="vanilla" title="Without React">
           <Code>{`
-import { createView, array, toSVG } from 'dsviz';
+import { createView, toSVG } from '@figurae/core';
+import { array } from '@figurae/ds';
 
 const view = createView(document.querySelector('svg'));
 view.render(array([1, 2, 3]));            // animate in the DOM

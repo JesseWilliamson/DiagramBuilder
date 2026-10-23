@@ -1,8 +1,9 @@
 // Colour the map: click a region (node) to cycle its colour. Neighbours
 // (connected nodes) must differ. Conflicts light up red as you go.
 import { useState } from 'react';
-import { combine, graph, Tone } from 'dsviz';
-import { Button, Diagram, useBurst } from 'dsviz/react';
+import { combine, Tone } from '@figurae/core';
+import { graph } from '@figurae/ds';
+import { Button, Diagram, useBurst } from '@figurae/react';
 
 type Id = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I';
 const pos: Record<Id, [number, number]> = {

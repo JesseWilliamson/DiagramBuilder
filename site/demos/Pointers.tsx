@@ -1,8 +1,10 @@
 // Pointer arithmetic. `p + k` doesn't add k bytes: it adds k × sizeof(*p).
 // Switch the element type and watch the same 24 bytes regroup.
 import { useState } from 'react';
-import { combine, mem, pointer } from 'dsviz';
-import { Diagram, Segmented, Slider } from 'dsviz/react';
+import { combine } from '@figurae/core';
+import { pointer } from '@figurae/ds';
+import { memory } from '@figurae/os';
+import { Diagram, Segmented, Slider } from '@figurae/react';
 
 const BASE = 0x7ffc1000, BYTES = 24;
 const types = {
@@ -19,7 +21,7 @@ export default function Pointers() {
   const count = BYTES / size;
   const kk = Math.min(k, count); // k == count is "one past the end": a legal pointer you must not dereference
 
-  const m = mem.memory({
+  const m = memory({
     base: BASE, bytes: BYTES, byteWidth: 18, y: 40,
     // keyed by index: switching int → double resizes e0, e1, e2 and fades the rest
     groups: Array.from({ length: count }, (_, i) => ({ key: `e${i}`, offset: i * size, size, value: value(i), label: size >= 4 ? `a[${i}]` : undefined, tone: i === kk ? 'active' : undefined })),

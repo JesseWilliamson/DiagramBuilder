@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.0.0
+
+The single package is now an npm-workspaces monorepo of `@figurae/*` packages (core, layout, ds, plot,
+prob, geom, os, arch, uml, git, spec, react), versioned together. Nothing else changes: namespaces are
+gone (`plot.fn` is `import { fn } from '@figurae/plot'`), `sched` and `mem` are one package (`os`), `sys`
+is `arch`, and the npm package no longer ships the Claude skill (`npm run sync:skill -- <repo>` copies it
+from a checkout).
+
 ## 2.2.0
 
 Everything is additive: existing calls draw what they drew before, with the exceptions listed under
@@ -26,8 +34,7 @@ Everything is additive: existing calls draw what they drew before, with the exce
 - **Renderer**: text crossfade when a label's words change (`crossfade: false` to turn off);
   `<Diagram injectStyles crossfade>`; `toSVG(scene, { theme: 'light' | 'dark', background })`;
   `THEME_VARS`.
-- **Claude skill** in `.claude/skills/dsviz/` (shipped in the package), and `npm run sync:skill -- <repo>`
-  / `npx dsviz-sync-skill <repo>` to copy it into another repository.
+- **Claude skill** in `.claude/skills/figurae/`, and `npm run sync:skill -- <repo>` to copy it into another repository.
 
 ### Changed
 

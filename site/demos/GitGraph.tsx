@@ -3,18 +3,18 @@
 // copies the feature commits onto main as NEW commits (new hashes, so the old
 // dots fade out and new ones fade in) and leaves the old ones unreferenced.
 import { useState } from 'react';
-import { git } from 'dsviz';
-import { Diagram, Segmented } from 'dsviz/react';
+import { Commit, graph, Ref } from '@figurae/git';
+import { Diagram, Segmented } from '@figurae/react';
 
 type View = 'before' | 'merge' | 'rebase';
-const base: git.Commit[] = [
+const base: Commit[] = [
   { hash: 'c3', parents: ['c2'], label: 'Fix login redirect' },
   { hash: 'f2', parents: ['f1'], label: 'Add dark theme toggle' },
   { hash: 'f1', parents: ['c2'], label: 'Extract theme tokens' },
   { hash: 'c2', parents: ['c1'], label: 'Cache user profile' },
   { hash: 'c1', parents: [], label: 'Initial commit' },
 ];
-const pictures: Record<View, { commits: git.Commit[]; refs: git.Ref[]; highlight?: string[]; note: string }> = {
+const pictures: Record<View, { commits: Commit[]; refs: Ref[]; highlight?: string[]; note: string }> = {
   before: {
     commits: base,
     refs: [{ name: 'main', hash: 'c3', kind: 'branch' }, { name: 'feature', hash: 'f2', kind: 'branch' }, { name: 'HEAD', hash: 'f2', kind: 'head' }],
@@ -43,7 +43,7 @@ export default function GitGraph() {
   const p = pictures[view];
   return (
     <>
-      <Diagram scene={git.graph(p.commits, p.refs, { highlight: p.highlight })} camera="fit" />
+      <Diagram scene={graph(p.commits, p.refs, { highlight: p.highlight })} camera="fit" />
       <p className="status">{p.note}</p>
       <Segmented value={view} onChange={setView} options={[{ value: 'before', label: 'Before' }, { value: 'merge', label: 'Merge' }, { value: 'rebase', label: 'Rebase' }]} />
     </>

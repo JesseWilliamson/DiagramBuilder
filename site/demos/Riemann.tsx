@@ -1,12 +1,13 @@
 // Riemann sums: area under a curve, approximated by n rectangles.
 // Rectangles are keyed by index, so changing n resizes the ones you have and fades in the rest.
 import { useState } from 'react';
-import { combine, plot } from 'dsviz';
-import { Diagram, MathText, Segmented, Slider } from 'dsviz/react';
+import { combine } from '@figurae/core';
+import { axes, fn, integrate, plane, point, riemann, RiemannRule, segment } from '@figurae/plot';
+import { Diagram, MathText, Segmented, Slider } from '@figurae/react';
 
 const f = (x: number) => 1.5 * (0.1 * x ** 3 - 0.9 * x ** 2 + 2 * x + 0.6);
-const p = plot.plane({ x: [-0.5, 6.5], y: [-0.6, 4], width: 440, height: 260 });
-type Rule = plot.RiemannRule;
+const p = plane({ x: [-0.5, 6.5], y: [-0.6, 4], width: 440, height: 260 });
+type Rule = RiemannRule;
 
 export default function Riemann() {
   const [a, setA] = useState(0.5);
@@ -15,17 +16,17 @@ export default function Riemann() {
   const [rule, setRule] = useState<Rule>('left');
   const [touched, setTouched] = useState(false);
   const lo = Math.min(a, b), hi = Math.max(a, b);
-  const r = plot.riemann(p, f, lo, hi, n, rule);
-  const exact = plot.integrate(f, lo, hi);
+  const r = riemann(p, f, lo, hi, n, rule);
+  const exact = integrate(f, lo, hi);
 
   const scene = combine(
-    plot.axes(p, { xTicks: 1, yTicks: 1 }),
+    axes(p, { xTicks: 1, yTicks: 1 }),
     r,
-    plot.fn(p, f, { id: 'f' }),
-    plot.segment(p, { x: a, y: 0 }, { x: a, y: f(a) }, { id: 'ga', role: 'guide' }),
-    plot.segment(p, { x: b, y: 0 }, { x: b, y: f(b) }, { id: 'gb', role: 'guide' }),
-    plot.point(p, a, 0, { id: 'a', draggable: true, hint: !touched, tone: 'active', label: 'a', labelOffset: { x: -4, y: 16 } }),
-    plot.point(p, b, 0, { id: 'b', draggable: true, hint: !touched, tone: 'active', label: 'b', labelOffset: { x: -4, y: 16 } }),
+    fn(p, f, { id: 'f' }),
+    segment(p, { x: a, y: 0 }, { x: a, y: f(a) }, { id: 'ga', role: 'guide' }),
+    segment(p, { x: b, y: 0 }, { x: b, y: f(b) }, { id: 'gb', role: 'guide' }),
+    point(p, a, 0, { id: 'a', draggable: true, hint: !touched, tone: 'active', label: 'a', labelOffset: { x: -4, y: 16 } }),
+    point(p, b, 0, { id: 'b', draggable: true, hint: !touched, tone: 'active', label: 'b', labelOffset: { x: -4, y: 16 } }),
   );
 
   return (

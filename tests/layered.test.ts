@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { graph, sys, uml } from '../src';
-import { layered, pack } from '../src/layout/layered';
+import { architecture } from '@figurae/arch';
+import { graph } from '@figurae/ds';
+import { layered, pack } from '@figurae/layout';
+import { classDiagram } from '@figurae/uml';
 
 /** A small deterministic PRNG (mulberry32), so the "random" graphs are the same every run. */
 function rng(seed: number) {
@@ -116,17 +118,17 @@ describe('families use the layered layout for unplaced nodes', () => {
     expect(g.pos('a').y).toBeCloseTo(-90);
   });
   it('architecture places components without x/y left to right along the links', () => {
-    const a = sys.architecture(
+    const a = architecture(
       [{ id: 'web', kind: 'client', label: 'Web' }, { id: 'api', kind: 'service', label: 'API' }, { id: 'db', kind: 'db', label: 'DB' }],
       [{ from: 'web', to: 'api' }, { from: 'api', to: 'db' }],
     );
     expect(a.frame('web').x).toBeLessThan(a.frame('api').x);
     expect(a.frame('api').x).toBeLessThan(a.frame('db').x);
     // a placed component stays put
-    expect(sys.architecture([{ id: 'x', kind: 'db', label: 'X', x: 5, y: 7 }]).frame('x')).toMatchObject({ x: 5, y: 7 });
+    expect(architecture([{ id: 'x', kind: 'db', label: 'X', x: 5, y: 7 }]).frame('x')).toMatchObject({ x: 5, y: 7 });
   });
   it('class diagrams put parents above children', () => {
-    const d = uml.classDiagram(
+    const d = classDiagram(
       [{ id: 'Shape', name: 'Shape' }, { id: 'Circle', name: 'Circle' }, { id: 'Square', name: 'Square' }],
       [{ from: 'Circle', to: 'Shape', kind: 'inherits' }, { from: 'Square', to: 'Shape', kind: 'inherits' }],
     );
@@ -153,7 +155,7 @@ describe('graph shapes and kinds', () => {
     expect(g.nodes.find((n) => n.id === 'graph:node:x')?.role).toBeUndefined();
   });
   it('the stylesheet colours the four built-in kinds', async () => {
-    const { DEFAULT_CSS } = await import('../src/styles');
+    const { DEFAULT_CSS } = await import('@figurae/core');
     for (const k of ['changed', 'upstream', 'downstream', 'test']) expect(DEFAULT_CSS).toContain(`.dv-role-node-${k}`);
   });
 });

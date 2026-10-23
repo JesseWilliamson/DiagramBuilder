@@ -1,10 +1,11 @@
 // The six UML relationships, each next to the code that creates it.
-// Click a row to highlight it. The markers come from connector(): uml.RELATION_STYLE maps kind -> line + ends.
+// Click a row to highlight it. The markers come from connector(): RELATION_STYLE maps kind -> line + ends.
 import { useState } from 'react';
-import { combine, connector, rect, text, uml } from 'dsviz';
-import { Diagram } from 'dsviz/react';
+import { combine, connector, rect, text } from '@figurae/core';
+import { Diagram } from '@figurae/react';
+import { RELATION_STYLE, RelationKind } from '@figurae/uml';
 
-const rows: Array<{ kind: uml.RelationKind; a: string; b: string; code: string; reads: string }> = [
+const rows: Array<{ kind: RelationKind; a: string; b: string; code: string; reads: string }> = [
   { kind: 'inherits', a: 'Square', b: 'Rectangle', code: 'class Square extends Rectangle', reads: 'is a' },
   { kind: 'implements', a: 'Circle', b: 'Shape', code: 'class Circle implements Shape', reads: 'implements' },
   { kind: 'composition', a: 'Car', b: 'Engine', code: 'engine = new Engine()  // made inside', reads: 'owns (dies with it)' },
@@ -21,7 +22,7 @@ export default function UmlArrows() {
     rows.map((r, i) => {
       const y = i * ROW, on = sel === i;
       const tone = on ? 'active' : undefined;
-      const s = uml.RELATION_STYLE[r.kind];
+      const s = RELATION_STYLE[r.kind];
       const box = (k: string, x: number, label: string) => [
         rect({ id: `${k}${i}`, x, y, w: W, h: H, rx: 6, role: 'card', tone, interactive: true, data: { row: i } }),
         text({ id: `${k}${i}:t`, x, y, text: label, size: 12.5, role: 'class-name' }),

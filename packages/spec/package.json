@@ -1,0 +1,40 @@
+{
+  "name": "@figurae/spec",
+  "version": "3.0.0",
+  "description": "Diagrams as JSON: DiagramSpec, validateSpec, fromSpec, describeSpec",
+  "author": "Jesse Williamson",
+  "homepage": "https://jessewilliamson.github.io/DiagramBuilder/",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "dependencies": {
+    "@figurae/arch": "^3.0.0",
+    "@figurae/core": "^3.0.0",
+    "@figurae/ds": "^3.0.0",
+    "@figurae/git": "^3.0.0",
+    "@figurae/uml": "^3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JesseWilliamson/DiagramBuilder.git",
+    "directory": "packages/spec"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

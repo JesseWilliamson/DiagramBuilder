@@ -1,8 +1,9 @@
 // The Monty Hall problem. A car is behind one door, goats behind the others.
 // Pick a door; the host (who knows) opens a goat door; then stay or switch.
 import { useState } from 'react';
-import { combine, prob, rect, text } from 'dsviz';
-import { Button, Diagram, useBurst } from 'dsviz/react';
+import { combine, rect, text } from '@figurae/core';
+import { bars } from '@figurae/prob';
+import { Button, Diagram, useBurst } from '@figurae/react';
 
 type Stage = 'pick' | 'offer' | 'done';
 const DW = 92, DH = 130, GAP = 22;
@@ -71,7 +72,7 @@ export default function MontyHall() {
   const rate = (s: { won: number; n: number }) => (s.n ? s.won / s.n : 0);
   // win rates, once there's something to show (two flat 0% bars just look broken)
   const played = tally.stay.n + tally.switch.n > 0;
-  const chart = played && prob.bars([rate(tally.stay), rate(tally.switch)], {
+  const chart = played && bars([rate(tally.stay), rate(tally.switch)], {
     id: 'rates', x: 3 * (DW + GAP) + 30, y: 10, width: 130, height: DH - 10, max: 1,
     labels: ['stay', 'switch'], showValues: true, format: (v) => `${Math.round(v * 100)}%`, tones: { 0: 'muted', 1: 'success' }, reference: 2 / 3,
   });

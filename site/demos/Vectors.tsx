@@ -1,10 +1,12 @@
 // Vectors you can grab by the tip. Same plane, three questions.
 import { useState } from 'react';
-import { combine, geom, plot, Vec } from 'dsviz';
-import { Diagram, MathText, Segmented } from 'dsviz/react';
+import { combine, Vec } from '@figurae/core';
+import { angleAt, angleMark, dot as geomDot, toDegrees } from '@figurae/geom';
+import { axes, plane, point, segment, vector } from '@figurae/plot';
+import { Diagram, MathText, Segmented } from '@figurae/react';
 
 // Equal pixels per unit on both axes (60), so angles on screen are true angles.
-const p = plot.plane({ x: [-1, 6], y: [-1, 4], width: 420, height: 300 });
+const p = plane({ x: [-1, 6], y: [-1, 4], width: 420, height: 300 });
 const O = { x: 0, y: 0 };
 const add = (a: Vec, b: Vec) => ({ x: a.x + b.x, y: a.y + b.y });
 const sub = (a: Vec, b: Vec) => ({ x: a.x - b.x, y: a.y - b.y });
@@ -14,7 +16,7 @@ const fmt = (v: Vec) => `(${v.x.toFixed(1)}, ${v.y.toFixed(1)})`;
 
 type Mode = 'sum' | 'difference' | 'projection';
 
-const projOf = (u: Vec, v: Vec) => scale(v, geom.dot(u, v) / (geom.dot(v, v) || 1));
+const projOf = (u: Vec, v: Vec) => scale(v, geomDot(u, v) / (geomDot(v, v) || 1));
 
 export default function Vectors() {
   const [u, setU] = useState<Vec>({ x: 3.5, y: 1 });
@@ -22,31 +24,31 @@ export default function Vectors() {
   const [mode, setMode] = useState<Mode>('sum');
   const [touched, setTouched] = useState(false);
 
-  const dot = geom.dot(u, v);
+  const dot = geomDot(u, v);
   const proj = projOf(u, v);
-  const theta = geom.toDegrees(geom.angleAt(p.toPx(u), p.toPx(O), p.toPx(v)));
+  const theta = toDegrees(angleAt(p.toPx(u), p.toPx(O), p.toPx(v)));
 
   const scene = combine(
-    plot.axes(p, { xTicks: 1, yTicks: 1, labels: true }),
+    axes(p, { xTicks: 1, yTicks: 1, labels: true }),
     // the drag handles go first, so the arrowheads draw on top of them (lines ignore the pointer)
-    plot.point(p, u.x, u.y, { id: 'U', draggable: true, hint: !touched, tone: 'accent' }),
-    plot.point(p, v.x, v.y, { id: 'V', draggable: true, hint: !touched, tone: 'visited' }),
+    point(p, u.x, u.y, { id: 'U', draggable: true, hint: !touched, tone: 'accent' }),
+    point(p, v.x, v.y, { id: 'V', draggable: true, hint: !touched, tone: 'visited' }),
     mode === 'sum' && [
-      plot.vector(p, u, add(u, v), { id: 'v-copy', tone: 'muted', dashed: true, width: 1.5 }),
-      plot.vector(p, v, add(u, v), { id: 'u-copy', tone: 'muted', dashed: true, width: 1.5 }),
-      plot.vector(p, O, add(u, v), { id: 'result', tone: 'success', label: 'u + v' }),
+      vector(p, u, add(u, v), { id: 'v-copy', tone: 'muted', dashed: true, width: 1.5 }),
+      vector(p, v, add(u, v), { id: 'u-copy', tone: 'muted', dashed: true, width: 1.5 }),
+      vector(p, O, add(u, v), { id: 'result', tone: 'success', label: 'u + v' }),
     ],
     mode === 'difference' && [
-      plot.vector(p, v, u, { id: 'result', tone: 'danger', label: 'u − v' }),
-      plot.vector(p, O, sub(u, v), { id: 'v-copy', tone: 'muted', dashed: true, width: 1.5 }),
+      vector(p, v, u, { id: 'result', tone: 'danger', label: 'u − v' }),
+      vector(p, O, sub(u, v), { id: 'v-copy', tone: 'muted', dashed: true, width: 1.5 }),
     ],
     mode === 'projection' && [
-      geom.angleMark(p.toPx(u), p.toPx(O), p.toPx(v), { id: 'theta', r: 30, label: 'θ', tone: 'active' }),
-      plot.segment(p, u, proj, { id: 'perp', role: 'guide' }),
-      plot.vector(p, O, proj, { id: 'result', tone: 'success', label: 'proj_v u', width: 3 }),
+      angleMark(p.toPx(u), p.toPx(O), p.toPx(v), { id: 'theta', r: 30, label: 'θ', tone: 'active' }),
+      segment(p, u, proj, { id: 'perp', role: 'guide' }),
+      vector(p, O, proj, { id: 'result', tone: 'success', label: 'proj_v u', width: 3 }),
     ],
-    plot.vector(p, O, u, { id: 'u', tone: 'accent', label: 'u' }),
-    plot.vector(p, O, v, { id: 'v', tone: 'visited', label: 'v' }),
+    vector(p, O, u, { id: 'u', tone: 'accent', label: 'u' }),
+    vector(p, O, v, { id: 'v', tone: 'visited', label: 'v' }),
   );
 
   return (

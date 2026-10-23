@@ -1,10 +1,11 @@
 // Two events as regions of a sample space. Drag a circle by its centre dot; click regions to shade them.
 // P(region) is its area as a fraction of the rectangle U.
 import { useState } from 'react';
-import { prob, Vec } from 'dsviz';
-import { Button, Diagram, MathText } from 'dsviz/react';
+import { Vec } from '@figurae/core';
+import { venn2, vennAreas, VennRegion } from '@figurae/prob';
+import { Button, Diagram, MathText } from '@figurae/react';
 
-type Region = prob.VennRegion;
+type Region = VennRegion;
 const U: [number, number, number, number] = [0, 0, 440, 250];
 const names: Record<string, string> = {
   // TeX-lite strings: <MathText> sets them in maths type (italic A, B; spaced ∩)
@@ -22,7 +23,7 @@ export default function Venn() {
   const [sel, setSel] = useState<Region[]>(['both']);
   const [touched, setTouched] = useState(false);
 
-  const areas = prob.vennAreas(a, b);
+  const areas = vennAreas(a, b);
   const total = U[2] * U[3];
   const P = { aOnly: areas.aOnly / total, bOnly: areas.bOnly / total, both: areas.both / total, neither: 1 - (areas.a + areas.b - areas.both) / total };
   const pA = P.aOnly + P.both, pB = P.bOnly + P.both;
@@ -36,7 +37,7 @@ export default function Venn() {
   return (
     <>
       <Diagram
-        scene={prob.venn2(a, b, { highlight: sel, universe: U, interactive: true, draggable: true, hint: !touched })}
+        scene={venn2(a, b, { highlight: sel, universe: U, interactive: true, draggable: true, hint: !touched })}
         viewBox={[-10, -10, U[2] + 20, U[3] + 20]}
         onDrag={(e) => (setTouched(true), (e.node.data as { set: 'a' | 'b' }).set === 'a' ? setA((d) => place(d, e)) : setB((d) => place(d, e)))}
         // only regions toggle; a tap on a drag handle is not a click on what's under it

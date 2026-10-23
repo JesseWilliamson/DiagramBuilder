@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { DIAGRAM_TYPES, describeSpec, fromSpec, validateSpec } from '../src/spec';
-import type { DiagramSpec } from '../src/spec';
+import { describeSpec, DIAGRAM_TYPES, fromSpec, validateSpec } from '@figurae/spec';
+import type { DiagramSpec } from '@figurae/spec';
 
 /** One small valid spec per type. */
 const valid: Record<DiagramSpec['type'], DiagramSpec> = {

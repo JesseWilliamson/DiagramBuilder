@@ -3,8 +3,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createElement } from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { createView, text, toSVG } from '../src';
-import { Button, Diagram } from '../src/react';
+import { createView, text, toSVG } from '@figurae/core';
+import { Button, Diagram } from '@figurae/react';
 
 const SVG = 'http://www.w3.org/2000/svg';
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -56,20 +56,20 @@ describe('stylesheet injection', () => {
     const root = createRoot(host);
     const ui = (n: number) => createElement('div', null, ...Array.from({ length: 5 }, (_, i) => createElement(Button, { key: i, onClick: () => {}, children: `b${n}` })));
     for (let n = 0; n < 10; n++) await act(async () => root.render(ui(n)));
-    const lookups = spy.mock.calls.filter(([id]) => id === 'dsviz-control-styles').length;
+    const lookups = spy.mock.calls.filter(([id]) => id === 'figurae-control-styles').length;
     expect(lookups).toBeLessThanOrEqual(1);
-    expect(document.querySelectorAll('#dsviz-control-styles')).toHaveLength(1);
+    expect(document.querySelectorAll('#figurae-control-styles')).toHaveLength(1);
     await act(async () => root.unmount());
     spy.mockRestore();
   });
   it('<Diagram injectStyles={false}> leaves <head> alone', async () => {
-    document.getElementById('dsviz-default-styles')?.remove();
+    document.getElementById('figurae-default-styles')?.remove();
     const host = document.body.appendChild(document.createElement('div'));
     const root = createRoot(host);
     await act(async () => root.render(createElement(Diagram, { scene: { nodes: [] }, injectStyles: false })));
-    expect(document.getElementById('dsviz-default-styles')).toBeNull();
+    expect(document.getElementById('figurae-default-styles')).toBeNull();
     await act(async () => root.render(createElement(Diagram, { scene: { nodes: [] } })));
-    expect(document.getElementById('dsviz-default-styles')).not.toBeNull();
+    expect(document.getElementById('figurae-default-styles')).not.toBeNull();
     await act(async () => root.unmount());
   });
 });
@@ -92,7 +92,7 @@ describe('toSVG themes', () => {
 
 describe('the stylesheet survives being embedded in SVG', () => {
   it('has no "<" (inside an <svg>, a <style> is parsed as markup), and toSVG wraps it in CDATA anyway', async () => {
-    const { DEFAULT_CSS } = await import('../src/styles');
+    const { DEFAULT_CSS } = await import('@figurae/core');
     expect(DEFAULT_CSS.includes('<')).toBe(false);
     // (happy-dom's XML parser can't read CDATA, so this checks the wrapper, not a parse)
     expect(toSVG({ nodes: [text({ id: 't', x: 0, y: 0, text: 'a < b' })] })).toMatch(/<style><!\[CDATA\[[^]*\]\]><\/style>/);

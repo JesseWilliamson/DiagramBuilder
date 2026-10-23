@@ -3,16 +3,17 @@
 // 'danger' message by message; notes take a row of their own. Turn off the
 // activation bars for a lighter, overview-style diagram.
 import { useState } from 'react';
-import { fitViewBox, uml } from 'dsviz';
-import { Diagram, Switch } from 'dsviz/react';
+import { fitViewBox } from '@figurae/core';
+import { Diagram, Switch } from '@figurae/react';
+import { Fragment, Message, Note, Participant, sequence } from '@figurae/uml';
 
-const people: uml.Participant[] = [
+const people: Participant[] = [
   { id: 'user', label: 'Shopper', kind: 'actor' },
   { id: 'web', label: 'Web app' },
   { id: 'pay', label: 'Payments' },
   { id: 'bank', label: 'Card network' },
 ];
-const messages: uml.Message[] = [
+const messages: Message[] = [
   { from: 'user', to: 'web', label: 'Pay £42' },
   { from: 'web', to: 'pay', label: 'charge(order, card)' },
   { from: 'pay', to: 'bank', label: 'authorise' },
@@ -22,16 +23,16 @@ const messages: uml.Message[] = [
   { from: 'pay', to: 'web', label: '402 card declined', kind: 'return', tone: 'danger' },
   { from: 'web', to: 'user', label: 'show result', kind: 'return' },
 ];
-const fragments: uml.Fragment[] = [
+const fragments: Fragment[] = [
   { kind: 'alt', from: 3, to: 6, over: ['web', 'bank'], sections: [{ label: 'approved', from: 3, to: 4 }, { label: 'else', from: 5, to: 6 }] },
 ];
-const notes: uml.Note[] = [
+const notes: Note[] = [
   { over: 'pay', text: 'idempotency key = order id:\na retry never charges twice', at: 2 },
 ];
 
 export default function Checkout() {
   const [bars, setBars] = useState(true);
-  const scene = uml.sequence(people, messages, { fragments, notes, activations: bars, highlight: false, gap: 160 });
+  const scene = sequence(people, messages, { fragments, notes, activations: bars, highlight: false, gap: 160 });
   return (
     <>
       <Diagram scene={scene} viewBox={fitViewBox(scene, 24)} />

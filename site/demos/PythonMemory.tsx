@@ -1,7 +1,8 @@
 // Names, objects and aliasing, Python-Tutor style. `b = a` doesn't copy the list:
 // it draws a second arrow to the same object. Step through and watch what changes.
-import { fitViewBox, mem } from 'dsviz';
-import { CodeTrace, Diagram, Transport, usePlayer } from 'dsviz/react';
+import { fitViewBox } from '@figurae/core';
+import { HeapObject, StackFrame, stackHeap } from '@figurae/os';
+import { CodeTrace, Diagram, Transport, usePlayer } from '@figurae/react';
 
 const code = [
   'a = [1, 2]',
@@ -15,7 +16,7 @@ const code = [
   'print(a, c)',
 ];
 
-type Step = { line: number; frames: mem.StackFrame[]; heap: mem.HeapObject[]; tones?: Record<string, 'active' | 'success'>; note: string };
+type Step = { line: number; frames: StackFrame[]; heap: HeapObject[]; tones?: Record<string, 'active' | 'success'>; note: string };
 const ref = (id: string) => ({ ref: id });
 const fn = { id: 'fn', kind: 'function grow', items: [] };
 
@@ -35,7 +36,7 @@ const steps: Step[] = [
 // Fixed heap positions, so an object never jumps when another is added.
 const positions = { L1: { x: 0, y: 20 }, L2: { x: 0, y: 92 }, fn: { x: 0, y: 164 } };
 
-const draw = (s: Step) => mem.stackHeap(s.frames, s.heap, { tones: s.tones, positions, frameWidth: 150, heapX: 270 });
+const draw = (s: Step) => stackHeap(s.frames, s.heap, { tones: s.tones, positions, frameWidth: 150, heapX: 270 });
 // The second stack frame and the function object appear later; reserve their room now.
 const viewBox = fitViewBox(steps.map(draw));
 

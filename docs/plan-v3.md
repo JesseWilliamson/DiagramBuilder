@@ -4,12 +4,12 @@ Owner's brief (Oct 2026): remove the d3 experiment and anything that isn't core;
 elegant and minimal; split it into clearly separated modules (separate packages); structure it like
 Radix + shadcn (headless primitives, composed layouts on top, copyable diagram components);
 add snapping to draggable UML boxes and support the other UML diagram kinds; pick a name more
-generic than "dsviz". Model: Brilliant's internal diagram tool and Diagramatics, focused on CS
+generic than the old name. Model: Brilliant's internal diagram tool and Diagramatics, focused on CS
 first, maths and sciences later.
 
 ## Name
 
-`dsviz` says "data structures". Working name: **figurae** (Latin "figures": what textbooks call
+The old name says "data structures". Working name: **figurae** (Latin "figures": what textbooks call
 these pictures; npm scope `@figurae/*` is free). Alternatives that are also free on npm:
 `diagrammar` (diagram + grammar: compose a picture from a small grammar of parts), `slatejs`,
 `chalkviz`, `sketchline`, `inkscribe`. The name is a one-line sed across the repo, so it is easy to
@@ -82,7 +82,7 @@ app would. `build.mjs` builds every package into its own `dist/` (one ES module 
 
 - Nav: Examples, Guide, API, GitHub. Examples grouped by package. Each example is a registry
   component with its source beside it (as now).
-- `.claude/skills/figurae/` replaces `.claude/skills/dsviz/`; `references/api.md` is regenerated
+- `.claude/skills/figurae/` replaces the old skill folder; `references/api.md` is regenerated
   from the package exports; `spec.md` moves under the spec package.
 - CLAUDE.md rewritten for the new layout.
 

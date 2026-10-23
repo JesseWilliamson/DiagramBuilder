@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { binaryTree, bounds, tree, treeFromLevelOrder } from '../src';
-import type { TreeNode } from '../src';
-import { tidy } from '../src/layout/tidy';
+import { bounds } from '@figurae/core';
+import { binaryTree, tree, treeFromLevelOrder } from '@figurae/ds';
+import type { TreeNode } from '@figurae/ds';
+import { tidy } from '@figurae/layout';
 
 type N = { k: string; c?: N[] };
 const n = (k: string, ...c: N[]): N => ({ k, c });

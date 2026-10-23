@@ -1,10 +1,10 @@
 // An order's lifecycle as a state machine. Only the events that are legal in the
 // current state are enabled: that list IS the state machine.
 import { useState } from 'react';
-import { uml } from 'dsviz';
-import { Button, Diagram } from 'dsviz/react';
+import { Button, Diagram } from '@figurae/react';
+import { stateMachine, Transition, UmlState } from '@figurae/uml';
 
-const states: uml.UmlState[] = [
+const states: UmlState[] = [
   { id: 'start', kind: 'initial', x: 0, y: 60 },
   { id: 'Pending', x: 120, y: 60 },
   { id: 'Paid', x: 320, y: 60 },
@@ -14,7 +14,7 @@ const states: uml.UmlState[] = [
   { id: 'end', kind: 'final', x: 320, y: 300 },
 ];
 
-const transitions: uml.Transition[] = [
+const transitions: Transition[] = [
   { from: 'start', to: 'Pending' },
   { from: 'Pending', to: 'Pending', label: 'addItem' },
   { from: 'Pending', to: 'Paid', label: 'pay [in stock]' },
@@ -27,7 +27,7 @@ const transitions: uml.Transition[] = [
 ];
 
 // A label reads `event [guard] / action`: the event is everything before the guard or action.
-const eventOf = (t: uml.Transition) => t.label?.split(/\s*[[/]/)[0] ?? '';
+const eventOf = (t: Transition) => t.label?.split(/\s*[[/]/)[0] ?? '';
 const events = [...new Set(transitions.map(eventOf).filter(Boolean))];
 
 export default function StateMachine() {
@@ -47,7 +47,7 @@ export default function StateMachine() {
 
   return (
     <>
-      <Diagram scene={uml.stateMachine(states, transitions, { current, fired })} viewBox={[-30, -10, 640, 340]} />
+      <Diagram scene={stateMachine(states, transitions, { current, fired })} viewBox={[-30, -10, 640, 340]} />
       <div className="row">
         {events.map((ev) => (
           <Button key={ev} variant={legal.has(ev) ? 'primary' : undefined} disabled={!legal.has(ev)} onClick={() => fire(ev)}>{ev}</Button>

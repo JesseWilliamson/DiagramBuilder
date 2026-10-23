@@ -1,8 +1,10 @@
 // Roll a die again and again. Early on the frequencies jump around; with more rolls they
 // settle toward 1/6 each, and the running average settles toward 3.5.
 import { useEffect, useMemo, useState } from 'react';
-import { combine, path, plot, prob, translate } from 'dsviz';
-import { Button, Diagram, Switch, useTicker } from 'dsviz/react';
+import { combine, path, translate } from '@figurae/core';
+import { axes, label, niceTicks, plane, segment } from '@figurae/plot';
+import { bars } from '@figurae/prob';
+import { Button, Diagram, Switch, useTicker } from '@figurae/react';
 
 const roll = () => 1 + Math.floor(Math.random() * 6);
 
@@ -17,12 +19,12 @@ export default function LargeNumbers() {
   const freq = [1, 2, 3, 4, 5, 6].map((face) => (n ? rolls.filter((r) => r === face).length / n : 0));
 
   const scene = useMemo(() => {
-    const chart = prob.bars(freq, {
+    const chart = bars(freq, {
       id: 'freq', width: 210, height: 150, max: 0.4, reference: 1 / 6,
       labels: [1, 2, 3, 4, 5, 6], showValues: n > 0, format: (v) => `${Math.round(v * 100)}%`,
     });
     // running mean, plotted against roll number; the x-range grows as you roll
-    const p = plot.plane({ x: [0, Math.max(20, n)], y: [1, 6], width: 230, height: 150 });
+    const p = plane({ x: [0, Math.max(20, n)], y: [1, 6], width: 230, height: 150 });
     const means: Array<[number, number]> = [];
     let s = 0;
     const step = Math.max(1, Math.floor(n / 200)); // at most ~200 points
@@ -31,9 +33,9 @@ export default function LargeNumbers() {
       if (i % step === 0 || i === n - 1) means.push([p.sx(i + 1), p.sy(s / (i + 1))]);
     });
     const line = combine(
-      plot.axes(p, { yTicks: [1, 2, 3, 4, 5, 6], xTicks: plot.niceTicks(0, Math.max(20, n), 4), grid: false, hideZero: false }),
-      plot.segment(p, { x: 0, y: 3.5 }, { x: Math.max(20, n), y: 3.5 }, { id: 'ev', role: 'guide' }),
-      plot.label(p, Math.max(20, n), 3.5, '3.5', { id: 'ev-label', anchor: 'start', dx: 6, size: 11 }),
+      axes(p, { yTicks: [1, 2, 3, 4, 5, 6], xTicks: niceTicks(0, Math.max(20, n), 4), grid: false, hideZero: false }),
+      segment(p, { x: 0, y: 3.5 }, { x: Math.max(20, n), y: 3.5 }, { id: 'ev', role: 'guide' }),
+      label(p, Math.max(20, n), 3.5, '3.5', { id: 'ev-label', anchor: 'start', dx: 6, size: 11 }),
       means.length > 1 && path({ id: 'mean', points: means, role: 'curve', tone: 'accent', width: 2 }),
     );
     return combine(chart, translate(line, 270, 0));

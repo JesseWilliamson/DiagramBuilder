@@ -1,8 +1,9 @@
 // A Galton board. Every peg is a coin flip: left or right. Add up enough flips and
 // the bins fill into a bell shape, the binomial distribution, whatever the bias.
 import { useEffect, useMemo, useState } from 'react';
-import { circle, combine, easeInQuad, path, prob } from 'dsviz';
-import { Button, Diagram, Slider, Switch, useTicker } from 'dsviz/react';
+import { circle, combine, easeInQuad, path } from '@figurae/core';
+import { bars } from '@figurae/prob';
+import { Button, Diagram, Slider, Switch, useTicker } from '@figurae/react';
 
 const ROWS = 10, DX = 26, DY = 20;
 type Ball = { id: number; path: boolean[]; step: number };
@@ -42,7 +43,7 @@ export default function Galton() {
   }, [tick]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const binY = ROWS * DY + 8, H = 110;
-  const chart = prob.bars(bins, { id: 'bins', x: -((ROWS + 1) * DX) / 2, y: binY, width: (ROWS + 1) * DX, height: H, fill: 0.86, max: Math.max(8, ...bins), tones: () => 'accent' });
+  const chart = bars(bins, { id: 'bins', x: -((ROWS + 1) * DX) / 2, y: binY, width: (ROWS + 1) * DX, height: H, fill: 0.86, max: Math.max(8, ...bins), tones: () => 'accent' });
 
   const scene = useMemo(() => {
     const pegs = [];

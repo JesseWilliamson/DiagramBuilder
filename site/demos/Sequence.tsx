@@ -1,10 +1,11 @@
 // Logging in, as a sequence diagram. Step through it: activation bars grow and shrink
-// with the call stack, because uml.activations() derives them from calls and returns.
+// with the call stack, because activations() derives them from calls and returns.
 import { useMemo } from 'react';
-import { fitViewBox, uml } from 'dsviz';
-import { Diagram, Transport, usePlayer } from 'dsviz/react';
+import { fitViewBox } from '@figurae/core';
+import { Diagram, Transport, usePlayer } from '@figurae/react';
+import { activations, Message, Participant, sequence } from '@figurae/uml';
 
-const people: uml.Participant[] = [
+const people: Participant[] = [
   { id: 'user', label: 'User', kind: 'actor' },
   { id: 'web', label: 'Browser' },
   { id: 'api', label: 'API' },
@@ -12,7 +13,7 @@ const people: uml.Participant[] = [
   { id: 'db', label: 'Database' },
 ];
 
-const messages: Array<uml.Message & { note: string }> = [
+const messages: Array<Message & { note: string }> = [
   { from: 'user', to: 'web', label: 'submit(email, pw)', note: 'The user submits the form.' },
   { from: 'web', to: 'api', label: 'POST /login', note: 'The browser calls the API and waits: a synchronous call (solid head).' },
   { from: 'api', to: 'auth', label: 'verify(email, pw)', note: 'The API delegates to the auth service. Three bars are open now: three calls are waiting.' },
@@ -25,7 +26,7 @@ const messages: Array<uml.Message & { note: string }> = [
   { from: 'web', to: 'user', label: 'show dashboard', kind: 'return', note: 'Every call has been answered, so every bar has closed.' },
 ];
 
-const draw = (i: number) => uml.sequence(people, messages, { upTo: i, numbered: true, gap: 140 });
+const draw = (i: number) => sequence(people, messages, { upTo: i, numbered: true, gap: 140 });
 // The diagram only ever grows downward, so fit the camera to the LAST frame once.
 const viewBox = fitViewBox(draw(messages.length - 1), 24);
 

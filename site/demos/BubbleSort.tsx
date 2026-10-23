@@ -1,7 +1,8 @@
 // Keys decide what moves. Turn "stable keys" off and the numbers change in place instead.
 import { useMemo, useState } from 'react';
-import { array, combine, fitViewBox, pointer } from 'dsviz';
-import { Button, Diagram, Switch, Transport, usePlayer } from 'dsviz/react';
+import { combine, fitViewBox } from '@figurae/core';
+import { array, pointer } from '@figurae/ds';
+import { Button, Diagram, Switch, Transport, usePlayer } from '@figurae/react';
 
 type Item = { value: number; key: string };
 

@@ -1,7 +1,8 @@
 // The algorithm is a generator: each `yield` is one step of the transport bar.
 import { useMemo, useState } from 'react';
-import { array, combine, fitViewBox, pointer } from 'dsviz';
-import { CodeTrace, Diagram, NumberStepper, Transport, usePlayer } from 'dsviz/react';
+import { combine, fitViewBox } from '@figurae/core';
+import { array, pointer } from '@figurae/ds';
+import { CodeTrace, Diagram, NumberStepper, Transport, usePlayer } from '@figurae/react';
 
 const nums = [-9, -4, -1, 0, 3, 5, 8, 9, 12, 17, 21, 30];
 

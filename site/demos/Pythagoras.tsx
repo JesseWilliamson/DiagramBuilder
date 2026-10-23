@@ -1,8 +1,8 @@
 // A square inside a square. The four right triangles plus the tilted square
 // always fill the big square: (a + b)² = 4 · ab/2 + c², so a² + b² = c².
 import { useState } from 'react';
-import { combine, handle, path, text } from 'dsviz';
-import { Diagram, MathText } from 'dsviz/react';
+import { combine, handle, path, text } from '@figurae/core';
+import { Diagram, MathText } from '@figurae/react';
 
 const S = 240; // side of the big square
 

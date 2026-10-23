@@ -2,17 +2,18 @@
 // The packet is one circle with a stable id: each frame puts it at the end of
 // the next link, and the tween engine slides it there.
 import { useMemo, useState } from 'react';
-import { combine, fitViewBox, sys } from 'dsviz';
-import { Diagram, Segmented, Transport, usePlayer } from 'dsviz/react';
+import { combine, fitViewBox } from '@figurae/core';
+import { architecture, Component, Link, packet } from '@figurae/arch';
+import { Diagram, Segmented, Transport, usePlayer } from '@figurae/react';
 
-const parts: sys.Component[] = [
+const parts: Component[] = [
   { id: 'client', kind: 'client', label: 'Browser', x: 0, y: 140 },
   { id: 'lb', kind: 'lb', label: 'Load balancer', x: 190, y: 140 },
   { id: 'app', kind: 'service', label: 'App server', sub: 'x3', x: 380, y: 140 },
   { id: 'cache', kind: 'cache', label: 'Cache', sub: 'Redis', x: 580, y: 40 },
   { id: 'db', kind: 'db', label: 'Database', sub: 'Postgres', x: 580, y: 245 },
 ];
-const links: sys.Link[] = [
+const links: Link[] = [
   { from: 'client', to: 'lb', both: true },
   { from: 'lb', to: 'app', both: true },
   { from: 'app', to: 'cache', both: true },
@@ -37,7 +38,7 @@ const hops = (hit: boolean): Hop[] => [
 ];
 const total = (hit: boolean) => hops(hit).reduce((s, h) => s + h.ms, 0);
 
-const base = sys.architecture(parts, links);
+const base = architecture(parts, links);
 const viewBox = fitViewBox(base, 30);
 
 export default function RequestFlow() {
@@ -50,12 +51,12 @@ export default function RequestFlow() {
 
   // light up the link and the two components the packet is between
   const on = (k: string) => !!hop && (hop.from === k || hop.to === k);
-  const arch = sys.architecture(
+  const arch = architecture(
     parts.map((p) => ({ ...p, tone: on(p.id) ? 'active' : undefined })),
     links.map((l) => ({ ...l, tone: hop && ((l.from === hop.from && l.to === hop.to) || (l.from === hop.to && l.to === hop.from)) ? 'active' : undefined })),
   );
   const at = hop ? arch.along(hop.from, hop.to, 0.92) : arch.along('client', 'lb', 0.04);
-  const scene = combine(arch, sys.packet({ id: 'req', ...at, tone: 'accent', label: hop?.payload ?? 'GET /user/42' }));
+  const scene = combine(arch, packet({ id: 'req', ...at, tone: 'accent', label: hop?.payload ?? 'GET /user/42' }));
 
   return (
     <>

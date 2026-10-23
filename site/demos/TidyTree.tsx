@@ -4,9 +4,9 @@
 // before it, so the same tree fits in far less width. Add files and watch the
 // subtrees make room: nodes are keyed by path, so everything slides.
 import { useState } from 'react';
-import { tree } from 'dsviz';
-import type { TreeNode } from 'dsviz';
-import { Button, Diagram, Segmented } from 'dsviz/react';
+import { tree } from '@figurae/ds';
+import type { TreeNode } from '@figurae/ds';
+import { Button, Diagram, Segmented } from '@figurae/react';
 
 const start: TreeNode = {
   key: 'src', children: [

@@ -96,6 +96,7 @@ export const groups: Group[] = [
       { name: 'ConsistentHashing', title: 'Consistent hashing', desc: 'Add or remove a server and count the keys that move, ring versus hash % N.' },
       { name: 'TrustZones', title: 'Trust boundaries', desc: 'Zones around machines and a sandbox. Step a job across and see which files may cross.' },
       { name: 'GitGraph', title: 'Merge versus rebase', desc: 'graph from @dsviz/git: lanes by first parent, curved edges, branch pills. Commits are keyed by hash, so the switch animates.' },
+      { name: 'GitLayouts', title: 'Ways to draw a commit graph', desc: 'One history, the layouts different clients use: straight or compact lanes, curves or corners, main pinned left, merged branches folded (click a merge), and a lane cap with git\'s ~ mark.' },
       { name: 'Polling', title: 'Polling in a loop', desc: 'A sequence diagram with a loop fragment that grows as the polls come back.' },
       // uml: deployment
       { name: 'Deployment', title: 'Deployment diagram', desc: 'Machines (3D nodes) with a nested runtime and the files it hosts, joined by «protocol» lines. Add a second server and a load balancer: the nodes slide over. Click one to read what it runs.' },

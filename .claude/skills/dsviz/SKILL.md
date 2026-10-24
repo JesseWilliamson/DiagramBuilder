@@ -40,7 +40,7 @@ One package per family, each exporting its functions flat (no namespaces: `fn`, 
 | `@dsviz/os` | `simulate gantt stackHeap memory hex` |
 | `@dsviz/arch` | `architecture component zone packet` |
 | `@dsviz/uml` | `sequence classDiagram stateMachine useCase activity component deployment er` |
-| `@dsviz/git` | `graph` (commit graph), `gitLanes` |
+| `@dsviz/git` | `graph` (commit graph), `gitLanes`, `orderCommits`, `foldedCommits` |
 | `@dsviz/react` | `Diagram usePlayer useTicker useBurst`, controls, `Transport`, `CodeTrace`, `MathText` |
 
 Imports:
@@ -123,7 +123,7 @@ injected styles. `toSVG(scene, { theme: 'light' | 'dark' })` pins a palette insi
 | ER | `er(entities, relationships, { collapsed })` | crow's foot; cardinalities `one many zero-one zero-many one-many` at each end, `identifying: false` dashed |
 | Architecture | `architecture(components, links, { zones, direction, route })` | kinds `client user lb gateway service cache db queue cdn storage file` |
 | Graph / DAG | `graph(nodes, edges, { layout: 'layered', shape: 'rect', directed, route: 'elbow' })` | node `kind` → role `node-<kind>` (`changed`, `upstream`, `downstream`, `test`) |
-| Git | `gitGraph(commits, refs, { highlight })` | commits newest first, `parents` first-parent first |
+| Git | `gitGraph(commits, refs, { highlight, lanes, pin, fold, maxLanes, bend })` | commits newest first, `parents` first-parent first; `orderCommits(commits, 'topo')` sorts them; `lanes: 'straight' / 'compact'`, `pin: [mainTip]`, `fold: [mergeHash]`, `maxLanes: n` (git's `~`) |
 | Array | `array(values, { keys, tones, cell })` + `pointer({ id, at: arr.top(i), label })` | `arr.window(lo, hi)` for a band |
 | Trees | `tree(root, { layout: 'tidy', shape: 'rect' })`, `binaryTree(root, { layout: 'tidy' })` | n-ary `{ key, label, children }` |
 | Maps, lists, grids | `hashMap(entries)`, `linkedList(nodes)`, `grid(rows, { colLabels, cellWidth })`, `stack`, `queue` | |

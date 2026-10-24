@@ -293,10 +293,21 @@ Sequence behaviour in detail (returns, self-calls, alt branches, note rows): SKI
 
 | Export | Signature |
 |---|---|
-| `graph` | `graph(commits: { hash, parents: string[] (first parent first), label?, tone? }[] (NEWEST FIRST), refs: { name, hash, kind: 'branch' / 'remote' / 'tag' / 'head' }[] = [], { id? = 'git', highlight?: Iterable<hash>, rowH? = 34, laneW? = 22, r? = 6, x?, y?, tones?: Tone[] }): GitGraph` with `pos(hash): Vec`, `lane(hash)`, `row(hash)`, `lanes`, `labelX`. Commits are keyed by hash. Import as `graph as gitGraph` next to ds |
-| `gitLanes` | `gitLanes(commits): { hash, row, lane, edges: { parent, lane, row }[] }[]`, the lane walk on its own |
+| `graph` | `graph(commits: { hash, parents: string[] (first parent first), label?, tone?, date?, authorDate?, kind?: 'commit' / 'wip' / 'stash' }[] (NEWEST FIRST), refs: { name, hash, kind: 'branch' / 'remote' / 'tag' / 'head' }[] = [], { id? = 'git', highlight?: Iterable<hash>, lanes? = 'straight' / 'compact', pin?: hash[], fold?: Iterable<hash>, maxLanes?, bend? = 'curve' / 'corner' / 'angle', interactive?, rowH? = 34, laneW? = 22, r? = 6, x?, y?, tones?: Tone[] }): GitGraph` with `pos(hash): Vec`, `lane(hash)`, `row(hash)`, `lanes`, `labelX`, `hidden: Set<hash>` (folded away), `rows: hash[]`. Commits are keyed by hash; click events carry `data: { hash }`. Import as `graph as gitGraph` next to ds |
+| `gitLanes` | `gitLanes(commits, { lanes?, pin?, fold? }): { hash, row, lane, color, edges: { parent, lane, row, via: number[], color }[], folded? }[]`, the lane walk on its own. `via` is the column the edge holds in each row between child and parent; `color` is the line's colour index (its column with straight lanes) |
+| `orderCommits` | `orderCommits(commits, 'author-date' / 'commit-date' / 'topo'): Commit[]`, newest first. The date orders can put a parent above its child; `topo` (a temporal topological sort, what `git log --date-order` does) never does |
+| `foldedCommits` | `foldedCommits(commits, fold): Set<hash>`, the commits reachable from a folded merge's other parents but not from its first |
 
-Types: `Commit`, `Ref`, `GitGraphOptions`, `LanePlacement`, `GitGraph`.
+Layout options: `lanes: 'straight'` (default) keeps a finished column as an empty slot for the next branch,
+so no line moves sideways (GitKraken); `'compact'` opens a merged branch's column beside the merge and
+removes finished columns, so neighbours shift and bend (Git Extensions, gitk). `pin: [tip, ...]` holds
+the leftmost columns for those branches' first-parent lines wherever their tips are (GitGoose's trunk
+column). `fold` hides a merged branch behind its merge, drawn as a hollow ring with a plus (role
+`git-fold`). `maxLanes` cuts the columns past it and marks each row they cross with a `~` (role
+`git-cut`), as `git log --graph-lane-limit` does. `kind: 'wip'` draws the uncommitted changes as a
+dashed node with a dashed line to HEAD; `kind: 'stash'` a dashed card.
+
+Types: `Commit`, `Ref`, `LaneStyle`, `LaneOptions`, `GitGraphOptions`, `LaneEdge`, `LanePlacement`, `GitGraph`, `CommitOrder`.
 
 ## @dsviz/react
 

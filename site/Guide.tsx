@@ -212,6 +212,7 @@ graph(
   [{ name: 'main', hash: 'm', kind: 'branch' }],
   { highlight: ['m'] },
 );`}</Code>
+          <p>Clients differ in two choices, and both are options. Rows: <code>orderCommits(commits, 'topo')</code> sorts by date without ever putting a parent above its child (the date orders can). Columns: <code>lanes: 'straight'</code> (default) keeps a finished column as an empty slot, so no line moves sideways, as GitKraken draws; <code>'compact'</code> opens a merged branch beside its merge and removes finished columns, so neighbours shift and bend, as gitk and Git Extensions draw. <code>pin: [mainTip]</code> holds the left column for main wherever its tip is, <code>fold: [mergeHash]</code> hides a merged branch behind a hollow merge dot, <code>maxLanes</code> cuts the far lanes and marks them with git's <code>~</code>, and <code>bend</code> picks curves, rounded corners or diagonals. The <a href="#/examples">Ways to draw a commit graph</a> example has all of them on one history.</p>
         </Section>
 
 

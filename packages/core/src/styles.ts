@@ -332,6 +332,12 @@ ${TONES.map(toneVars).join('\n')}
 .dv-rect.dv-role-git-ref-head + .dv-text { fill: var(--dv-surface); }
 .dv-text.dv-role-git-ref-label { font-family: var(--dv-mono); font-weight: 600; }
 .dv-text.dv-role-git-label { font-weight: 500; }
+/* a folded merge: a hollow ring with a plus, click to unfold; a cut lane: git's ~; the uncommitted changes and stashes: dashed */
+.dv-circle.dv-role-git-fold { fill: var(--dv-surface); stroke: var(--dv-c, var(--dv-edge)); stroke-width: 2px; }
+.dv-text.dv-role-git-fold-sign { fill: var(--dv-c, var(--dv-edge)); font-weight: 700; }
+.dv-path.dv-role-git-cut { fill: none; stroke: var(--dv-muted); stroke-width: 1.5px; pointer-events: none; }
+.dv-circle.dv-role-git-wip { fill: var(--dv-surface); stroke: var(--dv-c, var(--dv-edge)); stroke-width: 2px; }
+.dv-rect.dv-role-git-stash { fill: color-mix(in srgb, var(--dv-cf, var(--dv-muted-fill)) 40%, var(--dv-surface)); stroke: var(--dv-c, var(--dv-edge)); stroke-width: 1.5px; }
 
 /* code blocks: a soft panel, monospace lines, highlight bands in a tone's fill */
 .dv-rect.dv-role-code-bg { fill: var(--dv-muted-fill); stroke: none; }

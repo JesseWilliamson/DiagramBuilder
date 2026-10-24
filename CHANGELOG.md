@@ -1,5 +1,24 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- **`@dsviz/git` draws the layouts other clients use**, so they can be compared on one history:
+  `lanes: 'straight' | 'compact'` (slots reserved and reused, or inserted and removed so neighbours
+  shift), `pin: [tip, ...]` (the leftmost columns held for those branches, GitGoose's trunk column
+  generalised), `fold: [merge, ...]` (a merged branch hidden behind a hollow merge dot), `maxLanes`
+  (lanes past the cap cut and marked with git's `~`) and `bend: 'curve' | 'corner' | 'angle'`.
+  `orderCommits(commits, 'author-date' | 'commit-date' | 'topo')` orders rows the three ways tools do.
+  Commits take `date`, `authorDate` and `kind: 'wip' | 'stash'` (dashed, as GitGoose draws them).
+  New example: *Ways to draw a commit graph*.
+
+### Changed
+
+- `gitLanes` edges now carry `via` (the column in every row between child and parent) and `color`;
+  placements carry `color`. A line keeps the colour of the column it opened in, so it does not change
+  colour when compact lanes shift it. Commit dots carry `data: { hash }` and ref pills `data: { ref }`.
+
 ## 3.0.0
 
 The project is renamed **dsviz** (formerly dsviz) and split into an npm-workspaces monorepo of

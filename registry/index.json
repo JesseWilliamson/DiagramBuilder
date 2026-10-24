@@ -440,6 +440,17 @@
     ]
   },
   {
+    "name": "git-layouts",
+    "title": "Ways to draw a commit graph",
+    "description": "One history, the layouts different clients use: straight or compact lanes, curves or corners, main pinned left, merged branches folded (click a merge), and a lane cap with git's ~ mark.",
+    "group": "design",
+    "file": "GitLayouts.tsx",
+    "packages": [
+      "@dsviz/git",
+      "@dsviz/react"
+    ]
+  },
+  {
     "name": "polling",
     "title": "Polling in a loop",
     "description": "A sequence diagram with a loop fragment that grows as the polls come back.",

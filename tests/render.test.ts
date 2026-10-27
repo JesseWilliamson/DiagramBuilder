@@ -98,3 +98,14 @@ describe('the stylesheet survives being embedded in SVG', () => {
     expect(toSVG({ nodes: [text({ id: 't', x: 0, y: 0, text: 'a < b' })] })).toMatch(/<style><!\[CDATA\[[^]*\]\]><\/style>/);
   });
 });
+
+describe('theme', () => {
+  it('pairs every colour with light-dark() and keys nothing on a class or the OS', async () => {
+    const { DEFAULT_CSS, THEME_VARS } = await import('@dsviz/core');
+    expect(DEFAULT_CSS).toContain('--dv-fg: light-dark(#000, #fff);');
+    expect(DEFAULT_CSS).not.toMatch(/prefers-color-scheme|data-theme|\.dark\b/);
+    // the standalone export pins plain colours instead
+    expect(THEME_VARS.dark).toContain('--dv-fg: #fff;');
+    expect(THEME_VARS.light).not.toContain('light-dark');
+  });
+});

@@ -38,7 +38,7 @@ export function Example() {
 ```
 
 Render a new scene and every node that kept its id slides to its new place. Colours are CSS variables
-(`--dv-*`) you can override; dark mode follows `.dark` or `[data-theme="dark"]`.
+(`--dv-*`) you can override; dark mode follows the page's `color-scheme` (`.dark { color-scheme: dark }` in your app's CSS).
 
 To copy a ready-made diagram into your app instead: `npx @dsviz/cli add binary-search`.
 

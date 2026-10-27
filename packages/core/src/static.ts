@@ -14,9 +14,11 @@ export interface ToSvgOptions {
   width?: number;
   /**
    * Pin the light or dark palette. A standalone SVG file has no page around it
-   * to say `.dark`, so the theme's variables go on the <svg> itself (an inline
-   * style beats any stylesheet rule), along with a background in the theme's
-   * surface colour so white text never lands on a white viewer.
+   * to set a color-scheme, and a viewer that is not a browser may not know
+   * light-dark(), so the theme's variables go on the <svg> itself as plain
+   * colours (an inline style beats any stylesheet rule), along with a
+   * background in the theme's surface colour so white text never lands on a
+   * white viewer.
    * Default: none (the file follows whatever page it is placed in).
    */
   theme?: 'light' | 'dark';

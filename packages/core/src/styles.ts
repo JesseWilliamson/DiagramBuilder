@@ -12,8 +12,12 @@
  *  1. Variables on `.dv-root` (and `.dvc` for the controls): the vocabulary.
  *  2. Base rules that only ever read variables.
  *
- * Dark mode is a variable swap under `[data-theme="dark"]` / `.dark` (or the OS
- * setting when neither is set). Re-skin from your app without touching JS:
+ * Every colour is `light-dark(light, dark)`, so the diagrams follow the page's
+ * `color-scheme`, the same declaration the browser reads for form controls and
+ * scrollbars. A page that says nothing is light; `:root { color-scheme: light dark }`
+ * follows the OS; `.dark { color-scheme: dark }` follows the app's own switch.
+ * There is no class or attribute of dsviz's to keep in step with the app's.
+ * Re-skin from your app without touching JS:
  *   .my-app .dv-root { --dv-active-fill: hotpink; }
  *
  * Tones (`tone: 'active'`) become classes. Each tone has three colours:
@@ -37,33 +41,55 @@ const P = {
   orange: ['#ffe8d3', '#ffcc9c', '#ff8d23', '#ce6809'],
 };
 
-const LIGHT = `
-  --dv-fg: #000; --dv-muted: #999; --dv-faint: #ccc; --dv-surface: #fff; --dv-muted-fill: #f2f2f2;
-  --dv-stroke: #000; --dv-edge: #000; --dv-halo: #fff; --dv-grid: #e5e5e5;
-  --dv-curve: ${P.blue[2]}; --dv-area: color-mix(in srgb, ${P.blue[1]} 70%, transparent); --dv-point: #ff775c;
-  --dv-active: ${P.yellow[3]}; --dv-active-fill: ${P.yellow[1]}; --dv-active-stroke: #000;
-  --dv-accent: ${P.blue[2]}; --dv-accent-fill: ${P.blue[1]}; --dv-accent-stroke: #000;
-  --dv-success: ${P.green[3]}; --dv-success-fill: ${P.green[1]}; --dv-success-stroke: #000;
-  --dv-danger: ${P.red[3]}; --dv-danger-fill: ${P.red[1]}; --dv-danger-stroke: #000;
-  --dv-visited: ${P.purple[3]}; --dv-visited-fill: ${P.purple[1]}; --dv-visited-stroke: #000;
-  --dv-orange: ${P.orange[3]}; --dv-orange-fill: ${P.orange[0]}; --dv-orange-stroke: ${P.orange[1]};
-  --dv-band: ${P.yellow[0]};
-  --dv-outline: #d4d4d4; --dv-active-outline: ${P.yellow[3]}; --dv-accent-outline: ${P.blue[3]}; --dv-success-outline: ${P.green[3]};
-  --dv-danger-outline: ${P.red[3]}; --dv-visited-outline: ${P.purple[3]}; --dv-orange-outline: ${P.orange[3]}; --dv-muted-outline: #e5e5e5;`;
-
-const DARK = `
-  --dv-fg: #fff; --dv-muted: #8c8c8c; --dv-faint: #4c4c4c; --dv-surface: #1e1e1e; --dv-muted-fill: #2a2a2a;
-  --dv-stroke: #f2f2f2; --dv-edge: #f2f2f2; --dv-halo: #1e1e1e; --dv-grid: #333;
-  --dv-curve: #7491ff; --dv-area: color-mix(in srgb, #7491ff 35%, transparent); --dv-point: #ff8871;
-  --dv-active: ${P.yellow[1]}; --dv-active-fill: #b78900; --dv-active-stroke: #f2f2f2;
-  --dv-accent: #7491ff; --dv-accent-fill: #375ce3; --dv-accent-stroke: #f2f2f2;
-  --dv-success: ${P.green[1]}; --dv-success-fill: #15b441; --dv-success-stroke: #f2f2f2;
-  --dv-danger: ${P.red[1]}; --dv-danger-fill: #e14b4b; --dv-danger-stroke: #f2f2f2;
-  --dv-visited: ${P.purple[1]}; --dv-visited-fill: #874de5; --dv-visited-stroke: #f2f2f2;
-  --dv-orange: ${P.orange[1]}; --dv-orange-fill: #673404; --dv-orange-stroke: #ce6809;
-  --dv-band: #5c4400;
-  --dv-outline: #4c4c4c; --dv-active-outline: #5c4400; --dv-accent-outline: #142563; --dv-success-outline: #004e16;
-  --dv-danger-outline: #621c1c; --dv-visited-outline: #381d66; --dv-orange-outline: #291502; --dv-muted-outline: #333;`;
+// Every variable with its light and dark value side by side. The default
+// stylesheet joins each pair with light-dark(); THEME_VARS keeps the two
+// columns apart for a standalone SVG, which pins one of them as plain colours.
+const VARS: [name: string, light: string, dark: string][] = [
+  ['fg', '#000', '#fff'],
+  ['muted', '#999', '#8c8c8c'],
+  ['faint', '#ccc', '#4c4c4c'],
+  ['surface', '#fff', '#1e1e1e'],
+  ['muted-fill', '#f2f2f2', '#2a2a2a'],
+  ['stroke', '#000', '#f2f2f2'],
+  ['edge', '#000', '#f2f2f2'],
+  ['halo', '#fff', '#1e1e1e'],
+  ['grid', '#e5e5e5', '#333'],
+  ['curve', P.blue[2], '#7491ff'],
+  ['area', `color-mix(in srgb, ${P.blue[1]} 70%, transparent)`, 'color-mix(in srgb, #7491ff 35%, transparent)'],
+  ['point', '#ff775c', '#ff8871'],
+  ['active', P.yellow[3], P.yellow[1]],
+  ['active-fill', P.yellow[1], '#b78900'],
+  ['active-stroke', '#000', '#f2f2f2'],
+  ['accent', P.blue[2], '#7491ff'],
+  ['accent-fill', P.blue[1], '#375ce3'],
+  ['accent-stroke', '#000', '#f2f2f2'],
+  ['success', P.green[3], P.green[1]],
+  ['success-fill', P.green[1], '#15b441'],
+  ['success-stroke', '#000', '#f2f2f2'],
+  ['danger', P.red[3], P.red[1]],
+  ['danger-fill', P.red[1], '#e14b4b'],
+  ['danger-stroke', '#000', '#f2f2f2'],
+  ['visited', P.purple[3], P.purple[1]],
+  ['visited-fill', P.purple[1], '#874de5'],
+  ['visited-stroke', '#000', '#f2f2f2'],
+  ['orange', P.orange[3], P.orange[1]],
+  ['orange-fill', P.orange[0], '#673404'],
+  ['orange-stroke', P.orange[1], '#ce6809'],
+  ['band', P.yellow[0], '#5c4400'],
+  ['outline', '#d4d4d4', '#4c4c4c'],
+  ['active-outline', P.yellow[3], '#5c4400'],
+  ['accent-outline', P.blue[3], '#142563'],
+  ['success-outline', P.green[3], '#004e16'],
+  ['danger-outline', P.red[3], '#621c1c'],
+  ['visited-outline', P.purple[3], '#381d66'],
+  ['orange-outline', P.orange[3], '#291502'],
+  ['muted-outline', '#e5e5e5', '#333'],
+];
+const declarations = (pick: (light: string, dark: string) => string) =>
+  VARS.map(([name, light, dark]) => `  --dv-${name}: ${pick(light, dark)};`).join('\n');
+const BOTH = declarations((light, dark) => `light-dark(${light}, ${dark})`);
+const LIGHT = declarations((light) => light);
+const DARK = declarations((_, dark) => dark);
 
 /*
  * Outlines: solid things (array cells, tree and graph nodes, UML boxes, system
@@ -81,7 +107,7 @@ const LIFTED = 'drop-shadow(0 6px 8px rgb(0 0 0 / .16))';
 const OUTLINES = /* css */ `
 ${R} ${SOLID} { stroke: var(--dv-co, var(--dv-outline)); stroke-width: 2px; }
 ${R} ${SOLID}.dv-tone-muted { --dv-co: var(--dv-muted-outline); }
-${R} ${SOLID}.dv-interactive:hover { filter: brightness(.97); stroke-width: 2px; }
+${R} ${SOLID}.dv-interactive:hover { filter: brightness(var(--dv-hover)); stroke-width: 2px; }
 ${R} ${SOLID}.dv-grabbed { filter: ${LIFTED}; }
 /* cards (UML boxes, sequence heads) and system components */
 ${R} .dv-rect.dv-role-card { stroke: var(--dv-co, var(--dv-outline)); stroke-width: 2px; }
@@ -98,19 +124,22 @@ export const DEFAULT_CSS = /* css */ `
   --dv-font: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --dv-mono: "Source Code Pro", ui-monospace, "SF Mono", Menlo, monospace;
   --dv-math-font: "STIX Two Text", "Latin Modern Roman", "Cambria Math", "Times New Roman", serif;
-  --dv-stroke-w: 1.5px;${LIGHT}
+  --dv-stroke-w: 1.5px;
+${BOTH}
   font-family: var(--dv-font);
 }
+/* The one theme difference that is not a colour: a hovered shape darkens a
+   little on a light page and brightens on a dark one, and light-dark() only
+   makes colours. So a registered probe colour carries the scheme (registered,
+   so it computes to a real colour), and a style query on the diagram's root
+   reads it back. A browser without style queries keeps the light nudge. */
+@property --dv-scheme { syntax: '\\3c color\\3e'; inherits: true; initial-value: #fff; } /* the string is "color" in angle brackets, escaped: this sheet may hold no "less than" sign, see toSVG */
+.dv-root, .dvc { --dv-scheme: light-dark(#fff, #000); --dv-hover: .96; }
+@container style(--dv-scheme: #000) { .dv-root *, .dvc * { --dv-hover: 1.15; } }
 .dv-root { overflow: visible; }
 /* the svg itself can take focus on click in Chromium; only its draggable parts are real focus targets */
 .dv-root:focus { outline: none; }
 .dv-root.dv-clip { overflow: hidden; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]):not(.light) :is(.dv-root, .dvc) {${DARK}
-  }
-}
-:root[data-theme="dark"] :is(.dv-root, .dvc), :root.dark :is(.dv-root, .dvc), .dark :is(.dv-root, .dvc) {${DARK}
-}
 
 /* ── 2. base rules ─────────────────────────────────────────────── */
 .dv { transition: fill .25s ease, stroke .25s ease, filter .12s ease, transform .12s ease; }
@@ -271,8 +300,7 @@ ${TONES.map(toneVars).join('\n')}
 /* uml: use case, activity, component */
 .dv-path:is(.dv-role-usecase, .dv-role-decision) { fill: var(--dv-surface); stroke: var(--dv-co, var(--dv-outline)); stroke-width: 2px; }
 .dv-path:is(.dv-role-usecase, .dv-role-decision)${anyTone} { fill: color-mix(in srgb, var(--dv-cf) 55%, var(--dv-surface)); }
-.dv-path:is(.dv-role-usecase, .dv-role-decision).dv-interactive:hover { filter: brightness(.96); }
-:is(:root[data-theme="dark"], .dark) .dv-path:is(.dv-role-usecase, .dv-role-decision).dv-interactive:hover { filter: brightness(1.15); }
+.dv-path:is(.dv-role-usecase, .dv-role-decision).dv-interactive:hover { filter: brightness(var(--dv-hover)); }
 .dv-rect.dv-role-boundary { fill: none; stroke: var(--dv-stroke); stroke-width: 1.5px; pointer-events: none; }
 .dv-rect.dv-role-boundary${anyTone} { fill: color-mix(in srgb, var(--dv-cf) 12%, transparent); stroke: var(--dv-c); }
 .dv-text.dv-role-lane-name { font-weight: 700; }
@@ -362,8 +390,7 @@ ${TONES.map(toneVars).join('\n')}
 
 /* interactive: clickable shapes get a pointer and a gentle hover; nothing else changes */
 .dv-interactive { cursor: pointer; }
-:is(.dv-rect, .dv-circle).dv-interactive:not(.dv-role-hit, .dv-role-universe):hover { filter: brightness(.96); stroke-width: 2px; }
-:is(:root[data-theme="dark"], .dark) :is(.dv-rect, .dv-circle).dv-interactive:not(.dv-role-hit, .dv-role-universe):hover { filter: brightness(1.15); }
+:is(.dv-rect, .dv-circle).dv-interactive:not(.dv-role-hit, .dv-role-universe):hover { filter: brightness(var(--dv-hover)); stroke-width: 2px; }
 .dv-path.dv-role-region.dv-interactive { cursor: pointer; }
 .dv-path.dv-role-region.dv-interactive:hover { fill: color-mix(in srgb, var(--dv-cf, var(--dv-active-fill)) 60%, transparent); }
 .dv-draggable { cursor: grab; touch-action: none; }
@@ -373,8 +400,10 @@ ${OUTLINES}
 `;
 
 /**
- * The variables of each theme as one CSS declaration list, for pinning a theme
- * where no ancestor can say `.dark` (a standalone SVG file: see toSVG).
+ * The variables of one theme as plain colours, one CSS declaration list each,
+ * for pinning a theme on a standalone SVG file (see toSVG): a viewer that is
+ * not a browser may not know light-dark(), and inline plain colours beat the
+ * stylesheet's either way.
  */
 export const THEME_VARS: Record<'light' | 'dark', string> = { light: LIGHT.trim(), dark: DARK.trim() };
 

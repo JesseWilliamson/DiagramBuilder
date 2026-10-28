@@ -1,9 +1,9 @@
 // A binary search tree you can grow. The tree is your own plain object; dsviz only lays it out.
 // New nodes grow out of their parent because the layout gives them `enter` = the parent's position.
 import { useEffect, useRef, useState } from 'react';
-import { Tone } from '@dsviz/core';
-import { binaryTree, BinaryTreeNode } from '@dsviz/ds';
-import { Button, Diagram, NumberStepper } from '@dsviz/react';
+import { Tone } from 'dsviz';
+import { binaryTree, BinaryTreeNode } from 'dsviz/ds';
+import { Button, Diagram, NumberStepper } from 'dsviz/react';
 
 type Node = { key: number; left: Node | null; right: Node | null };
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { PathNode, Scene, SceneNode } from '@dsviz/core';
-import { activity, ActivityFlow, ActivityNode, activitySize, component, COMPONENT, componentSize, Connection, ellipsePoints, UmlComponent, useCase, UseCaseActor, UseCaseOval, UseCaseRelation } from '@dsviz/uml';
+import { PathNode, Scene, SceneNode } from 'dsviz';
+import { activity, ActivityFlow, ActivityNode, activitySize, component, COMPONENT, componentSize, Connection, ellipsePoints, UmlComponent, useCase, UseCaseActor, UseCaseOval, UseCaseRelation } from 'dsviz/uml';
 
 const find = (s: Scene, id: string): SceneNode => {
   const n = s.nodes.find((n) => n.id === id);

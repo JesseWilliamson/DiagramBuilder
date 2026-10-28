@@ -1,9 +1,9 @@
 // Filling a dynamic-programming table: the longest common subsequence of two strings.
 // dp[i][j] = LCS length of the first i letters of A and the first j letters of B.
 import { useMemo, useState } from 'react';
-import { arrow, combine, fitViewBox, vnorm, vsub } from '@dsviz/core';
-import { grid } from '@dsviz/ds';
-import { Diagram, TextInput, Transport, usePlayer } from '@dsviz/react';
+import { arrow, combine, fitViewBox, vnorm, vsub } from 'dsviz';
+import { grid } from 'dsviz/ds';
+import { Diagram, TextInput, Transport, usePlayer } from 'dsviz/react';
 
 type Cell = [number, number];
 

@@ -2,39 +2,39 @@
  * Turn a demo's source text into a React component, in the browser.
  *
  * sucrase strips the TypeScript, turns JSX into jsx() calls and turns
- * `import { x } from '@dsviz/core'` into `const { x } = require('@dsviz/core')`. We then
+ * `import { x } from 'dsviz'` into `const { x } = require('dsviz')`. We then
  * run the result with a tiny `require` that hands back the real modules. So
  * the code you edit is exactly the code an app would write, imports and all.
  */
 import * as React from 'react';
 import * as jsxRuntime from 'react/jsx-runtime';
 import { transform } from 'sucrase';
-import * as core from '@dsviz/core';
-import * as layout from '@dsviz/layout';
-import * as ds from '@dsviz/ds';
-import * as plot from '@dsviz/plot';
-import * as prob from '@dsviz/prob';
-import * as geom from '@dsviz/geom';
-import * as os from '@dsviz/os';
-import * as arch from '@dsviz/arch';
-import * as uml from '@dsviz/uml';
-import * as git from '@dsviz/git';
-import * as dsvizReact from '@dsviz/react';
+import * as core from 'dsviz';
+import * as layout from 'dsviz/layout';
+import * as ds from 'dsviz/ds';
+import * as plot from 'dsviz/plot';
+import * as prob from 'dsviz/prob';
+import * as geom from 'dsviz/geom';
+import * as os from 'dsviz/os';
+import * as arch from 'dsviz/arch';
+import * as uml from 'dsviz/uml';
+import * as git from 'dsviz/git';
+import * as dsvizReact from 'dsviz/react';
 
 const modules: Record<string, unknown> = {
   react: React,
   'react/jsx-runtime': jsxRuntime,
-  '@dsviz/core': core,
-  '@dsviz/layout': layout,
-  '@dsviz/ds': ds,
-  '@dsviz/plot': plot,
-  '@dsviz/prob': prob,
-  '@dsviz/geom': geom,
-  '@dsviz/os': os,
-  '@dsviz/arch': arch,
-  '@dsviz/uml': uml,
-  '@dsviz/git': git,
-  '@dsviz/react': dsvizReact,
+  'dsviz': core,
+  'dsviz/layout': layout,
+  'dsviz/ds': ds,
+  'dsviz/plot': plot,
+  'dsviz/prob': prob,
+  'dsviz/geom': geom,
+  'dsviz/os': os,
+  'dsviz/arch': arch,
+  'dsviz/uml': uml,
+  'dsviz/git': git,
+  'dsviz/react': dsvizReact,
 };
 
 export function compile(source: string): React.ComponentType {

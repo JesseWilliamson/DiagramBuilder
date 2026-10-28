@@ -8,7 +8,7 @@ A trace is a list of calls with depths (from logs, a profiler, or a debugger). T
 `call` message and each finished call into a `return`, so the activation bars come out right.
 
 ```ts
-import { Message, sequence } from '@dsviz/uml';
+import { Message, sequence } from 'dsviz/uml';
 
 type Call = { caller: string; callee: string; fn: string; result?: string; children?: Call[] };
 
@@ -34,7 +34,7 @@ To step through it, pass `upTo: i` and keep the camera fixed: `fitViewBox(sequen
 ## 2. Architecture with zones
 
 ```ts
-import { Component, Link, Zone, architecture } from '@dsviz/arch';
+import { Component, Link, Zone, architecture } from 'dsviz/arch';
 
 const parts: Component[] = [
   { id: 'user', kind: 'user', label: 'Customer' },
@@ -60,7 +60,7 @@ Animate a request: keep a packet's id and move it with `a.along('lb', 'api', t)`
 ## 3. A layered DAG (dependencies, blast radius)
 
 ```ts
-import { graph } from '@dsviz/ds';
+import { graph } from 'dsviz/ds';
 
 const nodes = [
   { id: 'parseConfig', kind: 'changed' }, { id: 'loadSettings', kind: 'downstream' },
@@ -81,7 +81,7 @@ Need only positions (to draw something else)? `layered(nodes, edges).pos(id)`.
 ## 4. A git graph: what a rebase does
 
 ```ts
-import { Commit, Ref, graph as gitGraph } from '@dsviz/git';
+import { Commit, Ref, graph as gitGraph } from 'dsviz/git';
 
 const before: Commit[] = [
   { hash: 'c3', parents: ['c2'], label: 'Fix login redirect' },
@@ -108,8 +108,8 @@ Two copies of one family in one scene need different ids; keys that follow the v
 readable, and the same `draw` for both keeps the layout identical.
 
 ```ts
-import { combine, text, translate } from '@dsviz/core';
-import { array } from '@dsviz/ds';
+import { combine, text, translate } from 'dsviz';
+import { array } from 'dsviz/ds';
 
 const draw = (id: string, values: number[], keys: string[], y: number, title: string, lit: number[]) =>
   combine(
@@ -133,9 +133,9 @@ changes, so one fixed camera fits every step.
 
 ```tsx
 import { useMemo } from 'react';
-import { fitViewBox } from '@dsviz/core';
-import { Diagram, Transport, usePlayer } from '@dsviz/react';
-import { ActivityFlow, ActivityNode, activity } from '@dsviz/uml';
+import { fitViewBox } from 'dsviz';
+import { Diagram, Transport, usePlayer } from 'dsviz/react';
+import { ActivityFlow, ActivityNode, activity } from 'dsviz/uml';
 
 const nodes: ActivityNode[] = [
   { id: 'start', kind: 'start' }, { id: 'read', label: 'Read request' }, { id: 'ok', kind: 'decision' },
@@ -174,8 +174,8 @@ lets one `if` pick the branch.
 ## 7. Embedding in React with a dark theme mapped from app tokens
 
 ```tsx
-import { Diagram } from '@dsviz/react';
-import { Scene, toSVG } from '@dsviz/core';
+import { Diagram } from 'dsviz/react';
+import { Scene, toSVG } from 'dsviz';
 
 // once, in the app's CSS: dsviz reads only these variables
 // .app .dv-root, .app .dvc { --dv-surface: var(--bg-panel); --dv-fg: var(--text); --dv-muted: var(--text-muted);

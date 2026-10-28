@@ -1,8 +1,8 @@
 // Keys decide what moves. Turn "stable keys" off and the numbers change in place instead.
 import { useMemo, useState } from 'react';
-import { combine, fitViewBox } from '@dsviz/core';
-import { array, pointer } from '@dsviz/ds';
-import { Button, Diagram, Switch, Transport, usePlayer } from '@dsviz/react';
+import { combine, fitViewBox } from 'dsviz';
+import { array, pointer } from 'dsviz/ds';
+import { Button, Diagram, Switch, Transport, usePlayer } from 'dsviz/react';
 
 type Item = { value: number; key: string };
 

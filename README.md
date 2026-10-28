@@ -5,7 +5,7 @@ dsviz lays it out, draws it, and animates every change.
 
 It is built in three layers, like Radix and shadcn:
 
-- **Headless primitives** (`@dsviz/core`): `rect`, `circle`, `text`, `arrow`, `path`, a keyed renderer that
+- **Headless primitives** (`dsviz`): `rect`, `circle`, `text`, `arrow`, `path`, a keyed renderer that
   tweens by id, a camera, a step player, connectors. No dependencies, no opinions about looks.
 - **Family layouts** (one package each): pure functions from your state to a scene, with anchors to attach
   things to.
@@ -23,13 +23,13 @@ memory.
 ## Install
 
 ```sh
-npm install @dsviz/core @dsviz/react @dsviz/ds     # react >= 18 is a peer dependency
+npm install dsviz     # react >= 18 is a peer dependency
 ```
 
 ```tsx
-import { combine } from '@dsviz/core';
-import { array, pointer } from '@dsviz/ds';
-import { Diagram } from '@dsviz/react';
+import { combine } from 'dsviz';
+import { array, pointer } from 'dsviz/ds';
+import { Diagram } from 'dsviz/react';
 
 export function Example() {
   const arr = array([3, 8, 12, 17], { tones: { 2: 'active' } });
@@ -40,31 +40,32 @@ export function Example() {
 Render a new scene and every node that kept its id slides to its new place. Colours are CSS variables
 (`--dv-*`) you can override; dark mode follows the page's `color-scheme` (`.dark { color-scheme: dark }` in your app's CSS).
 
-To copy a ready-made diagram into your app instead: `npx @dsviz/cli add binary-search`.
+To copy a ready-made diagram into your app instead: `npx dsviz add binary-search`.
 
 ## Packages
 
-All versioned together; each exports its functions flat (`import { fn } from '@dsviz/plot'`).
+One npm package; each family is a subpath export with flat functions (`import { fn } from 'dsviz/plot'`), so
+what you do not import is not bundled.
 
 | Package | Contents |
 |---|---|
-| `@dsviz/core` | scene primitives, renderer, camera, player, connectors, `toSVG` |
-| `@dsviz/layout` | `layered` (DAG layout), `tidy` (tree layout) |
-| `@dsviz/ds` | `array pointer linkedList binaryTree tree graph grid stack queue hashMap` |
-| `@dsviz/plot` | `plane axes fn point segment vector tangent area riemann integrate label` |
-| `@dsviz/prob` | `bars sampleSpace diePips probTree venn2` |
-| `@dsviz/geom` | `polygon segment tickMarks angleMark circle pointLabel` and construction helpers |
-| `@dsviz/os` | `simulate gantt stackHeap memory hex` |
-| `@dsviz/arch` | `architecture component zone packet` |
-| `@dsviz/uml` | `sequence classDiagram stateMachine useCase activity component deployment er` |
-| `@dsviz/git` | `graph gitLanes` |
-| `@dsviz/react` | `Diagram usePlayer useTicker useBurst`, controls, `Transport`, `CodeTrace`, `MathText` |
+| `dsviz` | scene primitives, renderer, camera, player, connectors, `toSVG` |
+| `dsviz/layout` | `layered` (DAG layout), `tidy` (tree layout) |
+| `dsviz/ds` | `array pointer linkedList binaryTree tree graph grid stack queue hashMap` |
+| `dsviz/plot` | `plane axes fn point segment vector tangent area riemann integrate label` |
+| `dsviz/prob` | `bars sampleSpace diePips probTree venn2` |
+| `dsviz/geom` | `polygon segment tickMarks angleMark circle pointLabel` and construction helpers |
+| `dsviz/os` | `simulate gantt stackHeap memory hex` |
+| `dsviz/arch` | `architecture component zone packet` |
+| `dsviz/uml` | `sequence classDiagram stateMachine useCase activity component deployment er` |
+| `dsviz/git` | `graph gitLanes` |
+| `dsviz/react` | `Diagram usePlayer useTicker useBurst`, controls, `Transport`, `CodeTrace`, `MathText` |
 
 A family depends on core (and layout, if it places boxes) and on nothing else.
 
 ### For coding agents
 
-This repo holds a Claude skill (`.claude/skills/dsviz/`) that covers every package. Copy it into another
+This repo holds a Claude skill (`.claude/skills/dsviz/`) that covers every family. Copy it into another
 repository with `npm run sync:skill -- <repo>` from a checkout and agents there will know how to draw with
 dsviz.
 

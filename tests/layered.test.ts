@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { architecture } from '@dsviz/arch';
-import { graph } from '@dsviz/ds';
-import { layered, pack } from '@dsviz/layout';
-import { classDiagram } from '@dsviz/uml';
+import { architecture } from 'dsviz/arch';
+import { graph } from 'dsviz/ds';
+import { layered, pack } from 'dsviz/layout';
+import { classDiagram } from 'dsviz/uml';
 
 /** A small deterministic PRNG (mulberry32), so the "random" graphs are the same every run. */
 function rng(seed: number) {
@@ -155,7 +155,7 @@ describe('graph shapes and kinds', () => {
     expect(g.nodes.find((n) => n.id === 'graph:node:x')?.role).toBeUndefined();
   });
   it('the stylesheet colours the four built-in kinds', async () => {
-    const { DEFAULT_CSS } = await import('@dsviz/core');
+    const { DEFAULT_CSS } = await import('dsviz');
     for (const k of ['changed', 'upstream', 'downstream', 'test']) expect(DEFAULT_CSS).toContain(`.dv-role-node-${k}`);
   });
 });

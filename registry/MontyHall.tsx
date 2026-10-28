@@ -1,9 +1,9 @@
 // The Monty Hall problem. A car is behind one door, goats behind the others.
 // Pick a door; the host (who knows) opens a goat door; then stay or switch.
 import { useState } from 'react';
-import { combine, rect, text } from '@dsviz/core';
-import { bars } from '@dsviz/prob';
-import { Button, Diagram, useBurst } from '@dsviz/react';
+import { combine, rect, text } from 'dsviz';
+import { bars } from 'dsviz/prob';
+import { Button, Diagram, useBurst } from 'dsviz/react';
 
 type Stage = 'pick' | 'offer' | 'done';
 const DW = 92, DH = 130, GAP = 22;

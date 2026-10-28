@@ -1,9 +1,9 @@
 // A test that is "99% accurate" can still be wrong most of the time it says yes.
 // The tree multiplies along each path; Bayes' rule is just "of the + leaves, how much is sick?"
 import { useState } from 'react';
-import { combine, rect, text } from '@dsviz/core';
-import { probTree } from '@dsviz/prob';
-import { Diagram, MathText, Slider } from '@dsviz/react';
+import { combine, rect, text } from 'dsviz';
+import { probTree } from 'dsviz/prob';
+import { Diagram, MathText, Slider } from 'dsviz/react';
 
 const pct = (p: number) => `${+(p * 100).toFixed(p < 0.01 ? 2 : 1)}%`;
 

@@ -1,8 +1,8 @@
 // A web shop's use cases. Click an actor to see what they can do: the cases they
 // are linked to, and anything those include or are extended by. Toggle the boundary.
 import { useState } from 'react';
-import { Diagram, Switch } from '@dsviz/react';
-import { useCase, UseCaseActor, UseCaseOval, UseCaseRelation } from '@dsviz/uml';
+import { Diagram, Switch } from 'dsviz/react';
+import { useCase, UseCaseActor, UseCaseOval, UseCaseRelation } from 'dsviz/uml';
 
 const actors: UseCaseActor[] = [
   { id: 'customer', name: 'Customer' },

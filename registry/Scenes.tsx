@@ -3,8 +3,8 @@
 //   new id   → it fades in (here: drops in from above)
 //   gone id  → it fades out (here: falls away)
 import { useState } from 'react';
-import { circle, rect, SceneNode, text, Tone } from '@dsviz/core';
-import { Button, Diagram } from '@dsviz/react';
+import { circle, rect, SceneNode, text, Tone } from 'dsviz';
+import { Button, Diagram } from 'dsviz/react';
 
 type Item = { id: number; shape: 'circle' | 'square'; tone: Tone };
 const tones: Tone[] = ['active', 'accent', 'success', 'danger', 'visited'];

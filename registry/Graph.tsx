@@ -1,9 +1,9 @@
 // BFS and DFS on a graph you can drag. Positions are ordinary state: dragging
 // writes a new position and the edges recompute around it.
 import { useState } from 'react';
-import { combine, text, V2 } from '@dsviz/core';
-import { array, graph } from '@dsviz/ds';
-import { Diagram, Segmented, Transport, usePlayer } from '@dsviz/react';
+import { combine, text, V2 } from 'dsviz';
+import { array, graph } from 'dsviz/ds';
+import { Diagram, Segmented, Transport, usePlayer } from 'dsviz/react';
 
 type Id = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I';
 const start: Record<Id, [number, number]> = {

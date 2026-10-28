@@ -2,9 +2,9 @@
 // deployed on them. Switch on a second server and a load balancer: nodes keep their ids, so the
 // ones already there slide over to make room instead of redrawing. Click a node to read what it runs.
 import { useState } from 'react';
-import { fitViewBox } from '@dsviz/core';
-import { Diagram, Switch } from '@dsviz/react';
-import { Artifact, DeployLink, DeployNode, deployment } from '@dsviz/uml';
+import { fitViewBox } from 'dsviz';
+import { Diagram, Switch } from 'dsviz/react';
+import { Artifact, DeployLink, DeployNode, deployment } from 'dsviz/uml';
 
 // Four rows, top to bottom: the client, the balancer's row (empty until it is switched on, so
 // nothing else has to move), the servers, the database. x/y are front-face centres.

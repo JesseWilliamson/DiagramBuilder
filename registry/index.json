@@ -6,8 +6,7 @@
     "group": "core",
     "file": "Scenes.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -17,9 +16,7 @@
     "group": "ds",
     "file": "BinarySearch.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/ds",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -29,8 +26,7 @@
     "group": "ds",
     "file": "WhyFast.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -40,9 +36,7 @@
     "group": "ds",
     "file": "BubbleSort.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/ds",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -52,9 +46,7 @@
     "group": "ds",
     "file": "HashMap.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/ds",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -64,9 +56,7 @@
     "group": "ds",
     "file": "LinkedList.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/ds",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -76,9 +66,7 @@
     "group": "ds",
     "file": "Bst.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/ds",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -88,8 +76,7 @@
     "group": "ds",
     "file": "TidyTree.tsx",
     "packages": [
-      "@dsviz/ds",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -99,9 +86,7 @@
     "group": "ds",
     "file": "Graph.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/ds",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -111,8 +96,7 @@
     "group": "ds",
     "file": "Layered.tsx",
     "packages": [
-      "@dsviz/ds",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -122,9 +106,7 @@
     "group": "ds",
     "file": "GraphColoring.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/ds",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -134,9 +116,7 @@
     "group": "ds",
     "file": "Lcs.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/ds",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -146,9 +126,7 @@
     "group": "plot",
     "file": "Tangent.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/plot",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -158,9 +136,7 @@
     "group": "plot",
     "file": "Riemann.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/plot",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -170,10 +146,7 @@
     "group": "plot",
     "file": "Vectors.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/geom",
-      "@dsviz/plot",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -183,9 +156,7 @@
     "group": "prob",
     "file": "Dice.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/prob",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -195,9 +166,7 @@
     "group": "prob",
     "file": "Venn.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/prob",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -207,9 +176,7 @@
     "group": "prob",
     "file": "Bayes.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/prob",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -219,9 +186,7 @@
     "group": "prob",
     "file": "Galton.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/prob",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -231,10 +196,7 @@
     "group": "prob",
     "file": "LargeNumbers.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/plot",
-      "@dsviz/prob",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -244,9 +206,7 @@
     "group": "prob",
     "file": "MontyHall.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/prob",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -256,8 +216,7 @@
     "group": "geom",
     "file": "Pythagoras.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -267,9 +226,7 @@
     "group": "geom",
     "file": "Triangle.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/geom",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -279,22 +236,17 @@
     "group": "geom",
     "file": "Inscribed.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/geom",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
     "name": "scheduling",
     "title": "CPU scheduling",
-    "description": "simulate (@dsviz/os) plus a Gantt chart keyed by process and segment.",
+    "description": "simulate (dsviz/os) plus a Gantt chart keyed by process and segment.",
     "group": "systems",
     "file": "Scheduling.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/ds",
-      "@dsviz/os",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -304,9 +256,7 @@
     "group": "systems",
     "file": "PythonMemory.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/os",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -316,10 +266,7 @@
     "group": "systems",
     "file": "Pointers.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/ds",
-      "@dsviz/os",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -329,9 +276,7 @@
     "group": "design",
     "file": "UmlArrows.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/react",
-      "@dsviz/uml"
+      "dsviz"
     ]
   },
   {
@@ -341,9 +286,7 @@
     "group": "design",
     "file": "ClassDiagram.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/react",
-      "@dsviz/uml"
+      "dsviz"
     ]
   },
   {
@@ -353,9 +296,7 @@
     "group": "design",
     "file": "Sequence.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/react",
-      "@dsviz/uml"
+      "dsviz"
     ]
   },
   {
@@ -365,9 +306,7 @@
     "group": "design",
     "file": "Checkout.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/react",
-      "@dsviz/uml"
+      "dsviz"
     ]
   },
   {
@@ -377,8 +316,7 @@
     "group": "design",
     "file": "StateMachine.tsx",
     "packages": [
-      "@dsviz/react",
-      "@dsviz/uml"
+      "dsviz"
     ]
   },
   {
@@ -388,9 +326,7 @@
     "group": "design",
     "file": "RequestFlow.tsx",
     "packages": [
-      "@dsviz/arch",
-      "@dsviz/core",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -400,9 +336,7 @@
     "group": "design",
     "file": "LoadBalancer.tsx",
     "packages": [
-      "@dsviz/arch",
-      "@dsviz/core",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -412,8 +346,7 @@
     "group": "design",
     "file": "ConsistentHashing.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -423,20 +356,17 @@
     "group": "design",
     "file": "TrustZones.tsx",
     "packages": [
-      "@dsviz/arch",
-      "@dsviz/core",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
     "name": "git-graph",
     "title": "Merge versus rebase",
-    "description": "graph from @dsviz/git: lanes by first parent, curved edges, branch pills. Commits are keyed by hash, so the switch animates.",
+    "description": "graph from dsviz/git: lanes by first parent, curved edges, branch pills. Commits are keyed by hash, so the switch animates.",
     "group": "design",
     "file": "GitGraph.tsx",
     "packages": [
-      "@dsviz/git",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -446,8 +376,7 @@
     "group": "design",
     "file": "GitLayouts.tsx",
     "packages": [
-      "@dsviz/git",
-      "@dsviz/react"
+      "dsviz"
     ]
   },
   {
@@ -457,9 +386,7 @@
     "group": "design",
     "file": "Polling.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/react",
-      "@dsviz/uml"
+      "dsviz"
     ]
   },
   {
@@ -469,9 +396,7 @@
     "group": "design",
     "file": "Deployment.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/react",
-      "@dsviz/uml"
+      "dsviz"
     ]
   },
   {
@@ -481,9 +406,7 @@
     "group": "design",
     "file": "Er.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/react",
-      "@dsviz/uml"
+      "dsviz"
     ]
   },
   {
@@ -493,8 +416,7 @@
     "group": "design",
     "file": "UseCase.tsx",
     "packages": [
-      "@dsviz/react",
-      "@dsviz/uml"
+      "dsviz"
     ]
   },
   {
@@ -504,9 +426,7 @@
     "group": "design",
     "file": "Activity.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/react",
-      "@dsviz/uml"
+      "dsviz"
     ]
   },
   {
@@ -516,9 +436,7 @@
     "group": "design",
     "file": "Component.tsx",
     "packages": [
-      "@dsviz/core",
-      "@dsviz/react",
-      "@dsviz/uml"
+      "dsviz"
     ]
   }
 ]

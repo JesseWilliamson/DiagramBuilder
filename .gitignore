@@ -2,4 +2,3 @@ node_modules/
 dist/
 site-dist/
 *.tgz
-packages/cli/registry/

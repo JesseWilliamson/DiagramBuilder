@@ -1,8 +1,8 @@
 // Reversing a linked list. Each arrow's id is the node it LEAVES, so flipping
 // `curr.next` swings that arrow round instead of replacing it.
-import { combine, fitViewBox, text, V2 } from '@dsviz/core';
-import { linkedList, listFromValues, ListNodeSpec, pointer } from '@dsviz/ds';
-import { CodeTrace, Diagram, Transport, usePlayer } from '@dsviz/react';
+import { combine, fitViewBox, text, V2 } from 'dsviz';
+import { linkedList, listFromValues, ListNodeSpec, pointer } from 'dsviz/ds';
+import { CodeTrace, Diagram, Transport, usePlayer } from 'dsviz/react';
 
 const values = [4, 8, 15, 16];
 

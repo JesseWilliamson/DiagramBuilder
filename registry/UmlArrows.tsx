@@ -1,9 +1,9 @@
 // The six UML relationships, each next to the code that creates it.
 // Click a row to highlight it. The markers come from connector(): RELATION_STYLE maps kind -> line + ends.
 import { useState } from 'react';
-import { combine, connector, rect, text } from '@dsviz/core';
-import { Diagram } from '@dsviz/react';
-import { RELATION_STYLE, RelationKind } from '@dsviz/uml';
+import { combine, connector, rect, text } from 'dsviz';
+import { Diagram } from 'dsviz/react';
+import { RELATION_STYLE, RelationKind } from 'dsviz/uml';
 
 const rows: Array<{ kind: RelationKind; a: string; b: string; code: string; reads: string }> = [
   { kind: 'inherits', a: 'Square', b: 'Rectangle', code: 'class Square extends Rectangle', reads: 'is a' },

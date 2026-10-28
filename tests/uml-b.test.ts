@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { Scene, SceneNode } from '@dsviz/core';
-import { Artifact, DEPLOY, DeployNode, NODE_DEPTH, headHeight, classSize, deployment } from '@dsviz/uml';
+import { Scene, SceneNode } from 'dsviz';
+import { Artifact, DEPLOY, DeployNode, NODE_DEPTH, headHeight, classSize, deployment } from 'dsviz/uml';
 
 const byRole = (s: Scene, role: string) => s.nodes.filter((n) => n.role === role);
 const get = (s: Scene, id: string) => s.nodes.find((n) => n.id === id);

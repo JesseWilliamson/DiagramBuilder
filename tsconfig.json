@@ -17,13 +17,16 @@
       "node"
     ],
     "paths": {
-      "@dsviz/*": [
-        "./packages/*/src/index.ts"
+      "dsviz": [
+        "./src/core/index.ts"
+      ],
+      "dsviz/*": [
+        "./src/*/index.ts"
       ]
     }
   },
   "include": [
-    "packages/*/src",
+    "src",
     "site",
     "tests",
     "registry"

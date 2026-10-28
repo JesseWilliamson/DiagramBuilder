@@ -3,8 +3,8 @@
 // many keys change owner, then compare with plain `hash(key) % N`.
 // Virtual nodes put each server on the ring several times, which evens out the load.
 import { useRef, useState } from 'react';
-import { circle, combine, path, rect, text, Tone } from '@dsviz/core';
-import { Button, Diagram, Segmented, Switch } from '@dsviz/react';
+import { circle, combine, path, rect, text, Tone } from 'dsviz';
+import { Button, Diagram, Segmented, Switch } from 'dsviz/react';
 
 // FNV-1a, then MurmurHash3's finaliser, scaled to [0, 1) = a position on the ring.
 // Plain FNV-1a barely changes its HIGH bits between 'user:1' and 'user:2', so

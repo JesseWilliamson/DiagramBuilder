@@ -1,6 +1,6 @@
 {
   "name": "@dsviz/prob",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Probability diagrams: bars, sample spaces, dice, probability trees, Venn diagrams",
   "author": "Jesse Williamson",
   "homepage": "https://jessewilliamson.github.io/DiagramBuilder/",
@@ -19,7 +19,7 @@
     "src"
   ],
   "dependencies": {
-    "@dsviz/core": "^3.0.0"
+    "@dsviz/core": "^3.0.1"
   },
   "repository": {
     "type": "git",

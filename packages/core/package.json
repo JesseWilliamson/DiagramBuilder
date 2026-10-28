@@ -1,6 +1,6 @@
 {
   "name": "@dsviz/core",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Headless core of dsviz: scene primitives, SVG renderer, camera, player",
   "author": "Jesse Williamson",
   "homepage": "https://jessewilliamson.github.io/DiagramBuilder/",

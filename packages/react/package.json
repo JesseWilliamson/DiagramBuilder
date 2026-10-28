@@ -1,6 +1,6 @@
 {
   "name": "@dsviz/react",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "React bindings for dsviz: Diagram, usePlayer and small controls",
   "author": "Jesse Williamson",
   "homepage": "https://jessewilliamson.github.io/DiagramBuilder/",
@@ -19,7 +19,7 @@
     "src"
   ],
   "dependencies": {
-    "@dsviz/core": "^3.0.0",
+    "@dsviz/core": "^3.0.1",
     "@radix-ui/react-select": "^2.4.1",
     "@radix-ui/react-slider": "^1.6.1",
     "@radix-ui/react-switch": "^1.4.1",

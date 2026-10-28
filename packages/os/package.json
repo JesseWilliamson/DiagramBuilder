@@ -1,6 +1,6 @@
 {
   "name": "@dsviz/os",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Operating-systems diagrams: scheduling Gantt charts, stack and heap, raw memory",
   "author": "Jesse Williamson",
   "homepage": "https://jessewilliamson.github.io/DiagramBuilder/",
@@ -19,7 +19,7 @@
     "src"
   ],
   "dependencies": {
-    "@dsviz/core": "^3.0.0"
+    "@dsviz/core": "^3.0.1"
   },
   "repository": {
     "type": "git",

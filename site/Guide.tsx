@@ -38,16 +38,16 @@ export function Guide() {
       </nav>
       <div className="doc-main">
         <h1>Guide</h1>
-        <p className="lede">dsviz draws interactive, animated SVG diagrams for teaching computer science: data structures and algorithms, UML, software architecture, git history, plots, probability, geometry, scheduling and memory. It is three layers: a headless core (primitives, renderer, camera, player), one package per family of diagrams (pure functions from your state to a scene), and copyable example components. The core has no dependencies; <code>@dsviz/react</code> is a thin wrapper.</p>
+        <p className="lede">dsviz draws interactive, animated SVG diagrams for teaching computer science: data structures and algorithms, UML, software architecture, git history, plots, probability, geometry, scheduling and memory. It is three layers: a headless core (primitives, renderer, camera, player), one package per family of diagrams (pure functions from your state to a scene), and copyable example components. The core has no dependencies; <code>dsviz/react</code> is a thin wrapper.</p>
 
         <Section id="start" title="First diagram">
-          <Code>{`npm install @dsviz/core @dsviz/ds @dsviz/react   # react >= 18 as a peer dependency`}</Code>
+          <Code>{`npm install dsviz dsviz/ds dsviz/react   # react >= 18 as a peer dependency`}</Code>
           <p>A diagram is a function from your state to a scene. Render it with <code>&lt;Diagram&gt;</code>; when the state changes, render again.</p>
           <Code>{`
 import { useState } from 'react';
-import { combine } from '@dsviz/core';
-import { array, pointer } from '@dsviz/ds';
-import { Diagram, Slider } from '@dsviz/react';
+import { combine } from 'dsviz';
+import { array, pointer } from 'dsviz/ds';
+import { Diagram, Slider } from 'dsviz/react';
 
 export function Example() {
   const [i, setI] = useState(2);
@@ -63,18 +63,18 @@ export function Example() {
         </Section>
 
         <Section id="packages" title="Packages">
-          <p>Each family is its own package and exports its functions flat, with no namespaces: <code>{"import { fn } from '@dsviz/plot'"}</code>. A family depends on <code>@dsviz/core</code> (and <code>@dsviz/layout</code> if it places boxes for you) and on nothing else, so an app installs only what it draws.</p>
+          <p>Each family is its own package and exports its functions flat, with no namespaces: <code>{"import { fn } from 'dsviz/plot'"}</code>. A family depends on <code>dsviz</code> (and <code>dsviz/layout</code> if it places boxes for you) and on nothing else, so an app installs only what it draws.</p>
           <ul>
-            <li><code>@dsviz/core</code>: <code>rect circle text arrow path</code>, <code>combine</code>, <code>connector</code>, <code>createView</code>, <code>toSVG</code>, <code>fitViewBox</code>, <code>createPlayer</code>, <code>handle</code></li>
-            <li><code>@dsviz/layout</code>: <code>layered</code> (DAGs) and <code>tidy</code> (trees); positions only.</li>
-            <li><code>@dsviz/ds</code>: <code>array pointer linkedList binaryTree tree graph grid stack queue hashMap</code>.</li>
-            <li><code>@dsviz/plot</code>, <code>@dsviz/prob</code>, <code>@dsviz/geom</code>: maths on a plane, probability, geometry.</li>
-            <li><code>@dsviz/os</code>: CPU scheduling (<code>simulate</code>, <code>gantt</code>) and memory (<code>stackHeap</code>, <code>memory</code>).</li>
-            <li><code>@dsviz/arch</code>: architecture diagrams. <code>@dsviz/git</code>: commit graphs.</li>
-            <li><code>@dsviz/uml</code>: eleven UML and ER diagrams (below).</li>
-            <li><code>@dsviz/react</code>: <code>&lt;Diagram&gt;</code>, <code>usePlayer</code>, controls.</li>
+            <li><code>dsviz</code>: <code>rect circle text arrow path</code>, <code>combine</code>, <code>connector</code>, <code>createView</code>, <code>toSVG</code>, <code>fitViewBox</code>, <code>createPlayer</code>, <code>handle</code></li>
+            <li><code>dsviz/layout</code>: <code>layered</code> (DAGs) and <code>tidy</code> (trees); positions only.</li>
+            <li><code>dsviz/ds</code>: <code>array pointer linkedList binaryTree tree graph grid stack queue hashMap</code>.</li>
+            <li><code>dsviz/plot</code>, <code>dsviz/prob</code>, <code>dsviz/geom</code>: maths on a plane, probability, geometry.</li>
+            <li><code>dsviz/os</code>: CPU scheduling (<code>simulate</code>, <code>gantt</code>) and memory (<code>stackHeap</code>, <code>memory</code>).</li>
+            <li><code>dsviz/arch</code>: architecture diagrams. <code>dsviz/git</code>: commit graphs.</li>
+            <li><code>dsviz/uml</code>: eleven UML and ER diagrams (below).</li>
+            <li><code>dsviz/react</code>: <code>&lt;Diagram&gt;</code>, <code>usePlayer</code>, controls.</li>
           </ul>
-          <p>Two packages sometimes use one name (<code>graph</code> in ds and git, <code>segment</code> in plot and geom): alias on import, <code>{"import { graph as gitGraph } from '@dsviz/git'"}</code>.</p>
+          <p>Two packages sometimes use one name (<code>graph</code> in ds and git, <code>segment</code> in plot and geom): alias on import, <code>{"import { graph as gitGraph } from 'dsviz/git'"}</code>.</p>
         </Section>
 
         <Section id="scenes" title="Scenes and ids">
@@ -93,7 +93,7 @@ arr.window(lo, hi);                                         // a band behind cel
 const p = plane({ x: [-4, 4], y: [-3, 3], width: 440, height: 300 });
 fn(p, Math.sin);                                       // world units, y up
 p.toWorld(e.x, e.y);                                        // drag position → maths coordinates`}</Code>
-          <p>The families are the packages above: data structures (<code>array, pointer, linkedList, binaryTree, tree, graph, grid, stack, queue, hashMap</code> in <code>@dsviz/ds</code>), then <code>@dsviz/plot</code>, <code>prob</code>, <code>geom</code>, <code>os</code>, <code>arch</code>, <code>uml</code> and <code>git</code>. See the <a href="#/api">API</a> for the full list.</p>
+          <p>The families are the packages above: data structures (<code>array, pointer, linkedList, binaryTree, tree, graph, grid, stack, queue, hashMap</code> in <code>dsviz/ds</code>), then <code>dsviz/plot</code>, <code>prob</code>, <code>geom</code>, <code>os</code>, <code>arch</code>, <code>uml</code> and <code>git</code>. See the <a href="#/api">API</a> for the full list.</p>
           <p>Ids inside a layout come from your data. <code>array</code> keys cells by index unless you pass <code>keys</code>; give each element a stable key and a swap becomes two tiles sliding past each other instead of two numbers changing in place.</p>
         </Section>
 
@@ -171,18 +171,18 @@ vector(p, O, proj, { id: 'r', label: 'proj_v u' })      // labels on marks are m
         </Section>
 
         <Section id="design" title="Architecture and layout">
-          <p><code>@dsviz/arch</code> draws system architecture (clients, load balancers, services, caches, databases, queues) and <code>@dsviz/uml</code> draws UML. Both are built on <code>connector()</code> from core, a line with a marker at either end. Each marker is a small shape with its own role (<code>end-solid</code>, <code>end-hollow</code>, <code>end-open</code>), and the line stops where the marker starts, so it never shows through a hollow triangle.</p>
+          <p><code>dsviz/arch</code> draws system architecture (clients, load balancers, services, caches, databases, queues) and <code>dsviz/uml</code> draws UML. Both are built on <code>connector()</code> from core, a line with a marker at either end. Each marker is a small shape with its own role (<code>end-solid</code>, <code>end-hollow</code>, <code>end-open</code>), and the line stops where the marker starts, so it never shows through a hollow triangle.</p>
           <Code>{`
-import { combine } from '@dsviz/core';
-import { architecture, packet } from '@dsviz/arch';
+import { combine } from 'dsviz';
+import { architecture, packet } from 'dsviz/arch';
 
 const a = architecture(components, links, { zones });
 combine(a, packet({ id: 'req', ...a.along('lb', 'app', 1) }));  // same id → it glides`}</Code>
-          <p>You place things (x, y), or leave x and y out: <code>graph(…, {"{ layout: 'layered' }"})</code>, <code>architecture</code> and every UML diagram that has boxes then use <code>layered</code> from <code>@dsviz/layout</code>, which puts each node one layer past everything that points at it, orders each layer to avoid crossings and bends long edges around the boxes in between. The layouts size boxes from their text and route the lines. Component colours come from the stylesheet by kind (<code>.dv-role-sys-db</code>), so a host app can restyle every database in one rule.</p>
+          <p>You place things (x, y), or leave x and y out: <code>graph(…, {"{ layout: 'layered' }"})</code>, <code>architecture</code> and every UML diagram that has boxes then use <code>layered</code> from <code>dsviz/layout</code>, which puts each node one layer past everything that points at it, orders each layer to avoid crossings and bends long edges around the boxes in between. The layouts size boxes from their text and route the lines. Component colours come from the stylesheet by kind (<code>.dv-role-sys-db</code>), so a host app can restyle every database in one rule.</p>
         </Section>
 
         <Section id="uml" title="UML diagrams">
-          <p><code>@dsviz/uml</code> has eleven diagram functions. Every one takes your data plus options, returns a scene, and returns <code>box(id)</code> or <code>frame(id)</code> so you can attach things to its boxes. Boxes without x and y are placed by <code>layered</code>. Ids come from your data, so a box that keeps its id moves instead of redrawing.</p>
+          <p><code>dsviz/uml</code> has eleven diagram functions. Every one takes your data plus options, returns a scene, and returns <code>box(id)</code> or <code>frame(id)</code> so you can attach things to its boxes. Boxes without x and y are placed by <code>layered</code>. Ids come from your data, so a box that keeps its id moves instead of redrawing.</p>
           <ul>
             <li><code>sequence</code>: lifelines and call / return / async messages; activation bars from the call stack; <code>fragments</code> (loop, alt, opt), <code>notes</code>; <code>upTo</code> reveals one message per step.</li>
             <li><code>classDiagram</code>: classes with attributes and methods; inherits, implements, composition, aggregation, association, dependency.</li>
@@ -194,7 +194,7 @@ combine(a, packet({ id: 'req', ...a.along('lb', 'app', 1) }));  // same id → i
             <li><code>er</code>: entity-relationship diagrams in crow's-foot notation, with primary and foreign keys and weak entities.</li>
           </ul>
           <Code>{`
-import { classDiagram, sequence } from '@dsviz/uml';
+import { classDiagram, sequence } from 'dsviz/uml';
 
 classDiagram(
   [{ id: 'Square', name: 'Square', x: 0, y: 200 }, { id: 'Rect', name: 'Rectangle', x: 0, y: 0, attributes: ['# w: number'] }],
@@ -205,7 +205,7 @@ sequence(people, messages, { upTo: player.frame });          // reveal one messa
         </Section>
 
         <Section id="git" title="Git history">
-          <p><code>graph(commits, refs)</code> from <code>@dsviz/git</code> draws a commit graph from <code>{'{ hash, parents, label }'}</code>, newest first, the order <code>git log</code> prints. Lanes follow the first-parent rule: a commit's first parent inherits its column, so a branch runs straight down and a branch on top of another continues its line; a merge's other parents open or join lanes. Commits are keyed by hash, so a before / after pair animates: a merge adds one dot, a rebase replaces dots.</p>
+          <p><code>graph(commits, refs)</code> from <code>dsviz/git</code> draws a commit graph from <code>{'{ hash, parents, label }'}</code>, newest first, the order <code>git log</code> prints. Lanes follow the first-parent rule: a commit's first parent inherits its column, so a branch runs straight down and a branch on top of another continues its line; a merge's other parents open or join lanes. Commits are keyed by hash, so a before / after pair animates: a merge adds one dot, a rebase replaces dots.</p>
           <Code>{`
 graph(
   [{ hash: 'm', parents: ['c', 'f'], label: 'Merge feature' }, { hash: 'c', parents: ['b'] }, { hash: 'f', parents: ['b'] }, { hash: 'b', parents: [] }],
@@ -218,8 +218,8 @@ graph(
 
         <Section id="vanilla" title="Without React">
           <Code>{`
-import { createView, toSVG } from '@dsviz/core';
-import { array } from '@dsviz/ds';
+import { createView, toSVG } from 'dsviz';
+import { array } from 'dsviz/ds';
 
 const view = createView(document.querySelector('svg'));
 view.render(array([1, 2, 3]));            // animate in the DOM

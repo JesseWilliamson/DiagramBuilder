@@ -1,10 +1,10 @@
 // Roll a die again and again. Early on the frequencies jump around; with more rolls they
 // settle toward 1/6 each, and the running average settles toward 3.5.
 import { useEffect, useMemo, useState } from 'react';
-import { combine, path, translate } from '@dsviz/core';
-import { axes, label, niceTicks, plane, segment } from '@dsviz/plot';
-import { bars } from '@dsviz/prob';
-import { Button, Diagram, Switch, useTicker } from '@dsviz/react';
+import { combine, path, translate } from 'dsviz';
+import { axes, label, niceTicks, plane, segment } from 'dsviz/plot';
+import { bars } from 'dsviz/prob';
+import { Button, Diagram, Switch, useTicker } from 'dsviz/react';
 
 const roll = () => 1 + Math.floor(Math.random() * 6);
 

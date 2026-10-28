@@ -3,8 +3,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createElement } from 'react';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import { createView, text, toSVG } from '@dsviz/core';
-import { Button, Diagram } from '@dsviz/react';
+import { createView, text, toSVG } from 'dsviz';
+import { Button, Diagram } from 'dsviz/react';
 
 const SVG = 'http://www.w3.org/2000/svg';
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -92,7 +92,7 @@ describe('toSVG themes', () => {
 
 describe('the stylesheet survives being embedded in SVG', () => {
   it('has no "<" (inside an <svg>, a <style> is parsed as markup), and toSVG wraps it in CDATA anyway', async () => {
-    const { DEFAULT_CSS } = await import('@dsviz/core');
+    const { DEFAULT_CSS } = await import('dsviz');
     expect(DEFAULT_CSS.includes('<')).toBe(false);
     // (happy-dom's XML parser can't read CDATA, so this checks the wrapper, not a parse)
     expect(toSVG({ nodes: [text({ id: 't', x: 0, y: 0, text: 'a < b' })] })).toMatch(/<style><!\[CDATA\[[^]*\]\]><\/style>/);
@@ -101,7 +101,7 @@ describe('the stylesheet survives being embedded in SVG', () => {
 
 describe('theme', () => {
   it('pairs every colour with light-dark() and keys nothing on a class or the OS', async () => {
-    const { DEFAULT_CSS, THEME_VARS } = await import('@dsviz/core');
+    const { DEFAULT_CSS, THEME_VARS } = await import('dsviz');
     expect(DEFAULT_CSS).toContain('--dv-fg: light-dark(#000, #fff);');
     expect(DEFAULT_CSS).not.toMatch(/prefers-color-scheme|data-theme|\.dark\b/);
     // the standalone export pins plain colours instead

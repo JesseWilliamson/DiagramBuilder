@@ -1,13 +1,67 @@
 {
-  "name": "dsviz-monorepo",
-  "private": true,
-  "version": "3.0.1",
-  "description": "Interactive, animated SVG teaching diagrams",
+  "name": "dsviz",
+  "version": "3.1.0",
+  "description": "Interactive, animated SVG teaching diagrams for computer science",
   "author": "Jesse Williamson",
   "homepage": "https://jessewilliamson.github.io/DiagramBuilder/",
   "type": "module",
-  "workspaces": [
-    "packages/*"
+  "sideEffects": false,
+  "main": "./dist/core/index.js",
+  "types": "./dist/core/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/core/index.js"
+    },
+    "./layout": {
+      "types": "./dist/layout/index.d.ts",
+      "import": "./dist/layout/index.js"
+    },
+    "./ds": {
+      "types": "./dist/ds/index.d.ts",
+      "import": "./dist/ds/index.js"
+    },
+    "./plot": {
+      "types": "./dist/plot/index.d.ts",
+      "import": "./dist/plot/index.js"
+    },
+    "./prob": {
+      "types": "./dist/prob/index.d.ts",
+      "import": "./dist/prob/index.js"
+    },
+    "./geom": {
+      "types": "./dist/geom/index.d.ts",
+      "import": "./dist/geom/index.js"
+    },
+    "./os": {
+      "types": "./dist/os/index.d.ts",
+      "import": "./dist/os/index.js"
+    },
+    "./arch": {
+      "types": "./dist/arch/index.d.ts",
+      "import": "./dist/arch/index.js"
+    },
+    "./uml": {
+      "types": "./dist/uml/index.d.ts",
+      "import": "./dist/uml/index.js"
+    },
+    "./git": {
+      "types": "./dist/git/index.d.ts",
+      "import": "./dist/git/index.js"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js"
+    }
+  },
+  "bin": {
+    "dsviz": "./bin/dsviz.js"
+  },
+  "files": [
+    "dist",
+    "src",
+    "bin",
+    "registry"
   ],
   "scripts": {
     "dev": "vite",
@@ -16,7 +70,25 @@
     "registry": "node scripts/registry.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "sync:skill": "node packages/core/scripts/sync-skill.mjs"
+    "sync:skill": "node scripts/sync-skill.mjs"
+  },
+  "dependencies": {
+    "@radix-ui/react-select": "^2.4.1",
+    "@radix-ui/react-slider": "^1.6.1",
+    "@radix-ui/react-switch": "^1.4.1",
+    "@radix-ui/react-toggle-group": "^1.2.1"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@codemirror/commands": "^6.11.1",
@@ -46,6 +118,9 @@
     "url": "git+https://github.com/JesseWilliamson/DiagramBuilder.git"
   },
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=18"
   }

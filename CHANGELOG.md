@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.1.0
+
+### Changed
+
+- **One package again.** The eleven `@dsviz/*` packages of 3.0.x are one npm package, `dsviz`, with
+  each family a subpath export: `dsviz` is the old `@dsviz/core`, and `@dsviz/<family>` is
+  `dsviz/<family>` (`dsviz/ds`, `dsviz/react`, ...). Exports stay flat and every file is still its own
+  ES module, so tree-shaking is unchanged; what changes is one `npm install dsviz`, one `npm publish`,
+  and `npx dsviz add <name>` for the copyable components. To migrate, replace `'@dsviz/core'` with
+  `'dsviz'` and `'@dsviz/` with `'dsviz/` in imports.
+
 ## 3.0.1
 
 ### Added

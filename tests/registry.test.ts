@@ -13,10 +13,10 @@ describe('registry/index.json', () => {
     expect(new Set(entries.map((e) => e.name)).size).toBe(entries.length);
     for (const e of entries) {
       expect(existsSync(`registry/${e.file}`), e.file).toBe(true);
-      for (const p of e.packages) expect(existsSync(`packages/${p.replace('@dsviz/', '')}/package.json`), `${e.name}: ${p}`).toBe(true);
+      expect(e.packages, e.name).toEqual(['dsviz']);
     }
   });
   it('reads packages from import lines', () => {
-    expect(packagesOf(`import { a } from '@dsviz/ds';\nimport x from 'react';\nimport { b } from './b';\nimport { c } from '@dsviz/core/sub';`)).toEqual(['@dsviz/core', '@dsviz/ds']);
+    expect(packagesOf(`import { a } from 'dsviz/ds';\nimport x from 'react';\nimport { b } from './b';\nimport { c } from '@scope/pkg/sub';`)).toEqual(['@scope/pkg', 'dsviz']);
   });
 });

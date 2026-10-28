@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { Frame, SceneNode, bounds, combine, estimateTextWidth } from '@dsviz/core';
-import { cardinalityMarker, er, ER_HEAD, ErEntity, ErRelationship, erSize, MARKER_LENGTH, Message, relationshipIds } from '@dsviz/uml';
+import { Frame, SceneNode, bounds, combine, estimateTextWidth } from 'dsviz';
+import { cardinalityMarker, er, ER_HEAD, ErEntity, ErRelationship, erSize, MARKER_LENGTH, Message, relationshipIds } from 'dsviz/uml';
 
 const ids = (d: { nodes: SceneNode[] }) => d.nodes.map((n) => n.id);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

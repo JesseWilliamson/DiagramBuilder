@@ -41,7 +41,7 @@ export const groups: Group[] = [
   {
     id: 'plot',
     title: 'Plots',
-    intro: 'plane (@dsviz/plot) maps maths coordinates (y up) to pixels. Axes, curves, points, tangents, areas and Riemann sums all take the plane.',
+    intro: 'plane (dsviz/plot) maps maths coordinates (y up) to pixels. Axes, curves, points, tangents, areas and Riemann sums all take the plane.',
     items: [
       { name: 'Tangent', title: 'Tangent lines', desc: 'Drag along the curve. Switching functions morphs the curve.' },
       { name: 'Riemann', title: 'Riemann sums', desc: 'Drag a and b, change n and the rule.' },
@@ -76,7 +76,7 @@ export const groups: Group[] = [
     title: 'Systems',
     intro: 'CPU scheduling and memory.',
     items: [
-      { name: 'Scheduling', title: 'CPU scheduling', desc: 'simulate (@dsviz/os) plus a Gantt chart keyed by process and segment.' },
+      { name: 'Scheduling', title: 'CPU scheduling', desc: 'simulate (dsviz/os) plus a Gantt chart keyed by process and segment.' },
       { name: 'PythonMemory', title: 'Names and objects', desc: 'Frames, heap objects and reference arrows.' },
       { name: 'Pointers', title: 'Pointer arithmetic', desc: 'The same bytes as char, int or double.' },
     ],
@@ -84,7 +84,7 @@ export const groups: Group[] = [
   {
     id: 'design',
     title: 'Software design',
-    intro: 'UML (classDiagram, sequence, stateMachine), system design (architecture, packet) and git history (graph from @dsviz/git). Lines and their end markers come from connector().',
+    intro: 'UML (classDiagram, sequence, stateMachine), system design (architecture, packet) and git history (graph from dsviz/git). Lines and their end markers come from connector().',
     items: [
       { name: 'UmlArrows', title: 'UML relationships', desc: 'The six arrows, each beside the code that creates it.' },
       { name: 'ClassDiagram', title: 'Class diagram', desc: 'Drag the classes; click one to see only its relationships.' },
@@ -95,7 +95,7 @@ export const groups: Group[] = [
       { name: 'LoadBalancer', title: 'Load balancing', desc: 'Round robin, least connections and random, with a slow server. Click a server to take it down.' },
       { name: 'ConsistentHashing', title: 'Consistent hashing', desc: 'Add or remove a server and count the keys that move, ring versus hash % N.' },
       { name: 'TrustZones', title: 'Trust boundaries', desc: 'Zones around machines and a sandbox. Step a job across and see which files may cross.' },
-      { name: 'GitGraph', title: 'Merge versus rebase', desc: 'graph from @dsviz/git: lanes by first parent, curved edges, branch pills. Commits are keyed by hash, so the switch animates.' },
+      { name: 'GitGraph', title: 'Merge versus rebase', desc: 'graph from dsviz/git: lanes by first parent, curved edges, branch pills. Commits are keyed by hash, so the switch animates.' },
       { name: 'GitLayouts', title: 'Ways to draw a commit graph', desc: 'One history, the layouts different clients use: straight or compact lanes, curves or corners, main pinned left, merged branches folded (click a merge), and a lane cap with git\'s ~ mark.' },
       { name: 'Polling', title: 'Polling in a loop', desc: 'A sequence diagram with a loop fragment that grows as the polls come back.' },
       // uml: deployment

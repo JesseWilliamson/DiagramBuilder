@@ -1,15 +1,15 @@
 # dsviz API reference
 
-Every function and type exported by the 11 packages, from their `src/index.ts`. Import each symbol from
-the package named in the heading (`import { fn } from '@dsviz/plot'`); there are no namespaces.
+Every function and type exported by the 11 families, from their `src/<family>/index.ts`. Import each symbol
+from the subpath named in the heading (`import { fn } from 'dsviz/plot'`); there are no namespaces.
 In the tables, `a / b` means "one of"; `?` marks an optional field; defaults follow `=`. Every option not
 marked required is optional. Each layout takes an `id` option (the prefix of its node ids) so two copies
 can share a scene.
 
-Names that two packages both export: `graph` (ds, git), `component` (arch: one box; uml: the diagram),
+Names that two families both export: `graph` (ds, git), `component` (arch: one box; uml: the diagram),
 `segment` (plot, geom), `circle` (core primitive, geom figure), `ToneSpec` / `resolveTone` (ds, prob).
 
-Common types (all from `@dsviz/core` unless noted):
+Common types (all from `dsviz` unless noted):
 
 ```ts
 type Vec = { x: number; y: number };
@@ -18,11 +18,11 @@ type Part = Scene | SceneNode | Part[] | null | undefined | false;
 interface Box { x: number; y: number; w: number; h: number }          // top-left + size
 interface Frame { x: number; y: number; w: number; h: number }        // CENTRE + size (what box(id) returns)
 type ViewBox = [x: number, y: number, w: number, h: number];
-type Key = string | number;                                           // @dsviz/ds
-type ToneSpec<K, V> = Record<string, Tone> | ((key: K, value: V) => Tone | undefined);   // @dsviz/ds, prob: { 2: 'active' } or a function
+type Key = string | number;                                           // dsviz/ds
+type ToneSpec<K, V> = Record<string, Tone> | ((key: K, value: V) => Tone | undefined);   // dsviz/ds, prob: { 2: 'active' } or a function
 ```
 
-## @dsviz/core
+## dsviz
 
 Headless: scene, renderer, camera, player, connectors. No dependencies.
 
@@ -117,7 +117,7 @@ Types: `View`, `ViewOptions`, `RenderOptions`, `ViewEvent`, `ViewEventType`, `To
 | `geometry feel` | the fixed look constants (corner scale, arrowhead, easing and duration); not options |
 | `describe tagFor classFor numericProps pointsOf bendControl arrowPath pointOnArrow` | renderer internals, exported so `toSVG` and `createView` agree; app code rarely needs them. Types `Description`, `SvgTag` |
 
-## @dsviz/layout
+## dsviz/layout
 
 Pure placement maths, no DOM, no drawing.
 
@@ -129,7 +129,7 @@ Pure placement maths, no DOM, no drawing.
 
 Types: `LayeredNode`, `LayeredEdge`, `LayeredOptions`, `LayeredLayout`, `TidyOptions`, `TidyPlacement`.
 
-## @dsviz/ds
+## dsviz/ds
 
 Data structures. `tones` on `array`, `stack`, `queue` is keyed by **index** (`{ 2: 'active' }` or
 `(i, value) => …`), not by the `keys` entry; `keys` only decides identity for animation.
@@ -158,7 +158,7 @@ Types: `Key`, `ToneSpec`, `ArrayOptions`, `ArrayDiagram`, `PointerOptions`, `Lis
 `NaryTreeDiagram`, `GraphNodeSpec`, `GraphEdgeSpec`, `GraphOptions`, `GraphDiagram`, `GridOptions`,
 `GridDiagram`, `HashMapOptions`, `HashMapDiagram`.
 
-## @dsviz/plot
+## dsviz/plot
 
 World coordinates (y up) through a `Plane`.
 
@@ -178,7 +178,7 @@ World coordinates (y up) through a `Plane`.
 
 Types: `Plane`, `PlaneOptions`, `AxesOptions`, `FnOptions`, `PointOptions`, `LineOptions`, `AreaOptions`, `RiemannRule`.
 
-## @dsviz/prob
+## dsviz/prob
 
 | Export | Signature | Returns |
 |---|---|---|
@@ -193,7 +193,7 @@ Types: `BarsOptions`, `BarsDiagram`, `SampleSpaceOptions`, `SampleSpaceDiagram`,
 `ProbTreeDiagram`, `Disc`, `VennRegion` (`'aOnly' / 'bOnly' / 'both' / 'neither'`), `VennOptions`, `ToneSpec`,
 `resolveTone`.
 
-## @dsviz/geom
+## dsviz/geom
 
 Figure parts in pixel coordinates.
 
@@ -209,7 +209,7 @@ Figure parts in pixel coordinates.
 
 Types: `PolygonOptions`, `SegmentOptions`, `AngleMarkOptions`.
 
-## @dsviz/os
+## dsviz/os
 
 | Export | Signature | Returns |
 |---|---|---|
@@ -223,7 +223,7 @@ Types: `Process`, `Policy`, `Segment`, `Tick`, `Stats`, `Schedule`, `GanttSegmen
 `StackFrame`, `HeapObject`, `MemValue`, `StackHeapOptions`, `StackHeapDiagram`, `MemoryGroup`, `MemoryOptions`,
 `MemoryDiagram`.
 
-## @dsviz/arch
+## dsviz/arch
 
 | Export | Signature |
 |---|---|
@@ -238,7 +238,7 @@ service cache db queue cdn storage file` (role `sys-<kind>`). `Link` = `{ from, 
 plain?, via?: Vec[] }`. `Zone` = `{ id, label, around: string[], padding?, tone? }`.
 Types: `ComponentKind`, `Component`, `Link`, `Zone`, `ArchitectureOptions`, `Architecture`.
 
-## @dsviz/uml
+## dsviz/uml
 
 Eleven diagrams. Every one returns a `Scene` plus `box(id)` or `frame(id)` (a `Frame`: centre + size), so
 you can connect and hit-test. Boxes without x/y are placed by `layered`.
@@ -289,7 +289,7 @@ Types: `Participant`, `Message`, `Note`, `Activation`, `Fragment`, `FragmentSect
 
 Sequence behaviour in detail (returns, self-calls, alt branches, note rows): SKILL.md "Sequence diagrams".
 
-## @dsviz/git
+## dsviz/git
 
 | Export | Signature |
 |---|---|
@@ -309,7 +309,7 @@ dashed node with a dashed line to HEAD; `kind: 'stash'` a dashed card.
 
 Types: `Commit`, `Ref`, `LaneStyle`, `LaneOptions`, `GitGraphOptions`, `LaneEdge`, `LanePlacement`, `GitGraph`, `CommitOrder`.
 
-## @dsviz/react
+## dsviz/react
 
 ```tsx
 <Diagram scene={Scene}

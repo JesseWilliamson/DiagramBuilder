@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { bounds } from '@dsviz/core';
-import { binaryTree, tree, treeFromLevelOrder } from '@dsviz/ds';
-import type { TreeNode } from '@dsviz/ds';
-import { tidy } from '@dsviz/layout';
+import { bounds } from 'dsviz';
+import { binaryTree, tree, treeFromLevelOrder } from 'dsviz/ds';
+import type { TreeNode } from 'dsviz/ds';
+import { tidy } from 'dsviz/layout';
 
 type N = { k: string; c?: N[] };
 const n = (k: string, ...c: N[]): N => ({ k, c });

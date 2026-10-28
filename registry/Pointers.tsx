@@ -1,10 +1,10 @@
 // Pointer arithmetic. `p + k` doesn't add k bytes: it adds k × sizeof(*p).
 // Switch the element type and watch the same 24 bytes regroup.
 import { useState } from 'react';
-import { combine } from '@dsviz/core';
-import { pointer } from '@dsviz/ds';
-import { memory } from '@dsviz/os';
-import { Diagram, Segmented, Slider } from '@dsviz/react';
+import { combine } from 'dsviz';
+import { pointer } from 'dsviz/ds';
+import { memory } from 'dsviz/os';
+import { Diagram, Segmented, Slider } from 'dsviz/react';
 
 const BASE = 0x7ffc1000, BYTES = 24;
 const types = {

@@ -1,22 +1,20 @@
 name: Publish to npm
 
-# Publishing a GitHub release publishes every package in packages/ (npm
-# workspaces). They share one version. The release's tag must be that version
-# (packages/core/package.json) with a v in front (v3.0.0 for 3.0.0), so the
+# Publishing a GitHub release publishes the package. The release's tag must be
+# its version (package.json) with a v in front (v3.1.0 for 3.1.0), so the
 # version on npm and the tag in git always name the same commit.
 #
 # It authenticates with npm Trusted Publishing: npm is told (on the package's
 # settings page) to trust this workflow in this repository, and GitHub hands
 # each run a short-lived OIDC token that npm exchanges for permission to
-# publish. Each @dsviz/* package needs its own trusted-publisher entry.
+# publish.
 # There is no npm token stored anywhere to leak. npm can only trust
-# a publisher for a package that exists, so the very first version of each
-# package is published by hand.
+# a publisher for a package that exists; dsviz does.
 #
 # Auth is OIDC only: setup-node gets no registry-url, so there is no .npmrc
 # and no token to fall back to. If the trusted login fails, the publish fails
 # with npm's own reason instead of a misleading 404. For it to succeed, the
-# packages' npm settings pages must list a trusted publisher for this
+# package's npm settings page must list a trusted publisher for this
 # repository and this workflow file (publish.yml).
 
 on:
@@ -43,19 +41,19 @@ jobs:
         env:
           TAG: ${{ github.event.release.tag_name }}
         run: |
-          version=$(node -p "require('./packages/core/package.json').version")
+          version=$(node -p "require('./package.json').version")
           if [ "$TAG" != "v$version" ]; then
-            echo "::error::release tag $TAG does not match packages/core/package.json version $version (expected v$version)"
+            echo "::error::release tag $TAG does not match package.json version $version (expected v$version)"
             exit 1
           fi
       - run: npm ci
       # Trusted Publishing needs npm 11.5.1 or later; Node 22 ships npm 10.
       - run: npm install -g npm@11
-      # Typecheck, test and build before anything is uploaded (the packages ship
-      # their dist/).
+      # Typecheck, test and build before anything is uploaded (the package ships
+      # its dist/).
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
       # --loglevel verbose prints npm's "oidc" lines, which say why npm turned
       # the trusted login down if it ever does.
-      - run: npm publish --workspaces --access public --loglevel verbose
+      - run: npm publish --access public --loglevel verbose

@@ -3,9 +3,9 @@
 // is where outside traffic comes in; a delegate hands it to the part inside. Click a component to
 // read its interfaces; switch "Inside" off to see the backend as one black box.
 import { useState } from 'react';
-import { fitViewBox } from '@dsviz/core';
-import { Diagram, Switch } from '@dsviz/react';
-import { component, Connection, UmlComponent } from '@dsviz/uml';
+import { fitViewBox } from 'dsviz';
+import { Diagram, Switch } from 'dsviz/react';
+import { component, Connection, UmlComponent } from 'dsviz/uml';
 
 // Positions are the centres of the boxes; a parent frame is drawn round its placed children.
 const open: UmlComponent[] = [

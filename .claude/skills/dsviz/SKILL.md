@@ -1,22 +1,22 @@
 ---
 name: dsviz
-description: Draw diagrams with the dsviz library (npm packages `@dsviz/*`), as SVG in a React app, in plain DOM, or as a standalone SVG string. Use this whenever a task asks for a diagram, figure or visual explanation in a project that depends on dsviz: UML (sequence, class, state machine, use case, activity, component, deployment), entity-relationship diagrams, architecture/system diagrams, dependency or call graphs (DAGs), git commit graphs, data-structure figures (arrays, trees, hash maps, linked lists, grids, stacks, queues), plots (functions, tangents, Riemann sums), probability (bars, trees, Venn), geometry, OS scheduling (Gantt) and memory, step-through algorithm animations. Also use it to export a diagram with toSVG.
+description: Draw diagrams with the dsviz library (npm package `dsviz`, families as subpaths such as `dsviz/ds`), as SVG in a React app, in plain DOM, or as a standalone SVG string. Use this whenever a task asks for a diagram, figure or visual explanation in a project that depends on dsviz: UML (sequence, class, state machine, use case, activity, component, deployment), entity-relationship diagrams, architecture/system diagrams, dependency or call graphs (DAGs), git commit graphs, data-structure figures (arrays, trees, hash maps, linked lists, grids, stacks, queues), plots (functions, tangents, Riemann sums), probability (bars, trees, Venn), geometry, OS scheduling (Gantt) and memory, step-through algorithm animations. Also use it to export a diagram with toSVG.
 ---
 
 # dsviz
 
 dsviz turns data into an SVG **scene**: a flat list of plain nodes (`rect`, `circle`, `text`, `arrow`,
 `path`), each with a stable `id`. A renderer draws the scene and, when you render a new one, tweens every
-node that kept its id. Layout functions build scenes from your data. `@dsviz/core` has no runtime
-dependencies; `@dsviz/react` is a thin wrapper.
+node that kept its id. Layout functions build scenes from your data. `dsviz` has no runtime
+dependencies; `dsviz/react` is a thin wrapper.
 
 ```
 your data ──layout()──▶ Scene { nodes } ──▶ <Diagram scene> │ createView(svg).render(scene) │ toSVG(scene)
 ```
 
 Three layers, like Radix and shadcn: **core** is headless (primitives, renderer, camera, player;
-parts carry `role`s and the stylesheet decides looks); **family packages** are pure `state → Scene`
-functions; a **registry** of copyable example components (`npx @dsviz/cli add <name>`) shows them put to use.
+parts carry `role`s and the stylesheet decides looks); **families** (`dsviz/ds`, `dsviz/uml`, ...) are pure `state → Scene`
+functions; a **registry** of copyable example components (`npx dsviz add <name>`) shows them put to use.
 
 ## Step 1: pick how to draw
 
@@ -31,29 +31,29 @@ functions; a **registry** of copyable example components (`npx @dsviz/cli add <n
 One package per family, each exporting its functions flat (no namespaces: `fn`, not `plot.fn`):
 
 |---|---|
-| `@dsviz/core` | `rect circle text arrow path`, `combine translate namespace`, `connector`, `createView`, `toSVG`, `fitViewBox`, `createPlayer`, `handle`, `burst` |
-| `@dsviz/layout` | `layered` (DAG), `tidy` (trees): positions only, no drawing |
-| `@dsviz/ds` | `array pointer linkedList binaryTree tree graph grid stack queue hashMap` |
-| `@dsviz/plot` | `plane axes fn point segment vector tangent area riemann integrate label` |
-| `@dsviz/prob` | `bars sampleSpace diePips probTree venn2` |
-| `@dsviz/geom` | `polygon segment tickMarks angleMark circle pointLabel` + construction helpers |
-| `@dsviz/os` | `simulate gantt stackHeap memory hex` |
-| `@dsviz/arch` | `architecture component zone packet` |
-| `@dsviz/uml` | `sequence classDiagram stateMachine useCase activity component deployment er` |
-| `@dsviz/git` | `graph` (commit graph), `gitLanes`, `orderCommits`, `foldedCommits` |
-| `@dsviz/react` | `Diagram usePlayer useTicker useBurst`, controls, `Transport`, `CodeTrace`, `MathText` |
+| `dsviz` | `rect circle text arrow path`, `combine translate namespace`, `connector`, `createView`, `toSVG`, `fitViewBox`, `createPlayer`, `handle`, `burst` |
+| `dsviz/layout` | `layered` (DAG), `tidy` (trees): positions only, no drawing |
+| `dsviz/ds` | `array pointer linkedList binaryTree tree graph grid stack queue hashMap` |
+| `dsviz/plot` | `plane axes fn point segment vector tangent area riemann integrate label` |
+| `dsviz/prob` | `bars sampleSpace diePips probTree venn2` |
+| `dsviz/geom` | `polygon segment tickMarks angleMark circle pointLabel` + construction helpers |
+| `dsviz/os` | `simulate gantt stackHeap memory hex` |
+| `dsviz/arch` | `architecture component zone packet` |
+| `dsviz/uml` | `sequence classDiagram stateMachine useCase activity component deployment er` |
+| `dsviz/git` | `graph` (commit graph), `gitLanes`, `orderCommits`, `foldedCommits` |
+| `dsviz/react` | `Diagram usePlayer useTicker useBurst`, controls, `Transport`, `CodeTrace`, `MathText` |
 
 Imports:
 
 ```ts
-import { combine, fitViewBox, connector, text, toSVG } from '@dsviz/core';
-import { array, pointer, graph, tree } from '@dsviz/ds';
-import { sequence, classDiagram } from '@dsviz/uml';
-import { graph as gitGraph } from '@dsviz/git';          // git and ds both export `graph`: alias one
-import { Diagram, usePlayer, Transport, Slider, Segmented } from '@dsviz/react';
+import { combine, fitViewBox, connector, text, toSVG } from 'dsviz';
+import { array, pointer, graph, tree } from 'dsviz/ds';
+import { sequence, classDiagram } from 'dsviz/uml';
+import { graph as gitGraph } from 'dsviz/git';          // git and ds both export `graph`: alias one
+import { Diagram, usePlayer, Transport, Slider, Segmented } from 'dsviz/react';
 ```
 
-Same names exist in two packages: `graph` (ds, git), `component` (uml diagram, arch single box),
+Same names exist in two families: `graph` (ds, git), `component` (uml diagram, arch single box),
 `segment` (plot, geom), `circle` (core primitive, geom figure). Alias on import when you need both.
 
 React:
@@ -88,7 +88,7 @@ Without React: `const view = createView(svgEl); view.render(scene);` Static: `to
   Families already order their own parts (fragment boxes under messages, edges under nodes).
 - **Place or don't.** `x`/`y` are optional on every graph-like diagram (architecture, class, state, object,
   component, deployment, use case, activity, ER, `graph` with
-  `layout: 'layered'`): leave them out and `@dsviz/layout` places the boxes. Give them for boxes the user
+  `layout: 'layered'`): leave them out and `dsviz/layout` places the boxes. Give them for boxes the user
   has dragged.
 
 ## Theme contract
@@ -128,7 +128,7 @@ injected styles. `toSVG(scene, { theme: 'light' | 'dark' })` pins a palette insi
 | Trees | `tree(root, { layout: 'tidy', shape: 'rect' })`, `binaryTree(root, { layout: 'tidy' })` | n-ary `{ key, label, children }` |
 | Maps, lists, grids | `hashMap(entries)`, `linkedList(nodes)`, `grid(rows, { colLabels, cellWidth })`, `stack`, `queue` | |
 | Layout only | `layered(nodes, edges)`, `tidy(root, children)` | positions without drawing |
-| Other | `@dsviz/plot` (functions, tangents, areas), `@dsviz/prob`, `@dsviz/geom`, `@dsviz/os` | see `references/api.md` |
+| Other | `dsviz/plot` (functions, tangents, areas), `dsviz/prob`, `dsviz/geom`, `dsviz/os` | see `references/api.md` |
 
 Layouts return the scene plus **anchors** (`arr.top(i)`, `seq.rowY(i)`, `g.pos(id)`, `a.frame(id)`,
 `d.box(id)`, `a.along(from, to, t)`). Use anchors to attach pointers, arrows and labels instead of

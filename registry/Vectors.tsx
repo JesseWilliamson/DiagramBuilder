@@ -1,9 +1,9 @@
 // Vectors you can grab by the tip. Same plane, three questions.
 import { useState } from 'react';
-import { combine, Vec } from '@dsviz/core';
-import { angleAt, angleMark, dot as geomDot, toDegrees } from '@dsviz/geom';
-import { axes, plane, point, segment, vector } from '@dsviz/plot';
-import { Diagram, MathText, Segmented } from '@dsviz/react';
+import { combine, Vec } from 'dsviz';
+import { angleAt, angleMark, dot as geomDot, toDegrees } from 'dsviz/geom';
+import { axes, plane, point, segment, vector } from 'dsviz/plot';
+import { Diagram, MathText, Segmented } from 'dsviz/react';
 
 // Equal pixels per unit on both axes (60), so angles on screen are true angles.
 const p = plane({ x: [-1, 6], y: [-1, 4], width: 420, height: 300 });

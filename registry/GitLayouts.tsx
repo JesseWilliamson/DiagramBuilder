@@ -8,8 +8,8 @@
 // lane cap cuts the far lanes and marks them with git's ~. feature-c's tip is
 // the newest commit, so without the pin it would take the left column.
 import { useState } from 'react';
-import { Commit, graph as gitGraph, Ref } from '@dsviz/git';
-import { Diagram, NumberStepper, Segmented, Switch } from '@dsviz/react';
+import { Commit, graph as gitGraph, Ref } from 'dsviz/git';
+import { Diagram, NumberStepper, Segmented, Switch } from 'dsviz/react';
 
 // newest first; a merge's first parent is the branch it was merged into
 const history: Commit[] = [

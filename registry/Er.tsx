@@ -3,9 +3,9 @@
 // a box is how many of that entity take part (a bar is one, a ring is zero, a crow's foot is many).
 // No positions are given: the layered layout puts the "one" side above the "many" side.
 import { useState } from 'react';
-import { fitViewBox } from '@dsviz/core';
-import { Diagram, Switch } from '@dsviz/react';
-import { Cardinality, er, ErEntity, ErRelationship } from '@dsviz/uml';
+import { fitViewBox } from 'dsviz';
+import { Diagram, Switch } from 'dsviz/react';
+import { Cardinality, er, ErEntity, ErRelationship } from 'dsviz/uml';
 
 const entities: ErEntity[] = [
   { id: 'customer', name: 'Customer', attributes: [

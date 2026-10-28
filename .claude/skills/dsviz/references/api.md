@@ -1,12 +1,12 @@
 # dsviz API reference
 
-Every function and type exported by the 11 packages, from their `src/index.ts`. Import each symbol from
-the package named in the heading (`import { fn } from 'dsviz/plot'`); there are no namespaces.
+Every function and type exported by the 11 families, from their `src/<family>/index.ts`. Import each symbol
+from the subpath named in the heading (`import { fn } from 'dsviz/plot'`); there are no namespaces.
 In the tables, `a / b` means "one of"; `?` marks an optional field; defaults follow `=`. Every option not
 marked required is optional. Each layout takes an `id` option (the prefix of its node ids) so two copies
 can share a scene.
 
-Names that two packages both export: `graph` (ds, git), `component` (arch: one box; uml: the diagram),
+Names that two families both export: `graph` (ds, git), `component` (arch: one box; uml: the diagram),
 `segment` (plot, geom), `circle` (core primitive, geom figure), `ToneSpec` / `resolveTone` (ds, prob).
 
 Common types (all from `dsviz` unless noted):

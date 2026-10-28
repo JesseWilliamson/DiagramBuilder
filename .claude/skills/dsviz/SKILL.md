@@ -1,6 +1,6 @@
 ---
 name: dsviz
-description: Draw diagrams with the dsviz library (npm packages `dsviz`), as SVG in a React app, in plain DOM, or as a standalone SVG string. Use this whenever a task asks for a diagram, figure or visual explanation in a project that depends on dsviz: UML (sequence, class, state machine, use case, activity, component, deployment), entity-relationship diagrams, architecture/system diagrams, dependency or call graphs (DAGs), git commit graphs, data-structure figures (arrays, trees, hash maps, linked lists, grids, stacks, queues), plots (functions, tangents, Riemann sums), probability (bars, trees, Venn), geometry, OS scheduling (Gantt) and memory, step-through algorithm animations. Also use it to export a diagram with toSVG.
+description: Draw diagrams with the dsviz library (npm package `dsviz`, families as subpaths such as `dsviz/ds`), as SVG in a React app, in plain DOM, or as a standalone SVG string. Use this whenever a task asks for a diagram, figure or visual explanation in a project that depends on dsviz: UML (sequence, class, state machine, use case, activity, component, deployment), entity-relationship diagrams, architecture/system diagrams, dependency or call graphs (DAGs), git commit graphs, data-structure figures (arrays, trees, hash maps, linked lists, grids, stacks, queues), plots (functions, tangents, Riemann sums), probability (bars, trees, Venn), geometry, OS scheduling (Gantt) and memory, step-through algorithm animations. Also use it to export a diagram with toSVG.
 ---
 
 # dsviz
@@ -15,7 +15,7 @@ your data ──layout()──▶ Scene { nodes } ──▶ <Diagram scene> │ 
 ```
 
 Three layers, like Radix and shadcn: **core** is headless (primitives, renderer, camera, player;
-parts carry `role`s and the stylesheet decides looks); **family packages** are pure `state → Scene`
+parts carry `role`s and the stylesheet decides looks); **families** (`dsviz/ds`, `dsviz/uml`, ...) are pure `state → Scene`
 functions; a **registry** of copyable example components (`npx dsviz add <name>`) shows them put to use.
 
 ## Step 1: pick how to draw
@@ -53,7 +53,7 @@ import { graph as gitGraph } from 'dsviz/git';          // git and ds both expor
 import { Diagram, usePlayer, Transport, Slider, Segmented } from 'dsviz/react';
 ```
 
-Same names exist in two packages: `graph` (ds, git), `component` (uml diagram, arch single box),
+Same names exist in two families: `graph` (ds, git), `component` (uml diagram, arch single box),
 `segment` (plot, geom), `circle` (core primitive, geom figure). Alias on import when you need both.
 
 React:

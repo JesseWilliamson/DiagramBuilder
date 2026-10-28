@@ -15,6 +15,14 @@
 
 ### Changed
 
+- **Breaking: dark mode follows the page's `color-scheme`, not a class.** Every colour in the
+  stylesheet is now a `light-dark(light, dark)` pair, so the diagrams and controls read the same
+  declaration the browser uses for form controls and scrollbars. The `.dark` and `[data-theme="dark"]`
+  selectors and the `prefers-color-scheme` fallback are gone: an app that only toggled a class gets
+  light diagrams until it adds `.dark { color-scheme: dark }` (and `color-scheme: light` on `:root`,
+  or `light dark` to follow the OS). This closes the case where an app chose light on a dark OS and
+  got dark ink on its light cards. `toSVG({ theme })` is unchanged: it still pins plain colours, for
+  viewers that do not know `light-dark()`.
 - `gitLanes` edges now carry `via` (the column in every row between child and parent) and `color`;
   placements carry `color`. A line keeps the colour of the column it opened in, so it does not change
   colour when compact lanes shift it. Commit dots carry `data: { hash }` and ref pills `data: { ref }`.

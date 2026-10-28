@@ -33,8 +33,8 @@ interaction. No 3D buttons, no lesson UI: this is a diagram library plus a docs/
    point counts are resampled by arc length); `fitViewBox`/`nextCamera`; `createPlayer`; `handle` (draggable
    dot with a big hit target, optional pulse hint); `connector` (line + end markers, straight/elbow/via
    routes, `rectEdge`); `toSVG`;
-   `describe`; TeX-lite `mathtext`; `styles.ts` (the one theme, `--dv-*` variables, dark via
-   `[data-theme="dark"]`/`.dark`/OS). Parts carry a semantic `role`; the stylesheet decides looks.
+   `describe`; TeX-lite `mathtext`; `styles.ts` (the one theme, `--dv-*` variables, each a
+   `light-dark()` pair, so dark follows the page's `color-scheme`). Parts carry a semantic `role`; the stylesheet decides looks.
    **Layouts never know about styling.** Drag handles pointer, touch (non-passive touchstart on draggables,
    pointer capture) and keyboard (arrow keys emit the same drag events).
 2. **Families: pure `state → Scene` functions, one package each.** They import only `@dsviz/core` and

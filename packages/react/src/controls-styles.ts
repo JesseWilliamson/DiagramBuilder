@@ -5,23 +5,17 @@ import { injectStyles } from '@dsviz/core';
  * CSS for the controls. Deliberately quiet: small, flat, neutral greys with one
  * blue accent, so the diagram is the thing you look at. They read the same
  * --dv-* variables as the diagrams (defined on `.dvc`), so a host app restyles
- * both from one place, or swaps the controls for its own entirely.
+ * both from one place, or swaps the controls for its own entirely. Like the
+ * diagrams, they follow the page's `color-scheme` through light-dark().
  */
 export const CONTROLS_CSS = /* css */ `
 .dvc {
-  --dvc-ink: var(--dv-fg); --dvc-sub: #6b6b6b; --dvc-line: #d9d9d9; --dvc-track: #ececec; --dvc-bg: #fff; --dvc-soft: #f5f5f5;
-  --dvc-accent: #456dff; --dvc-strong: #1a1a1a; --dvc-strong-ink: #fff; --dvc-hl: #fdf3d3; --dvc-hl-bar: #f7c325;
+  --dvc-ink: var(--dv-fg);
+  --dvc-sub: light-dark(#6b6b6b, #a3a3a3); --dvc-line: light-dark(#d9d9d9, #3d3d3d); --dvc-track: light-dark(#ececec, #333);
+  --dvc-bg: light-dark(#fff, #1e1e1e); --dvc-soft: light-dark(#f5f5f5, #262626); --dvc-accent: light-dark(#456dff, #7491ff);
+  --dvc-strong: light-dark(#1a1a1a, #f2f2f2); --dvc-strong-ink: light-dark(#fff, #141414);
+  --dvc-hl: light-dark(#fdf3d3, #3d3100); --dvc-hl-bar: light-dark(#f7c325, #d7a613);
   font-family: var(--dv-font); color: var(--dvc-ink);
-}
-:root[data-theme="dark"] .dvc, .dark .dvc {
-  --dvc-sub: #a3a3a3; --dvc-line: #3d3d3d; --dvc-track: #333; --dvc-bg: #1e1e1e; --dvc-soft: #262626;
-  --dvc-accent: #7491ff; --dvc-strong: #f2f2f2; --dvc-strong-ink: #141414; --dvc-hl: #3d3100; --dvc-hl-bar: #d7a613;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]):not(.light) .dvc {
-    --dvc-sub: #a3a3a3; --dvc-line: #3d3d3d; --dvc-track: #333; --dvc-bg: #1e1e1e; --dvc-soft: #262626;
-    --dvc-accent: #7491ff; --dvc-strong: #f2f2f2; --dvc-strong-ink: #141414; --dvc-hl: #3d3100; --dvc-hl-bar: #d7a613;
-  }
 }
 .dvc-field { display: flex; align-items: center; gap: 10px; font-size: 13px; }
 .dvc-label { color: var(--dvc-sub); white-space: nowrap; }

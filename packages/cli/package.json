@@ -1,6 +1,6 @@
 {
   "name": "@dsviz/cli",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Copy dsviz diagram components into your app: npx @dsviz/cli add binary-search",
   "author": "Jesse Williamson",
   "homepage": "https://jessewilliamson.github.io/DiagramBuilder/",

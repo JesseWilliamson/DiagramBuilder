@@ -1,6 +1,6 @@
 {
   "name": "@dsviz/arch",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "System-architecture diagrams: components, zones, links, packets",
   "author": "Jesse Williamson",
   "homepage": "https://jessewilliamson.github.io/DiagramBuilder/",
@@ -19,8 +19,8 @@
     "src"
   ],
   "dependencies": {
-    "@dsviz/core": "^3.0.0",
-    "@dsviz/layout": "^3.0.0"
+    "@dsviz/core": "^3.0.1",
+    "@dsviz/layout": "^3.0.1"
   },
   "repository": {
     "type": "git",

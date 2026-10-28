@@ -1,6 +1,6 @@
 {
   "name": "@dsviz/geom",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Geometry diagrams: polygons, angles, circles, tick marks",
   "author": "Jesse Williamson",
   "homepage": "https://jessewilliamson.github.io/DiagramBuilder/",
@@ -19,7 +19,7 @@
     "src"
   ],
   "dependencies": {
-    "@dsviz/core": "^3.0.0"
+    "@dsviz/core": "^3.0.1"
   },
   "repository": {
     "type": "git",

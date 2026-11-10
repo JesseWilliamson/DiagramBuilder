@@ -70,9 +70,7 @@
     "registry": "node scripts/registry.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "sync:skill": "node scripts/sync-skill.mjs",
-    "dev:rail": "vite --config apps/rail/vite.config.ts",
-    "build:rail": "vite build --config apps/rail/vite.config.ts"
+    "sync:skill": "node scripts/sync-skill.mjs"
   },
   "dependencies": {
     "@radix-ui/react-select": "^2.4.1",

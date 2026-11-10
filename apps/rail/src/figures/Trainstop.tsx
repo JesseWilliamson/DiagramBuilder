@@ -31,7 +31,7 @@ function draw(want: number, atStop: boolean): Scene {
     circle({ id: 'w3', x: tail + 40, y: RAIL - 8, r: 7 }),
     circle({ id: 'w4', x: tail + 64, y: RAIL - 8, r: 7 }),
     path({ id: 'cock', points: [[cock, RAIL - 17], [cock, RAIL - 6], [cock - 4, RAIL - 4]], role: 'post' }),
-    text({ id: 'cock:l', x: cock, y: RAIL - 44, text: 'trip cock ↓', size: 10.5, anchor: 'middle', role: 'code' }),
+    text({ id: 'cock:l', x: cock, y: RAIL - 60, text: 'trip cock ↓', size: 10.5, anchor: 'middle', role: 'code' }),
     tripped && text({ id: 'trip', x: front - LEN / 2, y: RAIL - 17, text: 'TRIPPED · emergency brake', size: 11, anchor: 'middle', role: 'code', weight: 600 }),
   );
 }

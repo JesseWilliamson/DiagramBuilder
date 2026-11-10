@@ -74,6 +74,8 @@ interaction. No 3D buttons, no lesson UI: this is a diagram library plus a docs/
   by family, live diagram beside editable source via sucrase + CodeMirror), guide (`#/guide`), API (`#/api`).
   `site/demos.ts` globs `../registry/*.tsx`. `site/live/compile.ts` maps every `dsviz` package for the
   in-page editor: add a package there when you add one.
+- `apps/rail/` — Network Control, a separate course site (Australian rail safeworking) built on dsviz, in
+  getbetter's style. `npm run dev:rail` / `build:rail`; see its README. Its models are tested in `tests/rail.test.ts`.
 - `tests/` — vitest; maths per family, `render.test.ts` in happy-dom, `uml-a/b/c`, `registry`, `cli`.
 - `.claude/skills/dsviz/` — the Claude skill for USING the library (SKILL.md + references/api.md,
   recipes.md). `npm run sync:skill -- <repo>` copies it into another checkout. Keep `references/api.md` in

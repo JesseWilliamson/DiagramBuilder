@@ -29,6 +29,7 @@
     "src",
     "site",
     "tests",
-    "registry"
+    "registry",
+    "apps"
   ]
 }
